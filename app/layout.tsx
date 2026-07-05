@@ -19,6 +19,20 @@ export const metadata: Metadata = {
     description: "Bought, restored, rehomed.",
     locale: "en_GB",
     type: "website",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Modern Life furniture, the wordmark over the contour field",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Modern Life Furniture",
+    description: "Bought, restored, rehomed.",
+    images: ["/og.png"],
   },
 };
 

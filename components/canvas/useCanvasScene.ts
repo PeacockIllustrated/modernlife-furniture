@@ -141,15 +141,40 @@ export function useCanvasScene(options: CanvasSceneOptions) {
       raf = requestAnimationFrame(frame);
     };
 
-    if (reduced) {
-      // One meaningful frame, then hold. resize() already drew once.
-      optionsRef.current.draw(scene);
-    } else {
-      raf = requestAnimationFrame(frame);
+    // Paint one static frame straightaway so the panel is never blank and the
+    // first paint lands early. Reduced motion stops here.
+    optionsRef.current.draw(scene);
+
+    // Defer the animation loop until the page has loaded and gone idle, so the
+    // canvases do not compete with the critical render for the main thread.
+    let idleId = 0;
+    let cancelled = false;
+    const startLoop = () => {
+      if (!cancelled) raf = requestAnimationFrame(frame);
+    };
+    const scheduleStart = () => {
+      if (typeof window.requestIdleCallback === "function") {
+        idleId = window.requestIdleCallback(startLoop, { timeout: 800 });
+      } else {
+        idleId = window.setTimeout(startLoop, 300);
+      }
+    };
+    const onLoad = () => scheduleStart();
+
+    if (!reduced) {
+      if (document.readyState === "complete") scheduleStart();
+      else window.addEventListener("load", onLoad, { once: true });
     }
 
     return () => {
+      cancelled = true;
       cancelAnimationFrame(raf);
+      if (idleId) {
+        if (typeof window.cancelIdleCallback === "function")
+          window.cancelIdleCallback(idleId);
+        else clearTimeout(idleId);
+      }
+      window.removeEventListener("load", onLoad);
       window.removeEventListener("resize", onResizeWindow);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerout", onLeave);

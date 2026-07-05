@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { closing } from "@/content/landing";
 
 /**
@@ -16,6 +17,11 @@ export default function Closing() {
       <a className="big reveal" href={closing.cta.href}>
         {closing.cta.label}
       </a>
+      <p className="reveal" style={{ marginTop: "2rem" }}>
+        <Link className="mono" href="/sell" style={{ opacity: 0.75 }}>
+          If you have a piece to sell, we buy
+        </Link>
+      </p>
     </section>
   );
 }

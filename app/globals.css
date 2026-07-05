@@ -93,6 +93,9 @@ button:focus-visible,
   display: flex;
   gap: 1.6rem;
 }
+.site-header a {
+  white-space: nowrap;
+}
 .site-header nav a {
   text-decoration: none;
   border-bottom: 1px solid transparent;
@@ -100,6 +103,17 @@ button:focus-visible,
 }
 .site-header nav a:hover {
   border-bottom-color: currentColor;
+}
+@media (max-width: 600px) {
+  .site-header {
+    padding: 0.9rem 1.1rem;
+  }
+  .site-header .mono {
+    font-size: 0.6rem;
+  }
+  .site-header nav {
+    gap: 0.95rem;
+  }
 }
 
 /* ---------- Hero ---------- */
