@@ -1,0 +1,366 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Modern Life Furniture, design system
+   Ported from reference/concept-v5.html. Tokens are CSS
+   variables (see DESIGN.md); Tailwind carries layout only.
+   ============================================================ */
+
+:root {
+  --stone: #e4e2db; /* gallery ground, light rooms   */
+  --stone-deep: #d8d6ce; /* closing section ground        */
+  --ink: #1e211e; /* line work, text on light      */
+  --basalt: #151c18; /* dark rooms                    */
+  --bone: #ddd9cc; /* line work, text on dark       */
+  --amber: #c97b3d; /* accent 1, ownership, cane     */
+  --rose: #b4685e; /* accent 2                      */
+  --sea: #5e7a6b; /* accent 3                      */
+  --hair-colour: rgba(30, 33, 30, 0.28);
+  --hair: 1px solid var(--hair-colour); /* hairline rules */
+
+  /* next/font families, injected on <html> in layout.tsx */
+  --font-display: var(--font-fraunces), Georgia, serif;
+  --font-body: var(--font-archivo), system-ui, sans-serif;
+  --font-mono: var(--font-spline-mono), ui-monospace, monospace;
+}
+
+/* Square corners and no shadows, everywhere, forever */
+*,
+*::before,
+*::after {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--stone);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--stone);
+}
+
+a {
+  color: inherit;
+}
+
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+
+/* ---------- Header ---------- */
+.site-header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 20;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.1rem 1.5rem;
+  mix-blend-mode: difference;
+  color: #e4e2db;
+}
+.site-header .mono {
+  opacity: 0.85;
+}
+.site-header nav {
+  display: flex;
+  gap: 1.6rem;
+}
+.site-header nav a {
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+}
+.site-header nav a:hover {
+  border-bottom-color: currentColor;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  position: relative;
+  height: 100vh;
+  min-height: 640px;
+  overflow: hidden;
+}
+.hero canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.hero-inner {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 1.5rem 2rem;
+  pointer-events: none;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(3.4rem, 11vw, 10.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+}
+.hero h1 em {
+  font-style: italic;
+  font-weight: 400;
+}
+.hero-sub {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2rem;
+  margin-top: 1.4rem;
+  padding-top: 1rem;
+  border-top: var(--hair);
+}
+.hero-sub p {
+  max-width: 36ch;
+}
+.scroll-cue {
+  white-space: nowrap;
+  opacity: 0.7;
+}
+
+/* ---------- Manifesto ---------- */
+.manifesto {
+  padding: 22vh 1.5rem;
+  border-top: var(--hair);
+}
+.manifesto p {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.5rem, 3.4vw, 2.9rem);
+  line-height: 1.28;
+  max-width: 24em;
+  margin: 0 auto;
+}
+.manifesto em {
+  font-style: italic;
+}
+
+/* ---------- Specimen room ---------- */
+.specimen {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  min-height: 100vh;
+  border-top: var(--hair);
+}
+.specimen.dark {
+  background: var(--basalt);
+  color: var(--bone);
+}
+.specimen.dark .label {
+  border-color: rgba(221, 217, 204, 0.28);
+}
+.panel {
+  position: relative;
+  overflow: hidden;
+  min-height: 62vh;
+}
+.panel canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: crosshair;
+  touch-action: pan-y;
+}
+.plinth {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 9%;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.25;
+  pointer-events: none;
+}
+.label {
+  align-self: center;
+  padding: 3.5rem 2.2rem;
+  border-left: var(--hair);
+}
+.label .no {
+  display: block;
+  margin-bottom: 2.4rem;
+  opacity: 0.75;
+}
+.label h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2rem, 3.6vw, 3.2rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin-bottom: 1.1rem;
+}
+.label .story {
+  max-width: 36ch;
+  margin-bottom: 1.4rem;
+  opacity: 0.92;
+}
+.label .hint {
+  display: block;
+  margin-bottom: 2.2rem;
+  opacity: 0.6;
+}
+dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.45rem 1.4rem;
+}
+dt {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  opacity: 0.65;
+  padding-top: 0.15rem;
+}
+dd {
+  font-size: 0.86rem;
+}
+.enquire {
+  display: inline-block;
+  margin-top: 2.6rem;
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
+  border: 1px solid currentColor;
+  padding: 0.75rem 1.3rem;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease;
+}
+.specimen:not(.dark) .enquire:hover {
+  background: var(--ink);
+  color: var(--stone);
+}
+.specimen.dark .enquire:hover {
+  background: var(--bone);
+  color: var(--basalt);
+}
+
+/* ---------- Reveal, the section entrance ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.9s ease,
+    transform 0.9s ease;
+}
+.reveal.in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- Closing and footer ---------- */
+.closing {
+  border-top: var(--hair);
+  padding: 20vh 1.5rem;
+  text-align: center;
+  background: var(--stone-deep);
+}
+.closing h2 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.4rem, 6vw, 5.2rem);
+  letter-spacing: -0.015em;
+  line-height: 1.02;
+  margin-bottom: 1.6rem;
+}
+.closing p {
+  max-width: 46ch;
+  margin: 0 auto 2.6rem;
+  opacity: 0.85;
+}
+.closing a.big {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  border: 1px solid var(--ink);
+  padding: 1rem 2rem;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease;
+  display: inline-block;
+}
+.closing a.big:hover {
+  background: var(--ink);
+  color: var(--stone);
+}
+.site-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1.4rem 1.5rem;
+  border-top: var(--hair);
+  opacity: 0.8;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 860px) {
+  .specimen {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .panel {
+    min-height: 58vh;
+  }
+  .label {
+    border-left: none;
+    border-top: var(--hair);
+    padding: 2.4rem 1.5rem 3.4rem;
+  }
+  .hero-sub {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

@@ -1,0 +1,50 @@
+import type { Metadata, Viewport } from "next";
+import { fraunces, archivo, splineMono } from "./fonts";
+import LenisProvider from "@/components/scroll/LenisProvider";
+import Header from "@/components/chrome/Header";
+import Footer from "@/components/chrome/Footer";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://modernlifefurniture.co.uk"),
+  title: {
+    default:
+      "Modern Life Furniture, collected works by the furniture artists of the last century",
+    template: "%s, Modern Life Furniture",
+  },
+  description:
+    "A collector and restorer of vintage designer furniture. Found in attics and auction rooms, restored on our bench, and passed on with the story intact.",
+  openGraph: {
+    title: "Modern Life Furniture",
+    description: "Bought, restored, rehomed.",
+    locale: "en_GB",
+    type: "website",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#e4e2db",
+  colorScheme: "light",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html
+      lang="en-GB"
+      className={`${fraunces.variable} ${archivo.variable} ${splineMono.variable}`}
+    >
+      <body>
+        <noscript>
+          <style>{`.reveal{opacity:1 !important;transform:none !important}`}</style>
+        </noscript>
+        <LenisProvider>
+          <Header />
+          {children}
+          <Footer />
+        </LenisProvider>
+      </body>
+    </html>
+  );
+}
