@@ -2,7 +2,7 @@ import Hero from "@/components/gallery/Hero";
 import Manifesto from "@/components/gallery/Manifesto";
 import Room from "@/components/gallery/Room";
 import Closing from "@/components/gallery/Closing";
-import PanelPlaceholder from "@/components/canvas/PanelPlaceholder";
+import Tide from "@/components/canvas/Tide";
 import RoomVisual from "@/components/canvas/RoomVisual";
 import RevealObserver from "@/components/scroll/RevealObserver";
 import { rooms } from "@/content/landing";
@@ -17,10 +17,7 @@ export default function Home() {
   return (
     <main>
       <Hero>
-        <PanelPlaceholder
-          visual="tide"
-          label="Tide, the hero field, the grain of time"
-        />
+        <Tide label="Tide, the hero field, the grain of time" />
       </Hero>
 
       <Manifesto />

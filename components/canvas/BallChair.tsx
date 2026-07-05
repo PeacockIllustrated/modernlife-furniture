@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRef } from "react";
 import { useCanvasScene } from "./useCanvasScene";
+import { useScrollBind } from "@/components/scroll/useScrollBind";
 import { drawBall } from "@/lib/drawBall";
 import { clamp, ease } from "@/lib/anim";
 
@@ -93,31 +92,7 @@ export default function BallChair({ label }: { label: string }) {
 
   // Bind the build to scroll progress. Skipped under reduced motion, where the
   // chair is already held assembled.
-  useEffect(() => {
-    const reduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    if (reduced) {
-      progress.current = 1;
-      return;
-    }
-    gsap.registerPlugin(ScrollTrigger);
-    const el = canvasRef.current;
-    if (!el) return;
-    const st = ScrollTrigger.create({
-      trigger: el,
-      start: "top bottom",
-      end: "top top",
-      scrub: true,
-      onUpdate: (self) => {
-        progress.current = self.progress;
-      },
-      onRefresh: (self) => {
-        progress.current = self.progress;
-      },
-    });
-    return () => st.kill();
-  }, [canvasRef]);
+  useScrollBind(canvasRef, progress);
 
   return <canvas ref={canvasRef} aria-label={label} />;
 }
