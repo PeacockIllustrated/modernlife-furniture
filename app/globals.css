@@ -521,6 +521,10 @@ dd {
   display: block;
   touch-action: pan-y;
 }
+.piece-backdrop {
+  position: absolute;
+  inset: 0;
+}
 .piece-photo {
   position: absolute;
   inset: 0;
@@ -561,6 +565,91 @@ dd {
   display: block;
   opacity: 0.6;
   margin-bottom: 0.8rem;
+}
+
+/* Provenance diagram on the piece page */
+.provenance {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+  gap: 2.5rem;
+  align-items: center;
+}
+.provenance-figure {
+  position: relative;
+  height: 44vh;
+  min-height: 300px;
+  background: var(--basalt);
+  overflow: hidden;
+}
+.provenance-figure canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: pan-y;
+}
+.provenance-legend {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+.provenance-legend li {
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+}
+.provenance-legend .swatch {
+  flex: 0 0 auto;
+  width: 12px;
+  height: 12px;
+  transform: translateY(1px);
+}
+.provenance-legend .mono {
+  display: block;
+  margin-bottom: 0.35rem;
+  opacity: 0.75;
+}
+.provenance-legend p {
+  max-width: 34ch;
+  opacity: 0.9;
+}
+
+/* Service pages: restoration, sell */
+.service-band {
+  position: relative;
+  height: 52vh;
+  min-height: 320px;
+  margin: 0 -1.5rem 3.5rem;
+  overflow: hidden;
+  border-bottom: var(--hair);
+}
+.service-band canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: pan-y;
+}
+.service-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem 2.5rem;
+  margin: 2.5rem 0 3.5rem;
+  border-top: var(--hair);
+  padding-top: 2.5rem;
+}
+.service-list h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+.service-list p {
+  opacity: 0.85;
+  font-size: 0.95rem;
 }
 
 /* Forms: enquire, sell, admin */
@@ -617,6 +706,91 @@ button.enquire {
   opacity: 1;
 }
 
+/* Admin dashboard */
+.admin-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1.4rem;
+  margin-bottom: 2.5rem;
+  border-bottom: var(--hair);
+}
+.admin-section {
+  margin-bottom: 3.5rem;
+}
+.admin-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1.4rem;
+}
+.admin-h {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.8rem;
+  margin-bottom: 1.2rem;
+}
+.admin-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+.admin-enquiry,
+.admin-piece {
+  padding: 1.4rem 0;
+  border-bottom: var(--hair);
+}
+.admin-enquiry {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+.admin-piece-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  align-items: baseline;
+}
+.admin-piece-actions {
+  display: flex;
+  gap: 0.8rem;
+}
+.admin-form {
+  margin-top: 1.6rem;
+  padding: 1.6rem;
+  border: var(--hair);
+  max-width: none;
+}
+.admin-fieldset {
+  border: var(--hair);
+  padding: 1rem 1.2rem 1.4rem;
+  margin: 1.4rem 0;
+}
+.admin-fieldset legend {
+  padding: 0 0.5rem;
+  opacity: 0.7;
+}
+.admin-subrow {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+  flex-wrap: wrap;
+}
+.admin-subrow input,
+.admin-subrow select {
+  flex: 1 1 8rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: inherit;
+  background: transparent;
+  border: var(--hair);
+  padding: 0.5rem 0.6rem;
+}
+.admin-enquiry a {
+  color: var(--sea);
+}
+
 @media (max-width: 860px) {
   .specimen-entry {
     grid-template-columns: 1fr;
@@ -633,6 +807,10 @@ button.enquire {
   }
   .piece {
     grid-template-columns: 1fr;
+  }
+  .provenance {
+    grid-template-columns: 1fr;
+    gap: 1.8rem;
   }
   .category-band {
     margin-left: -1.5rem;
