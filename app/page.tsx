@@ -3,6 +3,7 @@ import Manifesto from "@/components/gallery/Manifesto";
 import Room from "@/components/gallery/Room";
 import Closing from "@/components/gallery/Closing";
 import PanelPlaceholder from "@/components/canvas/PanelPlaceholder";
+import RoomVisual from "@/components/canvas/RoomVisual";
 import RevealObserver from "@/components/scroll/RevealObserver";
 import { rooms } from "@/content/landing";
 
@@ -29,7 +30,7 @@ export default function Home() {
           key={room.id}
           data={room}
           visual={
-            <PanelPlaceholder visual={room.visual} label={room.canvasLabel} />
+            <RoomVisual visual={room.visual} label={room.canvasLabel} />
           }
         />
       ))}
