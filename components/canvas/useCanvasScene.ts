@@ -115,8 +115,11 @@ export function useCanvasScene(options: CanvasSceneOptions) {
       client.y = e.clientY;
     };
     window.addEventListener("pointermove", onMove, { passive: true });
-    // When the pointer leaves the window entirely, let the visual return to idle.
-    const onLeave = () => {
+    // When the pointer leaves the window entirely (relatedTarget null), let the
+    // visual return to idle. Boundary crossings between elements keep a
+    // relatedTarget and are ignored, so interactions do not flicker.
+    const onLeave = (e: PointerEvent) => {
+      if (e.relatedTarget !== null) return;
       client.x = AWAY;
       client.y = AWAY;
     };
