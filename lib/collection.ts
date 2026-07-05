@@ -96,20 +96,21 @@ function toPiece(p: (typeof staticPieces)[number]): Piece {
 // ---- Public API ----
 
 export const getCategories = cache(async (): Promise<Category[]> => {
-  if (isSupabaseConfigured) {
-    try {
-      const { createClient } = await import("./supabase/server");
-      const supabase = await createClient();
-      const { data, error } = await supabase
-        .from("mlf_categories")
-        .select("slug,name,position,story,hint,facts,placeholder")
-        .order("position");
-      if (!error && data && data.length) {
-        return data as Category[];
-      }
-    } catch {
-      // fall through to static
-    }
+  // The static catalogue is the fallback for "no database", not for an empty
+  // one: when Supabase is configured its result is authoritative, so an empty
+  // table returns an empty list rather than the placeholder demo content.
+  if (!isSupabaseConfigured) return staticCategories();
+  try {
+    const { createClient } = await import("./supabase/server");
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("mlf_categories")
+      .select("slug,name,position,story,hint,facts,placeholder")
+      .order("position");
+    if (!error && data) return data as Category[];
+  } catch {
+    // Unreachable database: keep the landing and collection populated.
+    return staticCategories();
   }
   return staticCategories();
 });
@@ -123,58 +124,69 @@ export const getCategoryBySlug = cache(
 
 export const getPieces = cache(
   async (categorySlug?: string): Promise<Piece[]> => {
-    if (isSupabaseConfigured) {
-      try {
-        const { createClient } = await import("./supabase/server");
-        const supabase = await createClient();
-        let query = supabase
-          .from("mlf_pieces")
-          .select("*, mlf_categories!inner(slug)")
-          .neq("status", "draft")
-          .order("created_at", { ascending: false });
-        if (categorySlug) {
-          query = query.eq("mlf_categories.slug", categorySlug);
-        }
-        const { data, error } = await query;
-        if (!error && data) {
-          const rows = data as unknown as Array<
-            PieceRow & { mlf_categories: { slug: string } }
-          >;
-          return rows.map(
-            (row): Piece => ({
-              slug: row.slug,
-              categorySlug: row.mlf_categories.slug,
-              title: row.title,
-              attribution: row.attribution,
-              periodLabel: row.period_label,
-              yearFrom: row.year_from,
-              yearTo: row.year_to,
-              origin: row.origin,
-              materials: row.materials,
-              status: row.status,
-              priceOnRequest: row.price_on_request,
-              pricePence: row.price_pence,
-              story: row.story,
-              restorationNotes: row.restoration_notes,
-              placeholder: row.placeholder,
-            }),
-          );
-        }
-      } catch {
-        // fall through to static
-      }
+    // Without a database, serve the static catalogue. With one, the database is
+    // authoritative: a draft or deleted piece must not reappear from static, so
+    // there is no static fallback on the configured path.
+    if (!isSupabaseConfigured) {
+      const all = staticPieces.map(toPiece);
+      return categorySlug
+        ? all.filter((p) => p.categorySlug === categorySlug)
+        : all;
     }
-    const all = staticPieces.map(toPiece);
-    return categorySlug
-      ? all.filter((p) => p.categorySlug === categorySlug)
-      : all;
+    try {
+      const { createClient } = await import("./supabase/server");
+      const supabase = await createClient();
+      let query = supabase
+        .from("mlf_pieces")
+        .select("*, mlf_categories!inner(slug)")
+        .neq("status", "draft")
+        .order("created_at", { ascending: false });
+      if (categorySlug) {
+        query = query.eq("mlf_categories.slug", categorySlug);
+      }
+      const { data, error } = await query;
+      if (!error && data) {
+        const rows = data as unknown as Array<
+          PieceRow & { mlf_categories: { slug: string } }
+        >;
+        return rows.map(
+          (row): Piece => ({
+            slug: row.slug,
+            categorySlug: row.mlf_categories.slug,
+            title: row.title,
+            attribution: row.attribution,
+            periodLabel: row.period_label,
+            yearFrom: row.year_from,
+            yearTo: row.year_to,
+            origin: row.origin,
+            materials: row.materials,
+            status: row.status,
+            priceOnRequest: row.price_on_request,
+            pricePence: row.price_pence,
+            story: row.story,
+            restorationNotes: row.restoration_notes,
+            placeholder: row.placeholder,
+          }),
+        );
+      }
+    } catch {
+      // configured but unreachable
+    }
+    return [];
   },
 );
 
 export const getPieceBySlug = cache(
   async (slug: string): Promise<PieceDetail | null> => {
-    if (isSupabaseConfigured) {
-      try {
+    // Configured database is authoritative: a draft piece resolves to null (a
+    // 404) rather than leaking through the static fallback.
+    if (!isSupabaseConfigured) {
+      const found = staticPieces.find((p) => p.slug === slug);
+      if (!found) return null;
+      return { ...toPiece(found), provenance: found.provenance, images: [] };
+    }
+    try {
+      {
         const { createClient } = await import("./supabase/server");
         const supabase = await createClient();
         const { data, error } = await supabase
@@ -229,16 +241,10 @@ export const getPieceBySlug = cache(
             ),
           };
         }
-      } catch {
-        // fall through to static
       }
+    } catch {
+      // configured but unreachable
     }
-    const found = staticPieces.find((p) => p.slug === slug);
-    if (!found) return null;
-    return {
-      ...toPiece(found),
-      provenance: found.provenance,
-      images: [],
-    };
+    return null;
   },
 );

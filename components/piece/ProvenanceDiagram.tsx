@@ -26,8 +26,12 @@ export default function ProvenanceDiagram({
   provenance: Provenance[];
   label: string;
 }) {
+  // The piece-page figure is small (roughly 300 to 400px min dimension), so it
+  // draws only about a dozen rings. Keep the marked indices low and close so
+  // every provenance row lands on a ring that is actually drawn and the legend
+  // never lists a colour with no ring.
   const markers: RingMarker[] = provenance.map((_, i) => ({
-    ring: 6 + i * 7,
+    ring: 2 + i * 2,
     colour: RING_COLOURS[i % RING_COLOURS.length],
   }));
 

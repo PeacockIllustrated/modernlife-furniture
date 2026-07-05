@@ -37,5 +37,6 @@ export function periodRange(
 ): string {
   if (yearFrom && yearTo) return `${yearFrom} to ${yearTo}`;
   if (yearFrom) return `${yearFrom}`;
+  if (yearTo) return `${yearTo}`;
   return periodLabel;
 }

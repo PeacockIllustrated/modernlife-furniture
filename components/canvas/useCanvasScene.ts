@@ -92,8 +92,10 @@ export function useCanvasScene(options: CanvasSceneOptions) {
       canvas.height = Math.round(r.height * scene.dpr);
       ctx.setTransform(scene.dpr, 0, 0, scene.dpr, 0, 0);
       optionsRef.current.onResize?.(scene);
-      // Under reduced motion the loop never runs, so redraw the still here.
-      if (reduced) optionsRef.current.draw(scene);
+      // Redraw the current frame: resizing reallocates and clears the backing
+      // store, and the animation loop may still be deferred, so without this the
+      // panel would flash blank. Skipped at zero size to avoid NaN geometry.
+      if (scene.w > 0 && scene.h > 0) optionsRef.current.draw(scene);
     };
 
     optionsRef.current.init?.(scene);
@@ -101,6 +103,11 @@ export function useCanvasScene(options: CanvasSceneOptions) {
 
     const onResizeWindow = () => resize();
     window.addEventListener("resize", onResizeWindow);
+
+    // Catch container-driven size changes that the window resize event misses
+    // (a font swap reflowing siblings, a lazy image loading, the mobile URL bar).
+    const ro = new ResizeObserver(() => resize());
+    ro.observe(canvas);
 
     const io = new IntersectionObserver(
       (entries) => {
@@ -129,7 +136,7 @@ export function useCanvasScene(options: CanvasSceneOptions) {
     const dt = optionsRef.current.dt ?? 0.016;
 
     const frame = () => {
-      if (scene.active) {
+      if (scene.active && scene.w > 0 && scene.h > 0) {
         const r = canvas.getBoundingClientRect();
         scene.pointer.x = client.x - r.left;
         scene.pointer.y = client.y - r.top;
@@ -144,9 +151,8 @@ export function useCanvasScene(options: CanvasSceneOptions) {
       raf = requestAnimationFrame(frame);
     };
 
-    // Paint one static frame straightaway so the panel is never blank and the
-    // first paint lands early. Reduced motion stops here.
-    optionsRef.current.draw(scene);
+    // The initial resize() above already painted one static frame, so the panel
+    // is never blank. Reduced motion stops there.
 
     // Defer the animation loop until the page has loaded and gone idle, so the
     // canvases do not compete with the critical render for the main thread.
@@ -169,6 +175,17 @@ export function useCanvasScene(options: CanvasSceneOptions) {
       else window.addEventListener("load", onLoad, { once: true });
     }
 
+    // Repaint once the web fonts are ready, so in-canvas annotation (the
+    // conservator's notes, the ring labels) is not left in the fallback font,
+    // which matters under reduced motion where the loop never repaints.
+    if ("fonts" in document) {
+      document.fonts.ready.then(() => {
+        if (!cancelled && scene.w > 0 && scene.h > 0) {
+          optionsRef.current.draw(scene);
+        }
+      });
+    }
+
     return () => {
       cancelled = true;
       cancelAnimationFrame(raf);
@@ -181,6 +198,7 @@ export function useCanvasScene(options: CanvasSceneOptions) {
       window.removeEventListener("resize", onResizeWindow);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerout", onLeave);
+      ro.disconnect();
       io.disconnect();
     };
   }, []);

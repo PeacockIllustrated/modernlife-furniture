@@ -102,8 +102,11 @@ export default function AdminDashboard({ email }: { email: string }) {
   }
 
   async function deleteEnquiry(id: string) {
-    await supabase.from("mlf_enquiries").delete().eq("id", id);
-    setEnquiries((e) => e.filter((x) => x.id !== id));
+    const { error } = await supabase.from("mlf_enquiries").delete().eq("id", id);
+    // Only drop it from the view if it really went; otherwise reload so the
+    // dashboard reflects the truth rather than hiding a still-present enquiry.
+    if (error) loadAll();
+    else setEnquiries((e) => e.filter((x) => x.id !== id));
   }
 
   async function deletePiece(id: string) {
@@ -318,10 +321,16 @@ function PieceForm({
       }
       if (!pieceId) throw new Error("Could not save the piece.");
 
-      // Replace provenance and images with the edited set.
-      await supabase.from("mlf_provenance").delete().eq("piece_id", pieceId);
+      // Replace provenance and images with the edited set. Errors are surfaced
+      // (and the form keeps its state) so a failed write is visible and can be
+      // retried rather than silently losing the rows.
+      const provDel = await supabase
+        .from("mlf_provenance")
+        .delete()
+        .eq("piece_id", pieceId);
+      if (provDel.error) throw provDel.error;
       if (rows.length) {
-        await supabase.from("mlf_provenance").insert(
+        const { error } = await supabase.from("mlf_provenance").insert(
           rows.map((r, i) => ({
             piece_id: pieceId,
             position: i + 1,
@@ -329,10 +338,15 @@ function PieceForm({
             detail: r.detail.trim(),
           })) as never,
         );
+        if (error) throw error;
       }
-      await supabase.from("mlf_piece_images").delete().eq("piece_id", pieceId);
+      const imgDel = await supabase
+        .from("mlf_piece_images")
+        .delete()
+        .eq("piece_id", pieceId);
+      if (imgDel.error) throw imgDel.error;
       if (imgRows.length) {
-        await supabase.from("mlf_piece_images").insert(
+        const { error } = await supabase.from("mlf_piece_images").insert(
           imgRows.map((r, i) => ({
             piece_id: pieceId,
             position: i + 1,
@@ -341,6 +355,7 @@ function PieceForm({
             kind: r.kind,
           })) as never,
         );
+        if (error) throw error;
       }
       onDone();
     } catch (err) {

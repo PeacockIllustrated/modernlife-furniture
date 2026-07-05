@@ -13,6 +13,18 @@ export interface RateResult {
   retryAfterSeconds: number;
 }
 
+// Above this many tracked keys, drop any whose newest hit has aged out, so a
+// churn of one-off clients cannot grow the map without bound.
+const MAX_KEYS = 10000;
+
+function evictStale(since: number) {
+  for (const [key, times] of hits) {
+    if (times.length === 0 || times[times.length - 1] <= since) {
+      hits.delete(key);
+    }
+  }
+}
+
 export function rateLimit(
   key: string,
   limit = 5,
@@ -20,6 +32,7 @@ export function rateLimit(
   now = Date.now(),
 ): RateResult {
   const since = now - windowMs;
+  if (hits.size > MAX_KEYS) evictStale(since);
   const recent = (hits.get(key) ?? []).filter((t) => t > since);
   if (recent.length >= limit) {
     const retryAfter = Math.ceil((recent[0] + windowMs - now) / 1000);

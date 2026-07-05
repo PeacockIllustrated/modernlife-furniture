@@ -34,6 +34,12 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   }
+  if (name.length > 200 || email.length > 320) {
+    return NextResponse.json(
+      { error: "That name or email is too long." },
+      { status: 400 },
+    );
+  }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json(
       { error: "That email address does not look right." },

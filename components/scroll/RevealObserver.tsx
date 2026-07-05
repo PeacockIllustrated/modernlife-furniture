@@ -27,7 +27,11 @@ export default function RevealObserver() {
           }
         });
       },
-      { threshold: 0.2 },
+      // Reveal as soon as any part crosses ~12% up from the bottom edge. Using
+      // isIntersecting with a root margin, rather than a ratio threshold, means
+      // sections taller than the viewport (the provenance block on mobile) still
+      // reveal instead of being stranded below the ratio and staying invisible.
+      { threshold: 0, rootMargin: "0px 0px -12% 0px" },
     );
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
