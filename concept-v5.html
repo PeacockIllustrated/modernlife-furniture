@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modern Life Furniture, collected works by the furniture artists of the past</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Archivo:wght@400;500&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --stone:#E4E2DB;
+    --stone-deep:#D8D6CE;
+    --ink:#1E211E;
+    --basalt:#151C18;
+    --bone:#DDD9CC;
+    --amber:#C97B3D;
+    --rose:#B4685E;
+    --sea:#5E7A6B;
+    --hair:1px solid rgba(30,33,30,.28);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;border-radius:0 !important}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--stone);
+    color:var(--ink);
+    font-family:'Archivo',sans-serif;
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ink);color:var(--stone)}
+  a{color:inherit}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+
+  .mono{font-family:'Spline Sans Mono',monospace;font-size:.72rem;letter-spacing:.08em}
+
+  header{
+    position:fixed;inset:0 0 auto 0;z-index:20;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:1.1rem 1.5rem;
+    mix-blend-mode:difference;color:#E4E2DB;
+  }
+  header .mono{opacity:.85}
+  header nav{display:flex;gap:1.6rem}
+  header nav a{text-decoration:none;border-bottom:1px solid transparent;padding-bottom:2px}
+  header nav a:hover{border-bottom-color:currentColor}
+
+  .hero{position:relative;height:100vh;min-height:640px;overflow:hidden}
+  .hero canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .hero-inner{
+    position:relative;z-index:2;height:100%;
+    display:flex;flex-direction:column;justify-content:flex-end;
+    padding:0 1.5rem 2rem;pointer-events:none;
+  }
+  .hero h1{
+    font-family:'Fraunces',serif;font-weight:300;
+    font-size:clamp(3.4rem,11vw,10.5rem);
+    line-height:.92;letter-spacing:-.02em;
+  }
+  .hero h1 em{font-style:italic;font-weight:400}
+  .hero-sub{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    gap:2rem;margin-top:1.4rem;padding-top:1rem;border-top:var(--hair);
+  }
+  .hero-sub p{max-width:36ch}
+  .scroll-cue{white-space:nowrap;opacity:.7}
+
+  .manifesto{padding:22vh 1.5rem;border-top:var(--hair)}
+  .manifesto p{
+    font-family:'Fraunces',serif;font-weight:300;
+    font-size:clamp(1.5rem,3.4vw,2.9rem);line-height:1.28;
+    max-width:24em;margin:0 auto;
+  }
+  .manifesto em{font-style:italic}
+
+  .specimen{
+    display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);
+    min-height:100vh;border-top:var(--hair);
+  }
+  .specimen.dark{background:var(--basalt);color:var(--bone)}
+  .specimen.dark .label{border-color:rgba(221,217,204,.28)}
+  .panel{position:relative;overflow:hidden;min-height:62vh}
+  .panel canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:crosshair}
+  .plinth{
+    position:absolute;left:8%;right:8%;bottom:9%;height:1px;
+    background:currentColor;opacity:.25;pointer-events:none;
+  }
+  .label{align-self:center;padding:3.5rem 2.2rem;border-left:var(--hair)}
+  .label .no{display:block;margin-bottom:2.4rem;opacity:.75}
+  .label h2{
+    font-family:'Fraunces',serif;font-weight:400;
+    font-size:clamp(2rem,3.6vw,3.2rem);line-height:1.05;letter-spacing:-.01em;
+    margin-bottom:1.1rem;
+  }
+  .label .story{max-width:36ch;margin-bottom:1.4rem;opacity:.92}
+  .label .hint{display:block;margin-bottom:2.2rem;opacity:.6}
+  dl{display:grid;grid-template-columns:auto 1fr;gap:.45rem 1.4rem}
+  dt{font-family:'Spline Sans Mono',monospace;font-size:.7rem;letter-spacing:.08em;opacity:.65;padding-top:.15rem}
+  dd{font-size:.86rem}
+  .enquire{
+    display:inline-block;margin-top:2.6rem;text-decoration:none;
+    font-family:'Spline Sans Mono',monospace;font-size:.74rem;letter-spacing:.1em;
+    border:1px solid currentColor;padding:.75rem 1.3rem;
+    transition:background .25s ease,color .25s ease;
+  }
+  .specimen:not(.dark) .enquire:hover{background:var(--ink);color:var(--stone)}
+  .specimen.dark .enquire:hover{background:var(--bone);color:var(--basalt)}
+
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .9s ease,transform .9s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  .closing{
+    border-top:var(--hair);padding:20vh 1.5rem;text-align:center;
+    background:var(--stone-deep);
+  }
+  .closing h2{
+    font-family:'Fraunces',serif;font-weight:300;
+    font-size:clamp(2.4rem,6vw,5.2rem);letter-spacing:-.015em;line-height:1.02;
+    margin-bottom:1.6rem;
+  }
+  .closing p{max-width:46ch;margin:0 auto 2.6rem;opacity:.85}
+  .closing a.big{
+    font-family:'Spline Sans Mono',monospace;font-size:.8rem;letter-spacing:.12em;
+    text-decoration:none;border:1px solid var(--ink);padding:1rem 2rem;
+    transition:background .25s ease,color .25s ease;display:inline-block;
+  }
+  .closing a.big:hover{background:var(--ink);color:var(--stone)}
+  footer{
+    display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+    padding:1.4rem 1.5rem;border-top:var(--hair);opacity:.8;
+  }
+
+  @media (max-width:860px){
+    .specimen{grid-template-columns:1fr;min-height:0}
+    .panel{min-height:58vh}
+    .label{border-left:none;border-top:var(--hair);padding:2.4rem 1.5rem 3.4rem}
+    .hero-sub{flex-direction:column;align-items:flex-start;gap:.9rem}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .reveal{opacity:1;transform:none;transition:none}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="mono">Modern Life Furniture</span>
+  <nav class="mono">
+    <a href="#s01">Collection</a>
+    <a href="#s05">Restoration</a>
+    <a href="#commission">Enquire</a>
+  </nav>
+</header>
+
+<!-- Hero -->
+<section class="hero" aria-label="Modern Life Furniture">
+  <canvas id="tide" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <h1>Modern<br>Life <em>furniture</em></h1>
+    <div class="hero-sub">
+      <p>Collected works by the furniture artists of the last century. Found in attics and auction rooms, restored on our bench, and passed on with the story intact.</p>
+      <span class="mono scroll-cue">Scroll to enter the collection</span>
+    </div>
+  </div>
+</section>
+
+<section class="manifesto">
+  <p class="reveal">We do not make furniture. The artists of the last century already did. We find their work, undo the years, and <em>rehome</em> it.</p>
+</section>
+
+<!-- Category 01: Chairs -->
+<section class="specimen" id="s01">
+  <div class="panel">
+    <canvas id="chair" aria-label="Chairs, a space-age ball chair that turns to face you"></canvas>
+    <div class="plinth"></div>
+  </div>
+  <div class="label reveal">
+    <span class="mono no">Category 01 of 05</span>
+    <h2>Chairs</h2>
+    <p class="story">The heart of the collection. From the space-age pod to the Bauhaus cantilever, chairs by the schools and workshops that decided what sitting should look like. Every one restored, documented and ready for its next forty years.</p>
+    <span class="mono hint">The piece turns to face you as you pass</span>
+    <dl>
+      <dt>In collection</dt><dd>Two dozen pieces, changing weekly</dd>
+      <dt>Periods</dt><dd>1925 to 1975</dd>
+      <dt>Schools</dt><dd>Bauhaus, Danish modern, space age</dd>
+    </dl>
+    <a class="enquire" href="/collection/chairs">View the chairs</a>
+  </div>
+</section>
+
+<!-- Category 02: Shelving and storage -->
+<section class="specimen dark" id="s02">
+  <div class="panel">
+    <canvas id="grove" aria-label="Shelving and storage, a collection growing like branches"></canvas>
+    <div class="plinth"></div>
+  </div>
+  <div class="label reveal">
+    <span class="mono no">Category 02 of 05</span>
+    <h2>Shelving and storage</h2>
+    <p class="story">Wall units, modular systems and room dividers, the furniture that was built to grow with a household. The collection branches the same way, one arrival deciding the next. Shown here as it grows.</p>
+    <span class="mono hint">The collection grows as you arrive</span>
+    <dl>
+      <dt>In collection</dt><dd>Wall units, systems, room dividers</dd>
+      <dt>Periods</dt><dd>1950 to 1980</dd>
+      <dt>Materials</dt><dd>Teak, rosewood, ash, blackened steel</dd>
+    </dl>
+    <a class="enquire" href="/collection/shelving-and-storage">View shelving and storage</a>
+  </div>
+</section>
+
+<!-- Category 03: Cabinets and sideboards -->
+<section class="specimen" id="s03">
+  <div class="panel">
+    <canvas id="strata" aria-label="Cabinets and sideboards, layers of veneer and lacquer refracting light"></canvas>
+    <div class="plinth"></div>
+  </div>
+  <div class="label reveal">
+    <span class="mono no">Category 03 of 05</span>
+    <h2>Cabinets and sideboards</h2>
+    <p class="story">Credenzas, cocktail cabinets and bureaus, casework built in layers of veneer, lacquer and shellac. Decades settle into a finish the way sediment settles into stone, and the light bends around your hand the same way.</p>
+    <span class="mono hint">Move across the surface and the layers refract</span>
+    <dl>
+      <dt>In collection</dt><dd>Credenzas, cocktail cabinets, bureaus</dd>
+      <dt>Periods</dt><dd>1930 to 1975</dd>
+      <dt>Materials</dt><dd>Rosewood, teak, lacquer, brass</dd>
+    </dl>
+    <a class="enquire" href="/collection/cabinets-and-sideboards">View cabinets and sideboards</a>
+  </div>
+</section>
+
+<!-- Category 04: Tables -->
+<section class="specimen dark" id="s04">
+  <div class="panel">
+    <canvas id="rings" aria-label="Tables, rings of grain and ownership, touch to add one"></canvas>
+    <div class="plinth"></div>
+  </div>
+  <div class="label reveal">
+    <span class="mono no">Category 04 of 05</span>
+    <h2>Tables</h2>
+    <p class="story">Dining, coffee and side tables, the surfaces a household gathers around. Every top keeps its rings, of grain and of ownership, and each piece leaves us with both written down.</p>
+    <span class="mono hint">Touch the surface to add a ring of your own</span>
+    <dl>
+      <dt>In collection</dt><dd>Dining, coffee, side and nesting</dd>
+      <dt>Periods</dt><dd>1930 to 1975</dd>
+      <dt>Origins</dt><dd>Denmark, Italy, Britain</dd>
+    </dl>
+    <a class="enquire" href="/collection/tables">View the tables</a>
+  </div>
+</section>
+
+<!-- Category 05: Restoration -->
+<section class="specimen" id="s05">
+  <div class="panel">
+    <canvas id="bench" aria-label="Restoration, an exploded drawing of a ball chair, move outward to take it apart"></canvas>
+    <div class="plinth"></div>
+  </div>
+  <div class="label reveal">
+    <span class="mono no">Category 05 of 05</span>
+    <h2>Restoration</h2>
+    <p class="story">Every piece comes apart before it comes back. We strip a chair to its parts, shell, upholstery, foam and frame, put right what the decades took, and reassemble it with nothing hidden. The drawing below is how we think.</p>
+    <span class="mono hint">Move to the edge of the panel to take the piece apart</span>
+    <dl>
+      <dt>Services</dt><dd>French polishing, re-caning, reupholstery, re-chroming</dd>
+      <dt>Turnaround</dt><dd>From three weeks</dd>
+      <dt>Collection</dt><dd>North East England, courier nationwide</dd>
+    </dl>
+    <a class="enquire" href="/restoration">Bring us a piece</a>
+  </div>
+</section>
+
+<section class="closing" id="commission">
+  <h2 class="reveal">Live with a piece<br>of history</h2>
+  <p class="reveal">The collection changes weekly and the best pieces rarely reach the website. Tell us what you are after and we will find it. And if you have a piece the artists made, we buy.</p>
+  <a class="big reveal" href="mailto:studio@modernlifefurniture.co.uk?subject=Find me a piece">Ask about a piece</a>
+</section>
+
+<footer class="mono">
+  <span>Modern Life Furniture</span>
+  <span>Bought, restored, rehomed</span>
+  <span>studio@modernlifefurniture.co.uk</span>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var pointer = {x:-9999, y:-9999};
+  window.addEventListener('pointermove', function(e){ pointer.x = e.clientX; pointer.y = e.clientY; }, {passive:true});
+  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+  function ease(v){ v = clamp(v,0,1); return v*v*(3-2*v); }
+  function lerp(a,b,u){ return a + (b-a)*u; }
+
+  function setupCanvas(id){
+    var c = document.getElementById(id);
+    var ctx = c.getContext('2d');
+    var state = {c:c, ctx:ctx, w:0, h:0, dpr:1, active:false, t:Math.random()*100, onResize:null};
+    function resize(){
+      var r = c.getBoundingClientRect();
+      state.dpr = Math.min(window.devicePixelRatio || 1, 2);
+      state.w = r.width; state.h = r.height;
+      c.width = Math.round(r.width * state.dpr);
+      c.height = Math.round(r.height * state.dpr);
+      ctx.setTransform(state.dpr,0,0,state.dpr,0,0);
+      if(state.onResize) state.onResize();
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    var io = new IntersectionObserver(function(en){ state.active = en[0].isIntersecting; }, {threshold:0.05});
+    io.observe(c);
+    state.local = function(){
+      var r = c.getBoundingClientRect();
+      return {x: pointer.x - r.left, y: pointer.y - r.top};
+    };
+    return state;
+  }
+
+  /* ============ THE BALL CHAIR, drawn in the site's own language ============
+     Contour lines carry the form: meridians describe the sphere, depth rings
+     describe the cavity, piping lines describe the cushions. One renderer,
+     positioned by explicit part centres so it can assemble or explode cleanly.
+     P: {shellY, intY, cushY, stemTopY, baseY, shadowY}  A: alphas per part   */
+  var BG = '#E4E2DB';
+  function drawBall(ctx, cx, R, t, sw, P, A){
+    function a(k){ return A[k] === undefined ? 1 : A[k]; }
+    ctx.lineCap = 'round';
+    var opR = R*0.80;
+    var opX = cx + sw;
+
+    /* floor shadow, thinning as the piece lifts apart */
+    var apart = Math.abs(P.shellY - (P.intY - R*0.02));
+    ctx.save();
+    ctx.globalAlpha = Math.min(a('base'), a('shell')) * clamp(1 - apart/(R*1.4), 0.2, 1) * 0.5;
+    ctx.fillStyle = 'rgba(30,33,30,.18)';
+    ctx.beginPath();
+    ctx.ellipse(cx, P.shadowY, R*0.62, R*0.07, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+
+    /* ---- base: the tulip foot, turned metal described by rings ---- */
+    if(a('base') > 0){
+      ctx.save(); ctx.globalAlpha = a('base');
+      ctx.fillStyle = '#F2F0E8';
+      ctx.strokeStyle = 'rgba(30,33,30,.55)'; ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.ellipse(cx, P.baseY, R*0.42, R*0.095, 0, 0, Math.PI*2);
+      ctx.fill(); ctx.stroke();
+      /* turning rings */
+      ctx.strokeStyle = 'rgba(30,33,30,.14)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.ellipse(cx, P.baseY, R*0.30, R*0.062, 0, 0, Math.PI*2); ctx.stroke();
+      ctx.strokeStyle = 'rgba(30,33,30,.09)';
+      ctx.beginPath(); ctx.ellipse(cx, P.baseY, R*0.17, R*0.032, 0, 0, Math.PI*2); ctx.stroke();
+      ctx.restore();
+    }
+
+    /* ---- stem: swept enamel, form carried by two inner contour curves ---- */
+    if(a('stem') > 0){
+      ctx.save(); ctx.globalAlpha = a('stem');
+      var sTop = P.stemTopY;
+      var sBot = P.stemTopY + R*0.48;
+      ctx.fillStyle = '#F0EEE6';
+      ctx.strokeStyle = 'rgba(30,33,30,.5)'; ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(cx - R*0.10, sTop);
+      ctx.bezierCurveTo(cx - R*0.10, sBot - R*0.16, cx - R*0.20, sBot - R*0.06, cx - R*0.22, sBot);
+      ctx.lineTo(cx + R*0.22, sBot);
+      ctx.bezierCurveTo(cx + R*0.20, sBot - R*0.06, cx + R*0.10, sBot - R*0.16, cx + R*0.10, sTop);
+      ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      /* seat plate the sphere rests on */
+      ctx.fillStyle = '#EDEBE2';
+      ctx.strokeStyle = 'rgba(30,33,30,.35)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.ellipse(cx, sTop, R*0.30, R*0.05, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      /* contour curves */
+      ctx.strokeStyle = 'rgba(30,33,30,.12)'; ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cx - R*0.045, sTop + R*0.05);
+      ctx.bezierCurveTo(cx - R*0.045, sBot - R*0.18, cx - R*0.11, sBot - R*0.07, cx - R*0.13, sBot - R*0.02);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx + R*0.045, sTop + R*0.05);
+      ctx.bezierCurveTo(cx + R*0.045, sBot - R*0.18, cx + R*0.11, sBot - R*0.07, cx + R*0.13, sBot - R*0.02);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    /* ---- cushions: piped wool, drawn as nested contour ellipses ---- */
+    if(a('cushion') > 0){
+      ctx.save(); ctx.globalAlpha = a('cushion');
+      var cy2 = P.cushY;
+      /* seat */
+      ctx.fillStyle = '#E76F26';
+      ctx.beginPath();
+      ctx.ellipse(cx + sw - R*0.05, cy2, opR*0.58, opR*0.26, -0.05, 0, Math.PI*2);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(140,45,12,.55)'; ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.ellipse(cx + sw - R*0.05, cy2, opR*0.58, opR*0.26, -0.05, 0, Math.PI*2);
+      ctx.stroke();
+      /* piping contours */
+      ctx.strokeStyle = 'rgba(140,45,12,.3)'; ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.ellipse(cx + sw - R*0.05, cy2 - opR*0.02, opR*0.42, opR*0.16, -0.05, 0, Math.PI*2);
+      ctx.stroke();
+      ctx.strokeStyle = 'rgba(255,255,255,.28)'; ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.ellipse(cx + sw - R*0.08, cy2 - opR*0.08, opR*0.34, opR*0.09, -0.07, Math.PI*1.05, Math.PI*1.95);
+      ctx.stroke();
+      /* bolster */
+      ctx.fillStyle = '#F07E33';
+      ctx.beginPath();
+      ctx.ellipse(cx + sw + opR*0.36, cy2 + opR*0.17, opR*0.32, opR*0.12, -0.16, 0, Math.PI*2);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(140,45,12,.5)'; ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      ctx.ellipse(cx + sw + opR*0.36, cy2 + opR*0.17, opR*0.32, opR*0.12, -0.16, 0, Math.PI*2);
+      ctx.stroke();
+      ctx.strokeStyle = 'rgba(255,255,255,.25)'; ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.ellipse(cx + sw + opR*0.34, cy2 + opR*0.13, opR*0.20, opR*0.05, -0.16, Math.PI*1.1, Math.PI*1.9);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    /* ---- shell: hollow fibreglass, meridians carry the volume ---- */
+    if(a('shell') > 0){
+      ctx.save(); ctx.globalAlpha = a('shell');
+      var sy = P.shellY;
+      var apY = sy + R*0.02;                     /* aperture sits on the shell */
+      ctx.fillStyle = '#F4F2EA';
+      ctx.beginPath(); ctx.arc(cx, sy, R, 0, Math.PI*2); ctx.fill();
+      /* meridian contours, clipped to the sphere, leaning with the swivel */
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, sy, R, 0, Math.PI*2); ctx.clip();
+      var mers = [0.32, 0.58, 0.82];
+      for(var m=0;m<mers.length;m++){
+        var rx = R*mers[m];
+        ctx.strokeStyle = 'rgba(30,33,30,' + (0.05 + m*0.02) + ')';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.ellipse(cx - sw*0.8*(1-mers[m]), sy, rx, R*0.995, 0, 0, Math.PI*2);
+        ctx.stroke();
+      }
+      /* one latitude, low on the form */
+      ctx.strokeStyle = 'rgba(30,33,30,.05)'; ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.ellipse(cx, sy + R*0.42, R*0.9, R*0.2, 0, 0, Math.PI);
+      ctx.stroke();
+      /* body shade, hatched not flat */
+      for(var k=0;k<3;k++){
+        ctx.strokeStyle = 'rgba(30,33,30,' + (0.05 - k*0.012) + ')';
+        ctx.lineWidth = R*0.05;
+        ctx.beginPath();
+        ctx.arc(cx, sy, R*(0.90 - k*0.055), Math.PI*0.55, Math.PI*1.12);
+        ctx.stroke();
+      }
+      /* sheen, breathing, hatched */
+      for(var k=0;k<3;k++){
+        ctx.strokeStyle = 'rgba(255,255,255,' + ((0.4 - k*0.12) + Math.sin(t*0.7)*0.06) + ')';
+        ctx.lineWidth = R*0.025;
+        ctx.beginPath();
+        ctx.arc(cx, sy, R*(0.92 - k*0.045), -Math.PI*0.44, -Math.PI*0.06);
+        ctx.stroke();
+      }
+      ctx.restore();
+      /* the aperture: punched clean through, this is a hollow object */
+      ctx.fillStyle = BG;
+      ctx.beginPath(); ctx.arc(opX, apY, opR, 0, Math.PI*2); ctx.fill();
+      /* moulded rim, two contours reading as wall thickness */
+      ctx.strokeStyle = '#E9E6DC'; ctx.lineWidth = R*0.05;
+      ctx.beginPath(); ctx.arc(opX, apY, opR + R*0.025, 0, Math.PI*2); ctx.stroke();
+      ctx.strokeStyle = 'rgba(30,33,30,.4)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(opX, apY, opR + R*0.055, 0, Math.PI*2); ctx.stroke();
+      ctx.strokeStyle = 'rgba(30,33,30,.25)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(opX, apY, opR, 0, Math.PI*2); ctx.stroke();
+      /* outer line last */
+      ctx.strokeStyle = 'rgba(30,33,30,.75)'; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.arc(cx, sy, R, 0, Math.PI*2); ctx.stroke();
+      ctx.restore();
+    }
+
+    /* ---- interior: the cavity, depth carried by receding rings ---- */
+    if(a('interior') > 0){
+      ctx.save(); ctx.globalAlpha = a('interior');
+      var iy = P.intY;
+      var g = ctx.createRadialGradient(opX - sw*0.6 - opR*0.12, iy - opR*0.14, opR*0.08, opX, iy, opR);
+      g.addColorStop(0, '#F0812F');
+      g.addColorStop(0.5, '#DC5E1F');
+      g.addColorStop(1, '#98380F');
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(opX, iy, opR, 0, Math.PI*2); ctx.fill();
+      /* the tunnel: rings recede to the back of the cavity, away from the swivel */
+      var bx = opX - sw*1.4 - opR*0.14;
+      var by = iy - opR*0.10;
+      ctx.lineWidth = 1;
+      for(var k=1;k<=7;k++){
+        var u = k/8;
+        var rr = opR*(1 - u*0.86);
+        var kx = lerp(opX, bx, u);
+        var ky = lerp(iy, by, u);
+        var breathe = Math.sin(t*0.6 + k*0.7)*opR*0.006;
+        ctx.strokeStyle = 'rgba(' + Math.round(lerp(120,60,u)) + ',' +
+                                    Math.round(lerp(38,16,u)) + ',' +
+                                    Math.round(lerp(10,4,u)) + ',' + (0.24 + u*0.14) + ')';
+        ctx.beginPath();
+        ctx.arc(kx, ky, rr + breathe, 0, Math.PI*2);
+        ctx.stroke();
+      }
+      /* upholstery seams, falling toward the back point */
+      ctx.strokeStyle = 'rgba(120,36,8,.45)'; ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(opX - opR*0.02, iy - opR*0.96);
+      ctx.quadraticCurveTo(lerp(opX, bx, 0.5) + opR*0.1, lerp(iy, by, 0.5) - opR*0.2, bx + opR*0.02, by + opR*0.06);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(opX + opR*0.62, iy - opR*0.7);
+      ctx.quadraticCurveTo(lerp(opX, bx, 0.5) + opR*0.3, lerp(iy, by, 0.5), bx + opR*0.1, by + opR*0.04);
+      ctx.stroke();
+      /* rim light where the opening catches the room */
+      ctx.strokeStyle = 'rgba(255,190,140,.5)'; ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.arc(opX, iy, opR*0.97, -Math.PI*0.75, -Math.PI*0.15); ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  /* ---------- Hero: the grain of time ---------- */
+  var tide = setupCanvas('tide');
+  function drawTide(){
+    var s = tide, ctx = s.ctx, w = s.w, h = s.h, t = s.t;
+    ctx.fillStyle = '#E4E2DB'; ctx.fillRect(0,0,w,h);
+    var p = s.local();
+    var rows = Math.max(20, Math.floor(h/30));
+    ctx.lineWidth = 1;
+    for(var r=0; r<rows; r++){
+      var baseY = (r+0.5) * (h/rows);
+      var depth = r/rows;
+      ctx.strokeStyle = 'rgba(30,33,30,' + (0.16 + depth*0.34) + ')';
+      ctx.beginPath();
+      for(var x=0; x<=w; x+=7){
+        var y = baseY
+          + Math.sin(x*0.012 + t*0.7 + r*0.55) * 7
+          + Math.sin(x*0.004 - t*0.35 + r*0.9) * 13
+          + Math.sin(x*0.021 + t*1.1) * 3;
+        var dx = x - p.x, dy = baseY - p.y;
+        var d2 = dx*dx + dy*dy;
+        if(d2 < 48400){ y -= Math.exp(-d2/16000) * 34; }
+        if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    }
+  }
+
+  /* ---------- Category 01, Chairs: the ball chair arrives, then turns to face you ---------- */
+  var chair = setupCanvas('chair');
+  var chairG = 0, swivel = 0;
+  function drawChair(){
+    var s = chair, ctx = s.ctx, w = s.w, h = s.h, t = s.t;
+    ctx.fillStyle = BG; ctx.fillRect(0,0,w,h);
+    if(s.active && chairG < 1) chairG = Math.min(1, chairG + 0.008);
+    var p = s.local();
+    var mx = Math.min(w,h);
+    var R = mx*0.28;
+    var cx = w*0.5, cy = h*0.42;
+
+    var over = p.x > -100 && p.x < w+100;
+    var target = over ? clamp((p.x - cx)/(w*0.5), -1, 1) * R*0.14 : Math.sin(t*0.3)*R*0.05;
+    swivel += (target - swivel) * 0.05;
+
+    var g = chairG;
+    var pOutline = ease(g/0.30);
+    var pInner   = ease((g-0.22)/0.34);
+    var pStand   = ease((g-0.48)/0.30);
+    var pCush    = ease((g-0.68)/0.32);
+
+    if(pOutline < 1){
+      ctx.strokeStyle = 'rgba(30,33,30,.8)'; ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, -Math.PI/2, -Math.PI/2 + Math.PI*2*pOutline);
+      ctx.stroke();
+    }
+    var rise = (1-pStand)*R*0.25;
+    var P = {
+      shellY: cy,
+      intY:   cy + R*0.02,
+      cushY:  cy + R*0.02 + R*0.80*0.42,
+      stemTopY: cy + R*0.86 + rise,
+      baseY:  cy + R*1.30 + rise*1.3,
+      shadowY: cy + R*1.38
+    };
+    if(pOutline >= 1){
+      drawBall(ctx, cx, R, t, swivel, P,
+        { shell:1, interior:pInner, cushion:pCush, stem:pStand, base:pStand });
+    } else if(pInner > 0){
+      drawBall(ctx, cx, R, t, swivel, P,
+        { shell:pOutline*0.9, interior:pInner, cushion:0, stem:0, base:0 });
+    }
+  }
+
+  /* ---------- Category 02, Shelving and storage: the grove grows ---------- */
+  var grove = setupCanvas('grove');
+  var segs = [];
+  function growGrove(){
+    segs.length = 0;
+    var w = grove.w, h = grove.h;
+    function branch(x, y, angle, len, depth){
+      if(depth > 7 || len < 6) return;
+      var nx = x + Math.cos(angle)*len;
+      var ny = y + Math.sin(angle)*len;
+      segs.push({x1:x, y1:y, x2:nx, y2:ny, depth:depth});
+      var n = depth < 2 ? 2 : (Math.random() < 0.85 ? 2 : 1);
+      for(var i=0;i<n;i++){
+        branch(nx, ny, angle + (Math.random()-0.5)*1.15, len*(0.66+Math.random()*0.16), depth+1);
+      }
+      if(depth >= 2 && depth <= 4 && Math.random() < 0.3){
+        segs.push({x1:nx - len*0.9, y1:ny, x2:nx + len*0.9, y2:ny, depth:depth, shelf:true});
+      }
+    }
+    branch(w*0.5, h*0.92, -Math.PI/2, h*0.17, 0);
+    branch(w*0.32, h*0.92, -Math.PI/2 + 0.12, h*0.13, 1);
+    branch(w*0.68, h*0.92, -Math.PI/2 - 0.12, h*0.13, 1);
+  }
+  grove.onResize = growGrove;
+  growGrove();
+  var growth = 0;
+  function drawGrove(){
+    var s = grove, ctx = s.ctx, w = s.w, h = s.h, t = s.t;
+    ctx.fillStyle = '#151C18'; ctx.fillRect(0,0,w,h);
+    if(s.active && growth < segs.length) growth += Math.max(1, segs.length/240);
+    var p = s.local();
+    var n = Math.min(segs.length, Math.floor(growth));
+    for(var i=0;i<n;i++){
+      var g = segs[i];
+      var sway = Math.sin(t*0.9 + g.depth*1.3 + i*0.05) * g.depth * 0.7;
+      var dx = (g.x1+g.x2)/2 - p.x, dy = (g.y1+g.y2)/2 - p.y;
+      var near = Math.exp(-(dx*dx+dy*dy)/22000);
+      ctx.strokeStyle = g.shelf
+        ? 'rgba(221,217,204,' + (0.55 + near*0.45) + ')'
+        : 'rgba(221,217,204,' + (0.28 + (1 - g.depth/8)*0.4 + near*0.3) + ')';
+      ctx.lineWidth = g.shelf ? 2 : Math.max(0.6, 4.5 - g.depth*0.6);
+      ctx.beginPath();
+      ctx.moveTo(g.x1 + sway*0.4, g.y1);
+      ctx.lineTo(g.x2 + sway, g.y2 + near*-3);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = 'rgba(221,217,204,.3)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(w*0.14, h*0.92); ctx.lineTo(w*0.86, h*0.92); ctx.stroke();
+  }
+
+  /* ---------- Category 03, Cabinets and sideboards: the strata refract ---------- */
+  var strata = setupCanvas('strata');
+  var bands = [];
+  (function(){
+    var stops = [
+      [201,123,61],
+      [180,104,94],
+      [122,110,96],
+      [94,122,107],
+      [201,123,61]
+    ];
+    for(var i=0;i<90;i++){
+      var u = i/89, seg = u*(stops.length-1), k = Math.floor(seg), f = seg-k;
+      var a = stops[Math.min(k,stops.length-1)], b = stops[Math.min(k+1,stops.length-1)];
+      bands.push({
+        col:[ a[0]+(b[0]-a[0])*f, a[1]+(b[1]-a[1])*f, a[2]+(b[2]-a[2])*f ],
+        seed: Math.random()*10,
+        thick: 0.6 + Math.random()*0.9
+      });
+    }
+  })();
+  function drawStrata(){
+    var s = strata, ctx = s.ctx, w = s.w, h = s.h, t = s.t;
+    ctx.fillStyle = '#E4E2DB'; ctx.fillRect(0,0,w,h);
+    var p = s.local();
+    var pad = Math.min(w,h)*0.12;
+    var cab = {x:pad, y:pad*0.8, w:w-pad*2, h:h-pad*1.6};
+    var total = 0; for(var i=0;i<bands.length;i++) total += bands[i].thick;
+    var y = cab.y;
+    for(var i=0;i<bands.length;i++){
+      var b = bands[i];
+      var bh = (b.thick/total) * cab.h;
+      var mid = y + bh/2;
+      var dy = mid - p.y;
+      var refract = Math.exp(-(dy*dy)/9000) * 26 * Math.sin(b.seed*7);
+      var drift = Math.sin(t*0.5 + b.seed) * 4;
+      var lum = 1 + Math.sin(t*0.8 + b.seed*3)*0.06 + Math.exp(-(dy*dy)/16000)*0.28;
+      ctx.fillStyle = 'rgb(' + Math.min(255,b.col[0]*lum).toFixed(0) + ',' +
+                               Math.min(255,b.col[1]*lum).toFixed(0) + ',' +
+                               Math.min(255,b.col[2]*lum).toFixed(0) + ')';
+      ctx.fillRect(cab.x + refract + drift, y, cab.w, bh + 0.6);
+      y += bh;
+    }
+    ctx.strokeStyle = 'rgba(30,33,30,.65)'; ctx.lineWidth = 1;
+    ctx.strokeRect(cab.x, cab.y, cab.w, cab.h);
+    ctx.fillStyle = '#3A2E24';
+    var fw = cab.w*0.04;
+    ctx.fillRect(cab.x + cab.w*0.08, cab.y+cab.h, fw, pad*0.35);
+    ctx.fillRect(cab.x + cab.w*0.88, cab.y+cab.h, fw, pad*0.35);
+  }
+
+  /* ---------- Category 04, Tables: rings, in the dark room ---------- */
+  var rings = setupCanvas('rings');
+  var chapters = [];
+  rings.c.addEventListener('pointerdown', function(e){
+    var r = rings.c.getBoundingClientRect();
+    chapters.push({x:e.clientX-r.left, y:e.clientY-r.top, t0:rings.t});
+    if(chapters.length > 5) chapters.shift();
+  });
+  var wobble = [];
+  for(var i=0;i<64;i++){ wobble.push(Math.random()*Math.PI*2); }
+  function drawRings(){
+    var s = rings, ctx = s.ctx, w = s.w, h = s.h, t = s.t;
+    ctx.fillStyle = '#151C18'; ctx.fillRect(0,0,w,h);
+    var cx = w*0.5, cy = h*0.5;
+    var p = s.local();
+    var maxR = Math.min(w,h)*0.44;
+    ctx.lineWidth = 1;
+    var ringNo = 0;
+    for(var R=12; R<maxR; R+=11, ringNo++){
+      var owner = (ringNo===8) ? 'rgba(201,123,61,.9)'
+                : (ringNo===15) ? 'rgba(180,104,94,.9)'
+                : (ringNo===22) ? 'rgba(94,122,107,.9)'
+                : 'rgba(221,217,204,' + Math.max(0.07, 0.42 - R/maxR*0.34) + ')';
+      ctx.strokeStyle = owner;
+      ctx.beginPath();
+      var steps = 120;
+      for(var i=0;i<=steps;i++){
+        var a = (i/steps)*Math.PI*2;
+        var grain = Math.sin(a*3 + wobble[ringNo%64])*2.2 + Math.sin(a*7 + wobble[(ringNo*3)%64])*1.1;
+        var breathe = Math.sin(R*0.05 + t*0.9) * 1.6;
+        var rr = R + grain + breathe;
+        var px = cx + Math.cos(a)*rr;
+        var py = cy + Math.sin(a)*rr;
+        var dx = px - p.x, dy = py - p.y;
+        var swell = Math.exp(-(dx*dx+dy*dy)/12000) * 8;
+        for(var k=0;k<chapters.length;k++){
+          var ch = chapters[k], age = t - ch.t0;
+          if(age < 8){
+            var dd = Math.hypot(px-ch.x, py-ch.y);
+            swell += Math.sin(dd*0.09 - age*3) * 8 * Math.exp(-dd/220) * (1 - age/8);
+          }
+        }
+        px += Math.cos(a)*swell; py += Math.sin(a)*swell;
+        if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+      }
+      ctx.closePath();
+      ctx.stroke();
+    }
+  }
+
+  /* ---------- Category 05, Restoration: the conservator's drawing ---------- */
+  var bench = setupCanvas('bench');
+  var explode = 0.3;
+  function drawBench(){
+    var s = bench, ctx = s.ctx, w = s.w, h = s.h, t = s.t;
+    ctx.fillStyle = BG; ctx.fillRect(0,0,w,h);
+    var p = s.local();
+    var mx = Math.min(w,h);
+    var R = mx*0.165;
+    var cx = w*0.40, cy = h*0.42;
+
+    var over = p.x > 0 && p.x < w && p.y > 0 && p.y < h;
+    var target = over
+      ? clamp(Math.hypot(p.x - cx, p.y - cy) / (mx*0.52), 0, 1)
+      : 0.3 + Math.sin(t*0.35)*0.2;
+    explode += (target - explode) * 0.05;
+    var e = ease(explode);
+
+    /* register line, the drawing's spine */
+    ctx.strokeStyle = 'rgba(30,33,30,.15)'; ctx.lineWidth = 1;
+    ctx.setLineDash([2,5]);
+    ctx.beginPath();
+    ctx.moveTo(cx, h*0.03); ctx.lineTo(cx, h*0.90);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    /* assembled and exploded part centres, lerped: a clean vertical stack */
+    var opR = R*0.80;
+    var P = {
+      shellY:  lerp(cy,            cy - R*1.48, e),
+      intY:    lerp(cy + R*0.02,   cy + R*0.42, e),
+      cushY:   lerp(cy + R*0.02 + opR*0.42, cy + R*1.62, e),
+      stemTopY:lerp(cy + R*0.86,   cy + R*2.02, e),
+      baseY:   lerp(cy + R*1.30,   cy + R*2.85, e),
+      shadowY: cy + R*1.38 + e*R*1.5
+    };
+    drawBall(ctx, cx, R, t, 0, P, {shell:1, interior:1, cushion:1, stem:1, base:1});
+
+    /* leader lines and the conservator's notes, kept inside the frame */
+    var la = clamp((e - 0.3)/0.35, 0, 1);
+    if(la > 0){
+      var notes = [
+        {y: P.shellY,          txt:'shell / fibreglass, refinished'},
+        {y: P.intY,            txt:'upholstery / wool, replaced'},
+        {y: P.cushY,           txt:'cushions / foam, renewed'},
+        {y: P.stemTopY + R*0.24, txt:'stem / steel, re-enamelled'},
+        {y: P.baseY,           txt:'base / cast, rebalanced'}
+      ];
+      ctx.font = '11px "Spline Sans Mono", monospace';
+      ctx.textAlign = 'right';
+      var tx = w - 16;
+      for(var i=0;i<notes.length;i++){
+        var tw = ctx.measureText(notes[i].txt).width;
+        ctx.strokeStyle = 'rgba(30,33,30,' + (0.35*la) + ')';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(cx + R*1.15, notes[i].y);
+        ctx.lineTo(tx - tw - 10, notes[i].y);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(30,33,30,' + (0.65*la) + ')';
+        ctx.fillText(notes[i].txt, tx, notes[i].y + 4);
+      }
+    }
+  }
+
+  /* ---------- loop ---------- */
+  var states = [tide, chair, grove, strata, rings, bench];
+  var draws  = [drawTide, drawChair, drawGrove, drawStrata, drawRings, drawBench];
+  function frame(){
+    for(var i=0;i<states.length;i++){
+      if(states[i].active){ states[i].t += 0.016; draws[i](); }
+    }
+    requestAnimationFrame(frame);
+  }
+  if(reduced){
+    chairG = 1;
+    growth = segs.length;
+    explode = 0.55;
+    states.forEach(function(s){ s.active = true; });
+    draws.forEach(function(d){ d(); });
+    states.forEach(function(s){ s.active = false; });
+  } else {
+    requestAnimationFrame(frame);
+  }
+
+  /* ---------- reveals ---------- */
+  var ro = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); ro.unobserve(e.target); } });
+  }, {threshold:0.2});
+  document.querySelectorAll('.reveal').forEach(function(el){ ro.observe(el); });
+})();
+</script>
+</body>
+</html>
