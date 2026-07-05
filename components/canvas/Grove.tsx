@@ -24,7 +24,13 @@ interface Seg {
  * swaying per branch, brightening and lifting near the cursor. Under reduced
  * motion the grove renders fully grown.
  */
-export default function Grove({ label }: { label: string }) {
+export default function Grove({
+  label,
+  scrollBound = true,
+}: {
+  label: string;
+  scrollBound?: boolean;
+}) {
   const segs = useRef<Seg[]>([]);
   const progress = useRef(0);
 
@@ -104,7 +110,7 @@ export default function Grove({ label }: { label: string }) {
     },
   });
 
-  useScrollBind(canvasRef, progress);
+  useScrollBind(canvasRef, progress, { enabled: scrollBound });
 
   return <canvas ref={canvasRef} aria-label={label} />;
 }

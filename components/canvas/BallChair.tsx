@@ -16,14 +16,20 @@ const STONE = "#E4E2DB";
  * rest, sways gently so the interaction is discoverable. Under reduced motion
  * it holds as a fully assembled still.
  */
-export default function BallChair({ label }: { label: string }) {
+export default function BallChair({
+  label,
+  scrollBound = true,
+}: {
+  label: string;
+  scrollBound?: boolean;
+}) {
   const progress = useRef(0); // 0..1 build, from scroll
   const swivel = useRef(0); // eased horizontal turn
 
   const canvasRef = useCanvasScene({
     init: (s) => {
-      // Reduced motion: assembled from the first (and only) frame.
-      if (s.reduced) progress.current = 1;
+      // Reduced motion, or an unbound header band: assembled from the first frame.
+      if (s.reduced || !scrollBound) progress.current = 1;
     },
     draw: (s) => {
       const { ctx, w, h, t } = s;
@@ -90,9 +96,9 @@ export default function BallChair({ label }: { label: string }) {
     },
   });
 
-  // Bind the build to scroll progress. Skipped under reduced motion, where the
-  // chair is already held assembled.
-  useScrollBind(canvasRef, progress);
+  // Bind the build to scroll progress. Skipped under reduced motion or when the
+  // chair is used as a static header band, where it is already held assembled.
+  useScrollBind(canvasRef, progress, { enabled: scrollBound });
 
   return <canvas ref={canvasRef} aria-label={label} />;
 }

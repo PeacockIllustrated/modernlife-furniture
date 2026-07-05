@@ -13,15 +13,17 @@ import PanelPlaceholder from "./PanelPlaceholder";
 export default function RoomVisual({
   visual,
   label,
+  scrollBound = true,
 }: {
   visual: RoomVisualKind;
   label: string;
+  scrollBound?: boolean;
 }) {
   switch (visual) {
     case "chair":
-      return <BallChair label={label} />;
+      return <BallChair label={label} scrollBound={scrollBound} />;
     case "grove":
-      return <Grove label={label} />;
+      return <Grove label={label} scrollBound={scrollBound} />;
     case "strata":
       return <Strata label={label} />;
     case "rings":

@@ -14,12 +14,18 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 export function useScrollBind(
   elementRef: RefObject<HTMLElement | null>,
   progress: RefObject<number>,
-  opts?: { start?: string; end?: string },
+  opts?: { start?: string; end?: string; enabled?: boolean },
 ) {
   const start = opts?.start ?? "top bottom";
   const end = opts?.end ?? "top top";
+  const enabled = opts?.enabled ?? true;
 
   useEffect(() => {
+    // Not scroll-bound (a decorative header band): hold at the finished state.
+    if (!enabled) {
+      progress.current = 1;
+      return;
+    }
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
@@ -43,5 +49,5 @@ export function useScrollBind(
       },
     });
     return () => st.kill();
-  }, [elementRef, progress, start, end]);
+  }, [elementRef, progress, start, end, enabled]);
 }

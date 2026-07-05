@@ -6,6 +6,7 @@ import Tide from "@/components/canvas/Tide";
 import RoomVisual from "@/components/canvas/RoomVisual";
 import RevealObserver from "@/components/scroll/RevealObserver";
 import { rooms } from "@/content/landing";
+import { getCategories } from "@/lib/collection";
 
 /**
  * The landing gallery: hero, manifesto, five category rooms in the light,
@@ -13,7 +14,13 @@ import { rooms } from "@/content/landing";
  * placeholders in session 1; the live generative visuals replace them in
  * sessions 2 and 3.
  */
-export default function Home() {
+export default async function Home() {
+  // Story, hint and dl facts come from the collection layer (Supabase when
+  // configured, the static catalogue otherwise); the room's visual, variant and
+  // CTA stay in the presentational scaffold.
+  const categories = await getCategories();
+  const bySlug = new Map(categories.map((c) => [c.slug, c]));
+
   return (
     <main>
       <Hero>
@@ -22,15 +29,27 @@ export default function Home() {
 
       <Manifesto />
 
-      {rooms.map((room) => (
-        <Room
-          key={room.id}
-          data={room}
-          visual={
-            <RoomVisual visual={room.visual} label={room.canvasLabel} />
-          }
-        />
-      ))}
+      {rooms.map((room) => {
+        const category = bySlug.get(room.slug);
+        const data = category
+          ? {
+              ...room,
+              title: category.name,
+              story: category.story,
+              hint: category.hint,
+              facts: category.facts,
+            }
+          : room;
+        return (
+          <Room
+            key={room.id}
+            data={data}
+            visual={
+              <RoomVisual visual={room.visual} label={room.canvasLabel} />
+            }
+          />
+        );
+      })}
 
       <Closing />
 
