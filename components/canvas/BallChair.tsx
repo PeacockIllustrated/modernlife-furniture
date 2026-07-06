@@ -44,7 +44,9 @@ export default function BallChair({
 
       const R = Math.min(w * 0.3, h * 0.31);
       const cx = w * 0.5;
-      const cy = h * 0.46;
+      // Stand the chair on the plinth (9% from the panel foot) so the base and
+      // floor shadow meet the plinth line at every aspect, portrait included.
+      const cy = h * 0.91 - R * 1.6;
 
       const p = s.pointer;
       const over = !s.reduced && p.x > -100 && p.x < w + 100;

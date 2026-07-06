@@ -68,9 +68,9 @@ export default function Grove({
         });
       }
     };
-    branch(w * 0.5, h * 0.92, -Math.PI / 2, h * 0.17, 0);
-    branch(w * 0.32, h * 0.92, -Math.PI / 2 + 0.12, h * 0.13, 1);
-    branch(w * 0.68, h * 0.92, -Math.PI / 2 - 0.12, h * 0.13, 1);
+    branch(w * 0.5, h * 0.91, -Math.PI / 2, h * 0.17, 0);
+    branch(w * 0.32, h * 0.91, -Math.PI / 2 + 0.12, h * 0.13, 1);
+    branch(w * 0.68, h * 0.91, -Math.PI / 2 - 0.12, h * 0.13, 1);
     segs.current = out;
   };
 
@@ -104,8 +104,8 @@ export default function Grove({
       ctx.strokeStyle = "rgba(221,217,204,.3)";
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(w * 0.14, h * 0.92);
-      ctx.lineTo(w * 0.86, h * 0.92);
+      ctx.moveTo(w * 0.08, h * 0.91);
+      ctx.lineTo(w * 0.92, h * 0.91);
       ctx.stroke();
     },
   });

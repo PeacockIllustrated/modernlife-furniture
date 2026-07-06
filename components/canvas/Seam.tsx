@@ -58,8 +58,11 @@ export default function Seam({ label }: { label: string }) {
 
       const Cx = w * 0.5;
       const Cy = h * 0.47;
-      const B = 0.34 * Math.min(w, h);
+      // Bound the figure by width too, so the parted halves never run off the
+      // edges of a narrow portrait panel at full separation.
+      const B = Math.min(0.34 * Math.min(w, h), 0.26 * w);
       const seamX = Cx;
+      const compact = w < 560; // narrow panel: keyword-only notes, no overlap
 
       /* separation toward the cursor's distance from centre; idle breathing */
       if (!s.reduced) {
@@ -245,16 +248,25 @@ export default function Seam({ label }: { label: string }) {
         ctx.textAlign = "right";
         const tx = w - 16;
         NOTES.forEach((note, i) => {
+          // On a narrow panel the full note would sit over the drawing, so
+          // show only the keyword before the slash, which clears the figure.
+          const text = compact ? note.split(" / ")[0] : note;
           const y = h * (0.18 + i * 0.16);
-          const tw = ctx.measureText(note).width;
-          ctx.strokeStyle = ink(0.3 * noteA);
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(seamX + off + B * 0.06, y);
-          ctx.lineTo(tx - tw - 8, y);
-          ctx.stroke();
+          const tw = ctx.measureText(text).width;
+          const lineEnd = tx - tw - 8;
+          const lineStart = seamX + off + B * 0.06;
+          // Only draw the leader when it runs the right way (text clears the
+          // figure); on a cramped panel a backwards leader would strike the text.
+          if (lineEnd > lineStart + 12) {
+            ctx.strokeStyle = ink(0.3 * noteA);
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(lineStart, y);
+            ctx.lineTo(lineEnd, y);
+            ctx.stroke();
+          }
           ctx.fillStyle = ink(noteA);
-          ctx.fillText(note, tx, y + 4);
+          ctx.fillText(text, tx, y + 4);
         });
       }
     },

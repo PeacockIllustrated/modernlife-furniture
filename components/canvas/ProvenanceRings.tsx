@@ -61,10 +61,12 @@ export default function ProvenanceRings({
       const p = s.pointer;
       const maxR = Math.min(w, h) * 0.44;
       const wob = wobble.current;
-      ctx.lineWidth = 1;
       let ringNo = 0;
       for (let R = 12; R < maxR; R += 11, ringNo++) {
         const marker = markers.find((m) => m.ring === ringNo);
+        // Weight the ownership rings so they read against the grain even on a
+        // small mobile canvas, where a 1px desaturated ring can vanish.
+        ctx.lineWidth = marker ? 2 : 1;
         ctx.strokeStyle = marker
           ? marker.colour
           : "rgba(221,217,204," + Math.max(0.07, 0.42 - (R / maxR) * 0.34) + ")";

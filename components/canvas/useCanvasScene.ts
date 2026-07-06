@@ -131,6 +131,17 @@ export function useCanvasScene(options: CanvasSceneOptions) {
       client.y = AWAY;
     };
     window.addEventListener("pointerout", onLeave, { passive: true });
+    // On touch, lifting or cancelling a finger must release the "hover", or the
+    // visual would stay locked toward the last touch point instead of returning
+    // to its idle state. pointercancel fires when the browser takes over pan-y.
+    const onEnd = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse") {
+        client.x = AWAY;
+        client.y = AWAY;
+      }
+    };
+    window.addEventListener("pointerup", onEnd, { passive: true });
+    window.addEventListener("pointercancel", onEnd, { passive: true });
 
     let raf = 0;
     const dt = optionsRef.current.dt ?? 0.016;
@@ -198,6 +209,8 @@ export function useCanvasScene(options: CanvasSceneOptions) {
       window.removeEventListener("resize", onResizeWindow);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerout", onLeave);
+      window.removeEventListener("pointerup", onEnd);
+      window.removeEventListener("pointercancel", onEnd);
       ro.disconnect();
       io.disconnect();
     };

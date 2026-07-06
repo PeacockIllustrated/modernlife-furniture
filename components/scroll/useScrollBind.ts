@@ -16,8 +16,11 @@ export function useScrollBind(
   progress: RefObject<number>,
   opts?: { start?: string; end?: string; enabled?: boolean },
 ) {
-  const start = opts?.start ?? "top bottom";
-  const end = opts?.end ?? "top top";
+  // Complete the build a little before the panel reaches the top, so the object
+  // is legibly assembled while the panel is comfortably in view (it would
+  // otherwise still be a near-empty panel on a short mobile viewport).
+  const start = opts?.start ?? "top 85%";
+  const end = opts?.end ?? "top 35%";
   const enabled = opts?.enabled ?? true;
 
   useEffect(() => {

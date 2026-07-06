@@ -9,7 +9,7 @@ import ProvenanceRings, {
 const RING_COLOURS = [
   "rgba(201,123,61,.95)",
   "rgba(180,104,94,.95)",
-  "rgba(94,122,107,.95)",
+  "rgba(122,156,137,.95)", // a lighter sea, legible on basalt at mobile size
 ];
 const SWATCHES = ["var(--amber)", "var(--rose)", "var(--sea)"];
 
