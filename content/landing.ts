@@ -152,6 +152,6 @@ export const rooms: Room[] = [
     variant: "light",
     visual: "bench",
     canvasLabel:
-      "Restoration, a grain figure that parts along a seam, move outward to take it apart",
+      "Restoration, a mortise and tenon joint that draws apart, move outward to take it apart",
   },
 ];

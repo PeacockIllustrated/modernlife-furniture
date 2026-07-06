@@ -66,6 +66,9 @@ export function useCanvasScene(options: CanvasSceneOptions) {
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
+    // Devices without hover (phones, tablets) have no cursor to drive the
+    // visuals, so we let scrolling stand in for it (see the frame loop).
+    const hoverCapable = window.matchMedia("(hover: hover)").matches;
 
     const scene: CanvasScene = {
       canvas,
@@ -149,13 +152,32 @@ export function useCanvasScene(options: CanvasSceneOptions) {
     const frame = () => {
       if (scene.active && scene.w > 0 && scene.h > 0) {
         const r = canvas.getBoundingClientRect();
-        scene.pointer.x = client.x - r.left;
-        scene.pointer.y = client.y - r.top;
-        scene.pointer.inside =
-          client.x >= r.left &&
-          client.x <= r.right &&
-          client.y >= r.top &&
-          client.y <= r.bottom;
+        if (client.x !== AWAY) {
+          // A real cursor or an active touch: follow it.
+          scene.pointer.x = client.x - r.left;
+          scene.pointer.y = client.y - r.top;
+          scene.pointer.inside =
+            client.x >= r.left &&
+            client.x <= r.right &&
+            client.y >= r.top &&
+            client.y <= r.bottom;
+        } else if (!hoverCapable) {
+          // No hover and no active touch: let the page scroll drive the
+          // interaction. A virtual cursor sweeps across the panel as it travels
+          // through the viewport, so on a phone the visual turns, swells or
+          // opens in sympathy with the scroll, the same gesture a mouse gives.
+          const vh = window.innerHeight || scene.h;
+          const raw = (vh - r.top) / (vh + r.height);
+          const prog = raw < 0 ? 0 : raw > 1 ? 1 : raw;
+          scene.pointer.x = scene.w * prog;
+          scene.pointer.y = scene.h * (0.5 + 0.32 * (prog - 0.5));
+          scene.pointer.inside = prog > 0.03 && prog < 0.97;
+        } else {
+          // Hover device with the cursor away: rest at the idle animation.
+          scene.pointer.x = AWAY;
+          scene.pointer.y = AWAY;
+          scene.pointer.inside = false;
+        }
         scene.t += dt;
         optionsRef.current.draw(scene);
       }

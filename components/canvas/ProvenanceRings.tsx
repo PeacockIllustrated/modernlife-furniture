@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { useCanvasScene } from "./useCanvasScene";
 
 const BASALT = "#151C18";
+const STONE = "#E4E2DB";
 
 /** A coloured owner ring: which ring index it lands on and its colour. */
 export interface RingMarker {
@@ -35,10 +36,17 @@ interface Ripple {
 export default function ProvenanceRings({
   label,
   markers = DEFAULT_MARKERS,
+  ground = "dark",
 }: {
   label: string;
   markers?: RingMarker[];
+  /** dark: bone on basalt (the Tables room); light: ink on stone, seamless
+   *  with a stone page (the piece page provenance diagram). */
+  ground?: "dark" | "light";
 }) {
+  const dark = ground !== "light";
+  const bg = dark ? BASALT : STONE;
+  const lineRGB = dark ? "221,217,204" : "30,33,30";
   const wobble = useRef<number[]>([]);
   const ripples = useRef<Ripple[]>([]);
   const clock = useRef(0);
@@ -54,7 +62,7 @@ export default function ProvenanceRings({
     draw: (s) => {
       const { ctx, w, h, t } = s;
       clock.current = t;
-      ctx.fillStyle = BASALT;
+      ctx.fillStyle = bg;
       ctx.fillRect(0, 0, w, h);
       const cx = w * 0.5;
       const cy = h * 0.5;
@@ -69,7 +77,11 @@ export default function ProvenanceRings({
         ctx.lineWidth = marker ? 2 : 1;
         ctx.strokeStyle = marker
           ? marker.colour
-          : "rgba(221,217,204," + Math.max(0.07, 0.42 - (R / maxR) * 0.34) + ")";
+          : "rgba(" +
+            lineRGB +
+            "," +
+            Math.max(0.07, 0.42 - (R / maxR) * 0.34) +
+            ")";
         ctx.beginPath();
         const steps = 120;
         for (let i = 0; i <= steps; i++) {

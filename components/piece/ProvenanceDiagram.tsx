@@ -5,11 +5,12 @@ import ProvenanceRings, {
 
 // Ownership marks, cycling the accent palette. The canvas colours must be
 // concrete (canvas cannot read CSS variables); the legend swatches use the
-// tokens so the two stay in step.
+// tokens so the two stay in step. These are the full-strength tokens, which
+// read cleanly on the stone ground of the seamless piece-page diagram.
 const RING_COLOURS = [
-  "rgba(201,123,61,.95)",
-  "rgba(180,104,94,.95)",
-  "rgba(122,156,137,.95)", // a lighter sea, legible on basalt at mobile size
+  "rgba(201,123,61,1)",
+  "rgba(180,104,94,1)",
+  "rgba(94,122,107,1)",
 ];
 const SWATCHES = ["var(--amber)", "var(--rose)", "var(--sea)"];
 
@@ -38,7 +39,7 @@ export default function ProvenanceDiagram({
   return (
     <div className="provenance">
       <div className="provenance-figure">
-        <ProvenanceRings label={label} markers={markers} />
+        <ProvenanceRings label={label} markers={markers} ground="light" />
       </div>
       <ol className="provenance-legend">
         {provenance.map((row, i) => (
