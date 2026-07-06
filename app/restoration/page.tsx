@@ -39,7 +39,7 @@ export default function RestorationPage() {
 
       <ServiceBand
         visual="bench"
-        label="An exploded drawing of a ball chair, the conservator's method"
+        label="A grain figure parting along a seam, the conservator's method"
       />
 
       <div className="page-head">

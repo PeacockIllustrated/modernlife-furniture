@@ -1,6 +1,6 @@
 import type { RoomVisual as RoomVisualKind } from "@/content/landing";
 import BallChair from "./BallChair";
-import ExplodedBall from "./ExplodedBall";
+import Seam from "./Seam";
 import Grove from "./Grove";
 import Strata from "./Strata";
 import ProvenanceRings from "./ProvenanceRings";
@@ -29,7 +29,7 @@ export default function RoomVisual({
     case "rings":
       return <ProvenanceRings label={label} />;
     case "bench":
-      return <ExplodedBall label={label} />;
+      return <Seam label={label} />;
     default:
       return <PanelPlaceholder visual={visual} label={label} />;
   }

@@ -1,397 +1,433 @@
-import { clamp, lerp } from "./anim";
+import { clamp, ease } from "./anim";
 
 /**
- * The ball chair, drawn in the site's own language.
+ * The ball chair, abstracted: a lathe survey.
  *
- * Contour lines carry the form: meridians describe the sphere, receding rings
- * describe the cavity, piping lines describe the cushions. This is the single
- * renderer shared by BallChair (assembled) and ExplodedBall (the conservator's
- * drawing). It is pure: context in, no React, no module state that mutates
- * between frames. Any improvement to the chair lands here and nowhere else.
+ * The chair is rebuilt as a stack of latitude sections, open elliptical hoops
+ * whose broken mouths line up into the vivid orange cavity, so the object
+ * reads as a topography of itself still turning on the axis that made it.
+ * Volume is carried by hoop density and depth-graded stroke alpha; the mouth
+ * is genuinely absent line, punched through to the stone; the cavity is lined
+ * with receding orange arcs over a low-alpha warmth fill, kept deliberately
+ * vivid (see DESIGN.md, do not desaturate).
  *
- * Positioned by explicit part centres (`P`) so it can assemble or explode
- * cleanly; each part is faded independently by `A`. The vivid orange interior
- * is intentional and must not be desaturated to the base palette.
+ * This remains the single chair renderer: pure (context in, no React), and
+ * any improvement to the chair lands here and nowhere else. BallChair.tsx is
+ * its only consumer; the Restoration room no longer draws the chair.
  */
 
-export interface BallPositions {
-  /** shell centre y */
-  shellY: number;
-  /** interior (aperture cavity) centre y */
-  intY: number;
-  /** cushion centre y */
-  cushY: number;
-  /** stem top y */
-  stemTopY: number;
-  /** base ellipse centre y */
-  baseY: number;
-  /** floor shadow centre y */
-  shadowY: number;
+export const LATHE_SLICES = 17;
+
+const TAU = Math.PI * 2;
+const TILT = 0.24; /* section ellipse ry = rx * TILT      */
+const MOUTH_V = -0.03; /* cavity centre latitude, +up         */
+const MOUTH_SPAN = 0.78; /* cavity half-height in latitude      */
+const MOUTH_HALF = 1.15; /* max gap half-angle, radians         */
+const FACE_CLAMP = 0.9; /* the mouth never leaves the front    */
+
+/** Latitude fraction (+up) of shell slice i, from -0.94 to +0.94. */
+export function sliceLatitude(i: number): number {
+  return -0.94 + (i * 1.88) / (LATHE_SLICES - 1);
 }
 
-export interface BallAlphas {
-  shell?: number;
-  interior?: number;
-  cushion?: number;
-  stem?: number;
-  base?: number;
+export interface LatheChairOptions {
+  cx: number;
+  cy: number;
+  /** shell radius in CSS px */
+  R: number;
+  /** scene clock, seconds-ish */
+  t: number;
+  /** per-slice mouth azimuths in radians, length LATHE_SLICES */
+  phis: readonly number[];
+  /** assembly progress 0..1; 1 is the finished chair */
+  build: number;
 }
 
-/** Default ground the aperture is punched through: gallery stone. */
-const STONE = "#E4E2DB";
+function ink(a: number): string {
+  return "rgba(30,33,30," + a.toFixed(3) + ")";
+}
 
-export function drawBall(
+/** Vivid cavity ramp, #F0812F to #DC5E1F to #98380F. */
+function cavityColour(u: number, a: number): string {
+  const stops: [number, number, number][] = [
+    [240, 129, 47],
+    [220, 94, 31],
+    [152, 56, 15],
+  ];
+  const cu = clamp(u, 0, 1);
+  const seg = cu < 0.55 ? 0 : 1;
+  const f = seg === 0 ? cu / 0.55 : (cu - 0.55) / 0.45;
+  const c0 = stops[seg];
+  const c1 = stops[seg + 1];
+  const r = Math.round(c0[0] + (c1[0] - c0[0]) * f);
+  const g = Math.round(c0[1] + (c1[1] - c0[1]) * f);
+  const b = Math.round(c0[2] + (c1[2] - c0[2]) * f);
+  return "rgba(" + r + "," + g + "," + b + "," + a.toFixed(3) + ")";
+}
+
+function easeOutCubic(x: number): number {
+  const c = clamp(x, 0, 1);
+  return 1 - (1 - c) * (1 - c) * (1 - c);
+}
+
+function hoopX(cx: number, rx: number, phi: number): number {
+  return cx + rx * Math.sin(phi);
+}
+function hoopY(yc: number, rx: number, phi: number): number {
+  return yc + rx * TILT * Math.cos(phi);
+}
+
+/**
+ * Stroke an azimuth range of a tilted hoop in ~10 chunks per revolution, each
+ * chunk's alpha graded by how much it faces the viewer (phi = 0 is the front),
+ * which is what carries the roundness without any fill.
+ */
+function strokeHoopRange(
   ctx: CanvasRenderingContext2D,
   cx: number,
-  R: number,
-  t: number,
-  sw: number,
-  P: BallPositions,
-  A: BallAlphas,
-  bg: string = STONE,
+  yc: number,
+  rx: number,
+  a0: number,
+  a1: number,
+  baseAlpha: number,
+  mul: number,
 ): void {
-  const a = (k: keyof BallAlphas): number => (A[k] === undefined ? 1 : A[k]!);
-  ctx.lineCap = "round";
-  const opR = R * 0.8;
-  const opX = cx + sw;
+  const total = a1 - a0;
+  if (total <= 0.002) return;
+  const chunks = Math.max(1, Math.round(total / (TAU / 10)));
+  for (let c = 0; c < chunks; c++) {
+    const c0 = a0 + (total * c) / chunks;
+    const c1 = a0 + (total * (c + 1)) / chunks;
+    const mid = (c0 + c1) / 2;
+    const facing = (Math.cos(mid) + 1) / 2;
+    ctx.strokeStyle = ink(baseAlpha * (0.35 + 0.65 * facing) * mul);
+    ctx.lineWidth = Math.cos(mid) > 0 ? 1.3 : 1;
+    const steps = Math.max(6, Math.ceil((64 * (c1 - c0)) / TAU));
+    ctx.beginPath();
+    for (let k = 0; k <= steps; k++) {
+      const phi = c0 + ((c1 - c0) * k) / steps;
+      if (k === 0) ctx.moveTo(hoopX(cx, rx, phi), hoopY(yc, rx, phi));
+      else ctx.lineTo(hoopX(cx, rx, phi), hoopY(yc, rx, phi));
+    }
+    ctx.stroke();
+  }
+}
 
-  /* floor shadow, thinning as the piece lifts apart */
-  const apart = Math.abs(P.shellY - (P.intY - R * 0.02));
-  ctx.save();
-  ctx.globalAlpha =
-    Math.min(a("base"), a("shell")) *
-    clamp(1 - apart / (R * 1.4), 0.2, 1) *
-    0.5;
-  ctx.fillStyle = "rgba(30,33,30,.18)";
+/** A plain flat-alpha arc along a hoop, used for stance hoops and cavity lining. */
+function strokeFlatArc(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  yc: number,
+  rx: number,
+  a0: number,
+  a1: number,
+  style: string,
+  lw: number,
+): void {
+  if (a1 - a0 <= 0.002) return;
+  ctx.strokeStyle = style;
+  ctx.lineWidth = lw;
+  const steps = Math.max(8, Math.ceil((48 * (a1 - a0)) / TAU));
   ctx.beginPath();
-  ctx.ellipse(cx, P.shadowY, R * 0.62, R * 0.07, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
+  for (let k = 0; k <= steps; k++) {
+    const phi = a0 + ((a1 - a0) * k) / steps;
+    if (k === 0) ctx.moveTo(hoopX(cx, rx, phi), hoopY(yc, rx, phi));
+    else ctx.lineTo(hoopX(cx, rx, phi), hoopY(yc, rx, phi));
+  }
+  ctx.stroke();
+}
 
-  /* ---- base: the tulip foot, turned metal described by rings ---- */
-  if (a("base") > 0) {
-    ctx.save();
-    ctx.globalAlpha = a("base");
-    ctx.fillStyle = "#F2F0E8";
-    ctx.strokeStyle = "rgba(30,33,30,.55)";
-    ctx.lineWidth = 1.2;
+/** The warm pen tip riding the live end of a compass stroke during the build. */
+function penTips(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  yc: number,
+  rx: number,
+  u: number,
+  mul: number,
+): void {
+  if (u <= 0 || u >= 1) return;
+  ctx.fillStyle = "rgba(201,123,61," + (0.9 * mul).toFixed(3) + ")";
+  for (const phi of [Math.PI - u * Math.PI, Math.PI + u * Math.PI]) {
     ctx.beginPath();
-    ctx.ellipse(cx, P.baseY, R * 0.42, R * 0.095, 0, 0, Math.PI * 2);
+    ctx.arc(hoopX(cx, rx, phi), hoopY(yc, rx, phi), 2.2, 0, TAU);
     ctx.fill();
-    ctx.stroke();
-    /* turning rings */
-    ctx.strokeStyle = "rgba(30,33,30,.14)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.ellipse(cx, P.baseY, R * 0.3, R * 0.062, 0, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.strokeStyle = "rgba(30,33,30,.09)";
-    ctx.beginPath();
-    ctx.ellipse(cx, P.baseY, R * 0.17, R * 0.032, 0, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.restore();
+  }
+}
+
+interface StanceHoop {
+  y: number;
+  rx: number;
+  alpha: number;
+  lw: number;
+  start: number;
+  dur: number;
+}
+
+export function drawLatheChair(
+  ctx: CanvasRenderingContext2D,
+  o: LatheChairOptions,
+): void {
+  const { cx, cy, R, t } = o;
+  const e = clamp(o.build, 0, 1);
+  ctx.lineCap = "round";
+
+  /* the lathe axis, present from the first frame */
+  ctx.strokeStyle = ink(0.12);
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - R * 1.15);
+  ctx.lineTo(cx, cy + R * 1.6);
+  ctx.stroke();
+
+  const gapScale = ease((e - 0.72) / 0.28);
+
+  /* ---- stance: seat plate, stem and base restated as turned sections ---- */
+  const stance: StanceHoop[] = [];
+  for (let k = 0; k < 3; k++) {
+    stance.push({
+      y: cy + R * (1.52 - k * 0.015),
+      rx: R * [0.42, 0.3, 0.17][k],
+      alpha: [0.5, 0.25, 0.15][k],
+      lw: [1.3, 1, 1][k],
+      start: k * 0.02,
+      dur: 0.14,
+    });
+  }
+  for (let j = 0; j < 4; j++) {
+    stance.push({
+      y: cy + R * (1.02 + j * 0.12),
+      rx: R * [0.1, 0.105, 0.12, 0.16][j],
+      alpha: 0.35,
+      lw: 1.2,
+      start: 0.12 + (3 - j) * 0.03,
+      dur: 0.12,
+    });
+  }
+  stance.push({
+    y: cy + R * 0.96,
+    rx: R * 0.3,
+    alpha: 0.4,
+    lw: 1.1,
+    start: 0.24,
+    dur: 0.1,
+  });
+
+  let stancePresence = 0;
+  for (const hoop of stance) {
+    const u = easeOutCubic((e - hoop.start) / hoop.dur);
+    stancePresence = Math.max(stancePresence, u);
+    if (u <= 0) continue;
+    const yc = hoop.y + R * 0.1 * (1 - u);
+    const mul = 0.2 + 0.8 * u;
+    if (u >= 1) {
+      strokeFlatArc(ctx, cx, yc, hoop.rx, 0, TAU, ink(hoop.alpha), hoop.lw);
+    } else {
+      strokeFlatArc(
+        ctx,
+        cx,
+        yc,
+        hoop.rx,
+        Math.PI - u * Math.PI,
+        Math.PI + u * Math.PI,
+        ink(hoop.alpha * mul),
+        hoop.lw,
+      );
+      penTips(ctx, cx, yc, hoop.rx, u, mul);
+    }
   }
 
-  /* ---- stem: swept enamel, form carried by two inner contour curves ---- */
-  if (a("stem") > 0) {
-    ctx.save();
-    ctx.globalAlpha = a("stem");
-    const sTop = P.stemTopY;
-    const sBot = P.stemTopY + R * 0.48;
-    ctx.fillStyle = "#F0EEE6";
-    ctx.strokeStyle = "rgba(30,33,30,.5)";
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.moveTo(cx - R * 0.1, sTop);
-    ctx.bezierCurveTo(
-      cx - R * 0.1,
-      sBot - R * 0.16,
-      cx - R * 0.2,
-      sBot - R * 0.06,
-      cx - R * 0.22,
-      sBot,
-    );
-    ctx.lineTo(cx + R * 0.22, sBot);
-    ctx.bezierCurveTo(
-      cx + R * 0.2,
-      sBot - R * 0.06,
-      cx + R * 0.1,
-      sBot - R * 0.16,
-      cx + R * 0.1,
-      sTop,
-    );
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-    /* seat plate the sphere rests on */
-    ctx.fillStyle = "#EDEBE2";
-    ctx.strokeStyle = "rgba(30,33,30,.35)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.ellipse(cx, sTop, R * 0.3, R * 0.05, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-    /* contour curves */
-    ctx.strokeStyle = "rgba(30,33,30,.12)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(cx - R * 0.045, sTop + R * 0.05);
-    ctx.bezierCurveTo(
-      cx - R * 0.045,
-      sBot - R * 0.18,
-      cx - R * 0.11,
-      sBot - R * 0.07,
-      cx - R * 0.13,
-      sBot - R * 0.02,
-    );
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(cx + R * 0.045, sTop + R * 0.05);
-    ctx.bezierCurveTo(
-      cx + R * 0.045,
-      sBot - R * 0.18,
-      cx + R * 0.11,
-      sBot - R * 0.07,
-      cx + R * 0.13,
-      sBot - R * 0.02,
-    );
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  /* ---- cushions: piped wool, drawn as nested contour ellipses ---- */
-  if (a("cushion") > 0) {
-    ctx.save();
-    ctx.globalAlpha = a("cushion");
-    const cy2 = P.cushY;
-    /* seat */
-    ctx.fillStyle = "#E76F26";
-    ctx.beginPath();
-    ctx.ellipse(cx + sw - R * 0.05, cy2, opR * 0.58, opR * 0.26, -0.05, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = "rgba(140,45,12,.55)";
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.ellipse(cx + sw - R * 0.05, cy2, opR * 0.58, opR * 0.26, -0.05, 0, Math.PI * 2);
-    ctx.stroke();
-    /* piping contours */
-    ctx.strokeStyle = "rgba(140,45,12,.3)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.ellipse(
-      cx + sw - R * 0.05,
-      cy2 - opR * 0.02,
-      opR * 0.42,
-      opR * 0.16,
-      -0.05,
-      0,
-      Math.PI * 2,
-    );
-    ctx.stroke();
-    ctx.strokeStyle = "rgba(255,255,255,.28)";
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.ellipse(
-      cx + sw - R * 0.08,
-      cy2 - opR * 0.08,
-      opR * 0.34,
-      opR * 0.09,
-      -0.07,
-      Math.PI * 1.05,
-      Math.PI * 1.95,
-    );
-    ctx.stroke();
-    /* bolster */
-    ctx.fillStyle = "#F07E33";
-    ctx.beginPath();
-    ctx.ellipse(
-      cx + sw + opR * 0.36,
-      cy2 + opR * 0.17,
-      opR * 0.32,
-      opR * 0.12,
-      -0.16,
-      0,
-      Math.PI * 2,
-    );
-    ctx.fill();
-    ctx.strokeStyle = "rgba(140,45,12,.5)";
-    ctx.lineWidth = 1.1;
-    ctx.beginPath();
-    ctx.ellipse(
-      cx + sw + opR * 0.36,
-      cy2 + opR * 0.17,
-      opR * 0.32,
-      opR * 0.12,
-      -0.16,
-      0,
-      Math.PI * 2,
-    );
-    ctx.stroke();
-    ctx.strokeStyle = "rgba(255,255,255,.25)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.ellipse(
-      cx + sw + opR * 0.34,
-      cy2 + opR * 0.13,
-      opR * 0.2,
-      opR * 0.05,
-      -0.16,
-      Math.PI * 1.1,
-      Math.PI * 1.9,
-    );
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  /* ---- shell: hollow fibreglass, meridians carry the volume ---- */
-  if (a("shell") > 0) {
-    ctx.save();
-    ctx.globalAlpha = a("shell");
-    const sy = P.shellY;
-    const apY = sy + R * 0.02; /* aperture sits on the shell */
-    ctx.fillStyle = "#F4F2EA";
-    ctx.beginPath();
-    ctx.arc(cx, sy, R, 0, Math.PI * 2);
-    ctx.fill();
-    /* meridian contours, clipped to the sphere, leaning with the swivel */
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(cx, sy, R, 0, Math.PI * 2);
-    ctx.clip();
-    const mers = [0.32, 0.58, 0.82];
-    for (let m = 0; m < mers.length; m++) {
-      const rx = R * mers[m];
-      ctx.strokeStyle = "rgba(30,33,30," + (0.05 + m * 0.02) + ")";
+  /* floor shadow, two flat stroked ellipses, arriving with the base */
+  if (stancePresence > 0) {
+    for (const [srx, sa] of [
+      [R * 0.55, 0.1],
+      [R * 0.4, 0.06],
+    ] as const) {
+      ctx.strokeStyle = ink(sa * stancePresence);
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.ellipse(cx - sw * 0.8 * (1 - mers[m]), sy, rx, R * 0.995, 0, 0, Math.PI * 2);
+      ctx.ellipse(cx, cy + R * 1.6, srx, srx * 0.1, 0, 0, TAU);
       ctx.stroke();
     }
-    /* one latitude, low on the form */
-    ctx.strokeStyle = "rgba(30,33,30,.05)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.ellipse(cx, sy + R * 0.42, R * 0.9, R * 0.2, 0, 0, Math.PI);
-    ctx.stroke();
-    /* body shade, hatched not flat */
-    for (let k = 0; k < 3; k++) {
-      ctx.strokeStyle = "rgba(30,33,30," + (0.05 - k * 0.012) + ")";
-      ctx.lineWidth = R * 0.05;
-      ctx.beginPath();
-      ctx.arc(cx, sy, R * (0.9 - k * 0.055), Math.PI * 0.55, Math.PI * 1.12);
-      ctx.stroke();
-    }
-    /* sheen, breathing, hatched */
-    for (let k = 0; k < 3; k++) {
-      ctx.strokeStyle =
-        "rgba(255,255,255," + (0.4 - k * 0.12 + Math.sin(t * 0.7) * 0.06) + ")";
-      ctx.lineWidth = R * 0.025;
-      ctx.beginPath();
-      ctx.arc(cx, sy, R * (0.92 - k * 0.045), -Math.PI * 0.44, -Math.PI * 0.06);
-      ctx.stroke();
-    }
-    ctx.restore();
-    /* the aperture: punched clean through, this is a hollow object */
-    ctx.fillStyle = bg;
-    ctx.beginPath();
-    ctx.arc(opX, apY, opR, 0, Math.PI * 2);
-    ctx.fill();
-    /* moulded rim, two contours reading as wall thickness */
-    ctx.strokeStyle = "#E9E6DC";
-    ctx.lineWidth = R * 0.05;
-    ctx.beginPath();
-    ctx.arc(opX, apY, opR + R * 0.025, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.strokeStyle = "rgba(30,33,30,.4)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.arc(opX, apY, opR + R * 0.055, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.strokeStyle = "rgba(30,33,30,.25)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.arc(opX, apY, opR, 0, Math.PI * 2);
-    ctx.stroke();
-    /* outer line last */
-    ctx.strokeStyle = "rgba(30,33,30,.75)";
-    ctx.lineWidth = 1.6;
-    ctx.beginPath();
-    ctx.arc(cx, sy, R, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.restore();
   }
 
-  /* ---- interior: the cavity, depth carried by receding rings ---- */
-  if (a("interior") > 0) {
-    ctx.save();
-    ctx.globalAlpha = a("interior");
-    const iy = P.intY;
-    const g = ctx.createRadialGradient(
-      opX - sw * 0.6 - opR * 0.12,
-      iy - opR * 0.14,
-      opR * 0.08,
-      opX,
-      iy,
-      opR,
-    );
-    g.addColorStop(0, "#F0812F");
-    g.addColorStop(0.5, "#DC5E1F");
-    g.addColorStop(1, "#98380F");
-    ctx.fillStyle = g;
-    ctx.beginPath();
-    ctx.arc(opX, iy, opR, 0, Math.PI * 2);
-    ctx.fill();
-    /* the tunnel: rings recede to the back of the cavity, away from the swivel */
-    const bx = opX - sw * 1.4 - opR * 0.14;
-    const by = iy - opR * 0.1;
-    ctx.lineWidth = 1;
-    for (let k = 1; k <= 7; k++) {
-      const u = k / 8;
-      const rr = opR * (1 - u * 0.86);
-      const kx = lerp(opX, bx, u);
-      const ky = lerp(iy, by, u);
-      const breathe = Math.sin(t * 0.6 + k * 0.7) * opR * 0.006;
-      ctx.strokeStyle =
-        "rgba(" +
-        Math.round(lerp(120, 60, u)) +
-        "," +
-        Math.round(lerp(38, 16, u)) +
-        "," +
-        Math.round(lerp(10, 4, u)) +
-        "," +
-        (0.24 + u * 0.14) +
-        ")";
+  /* ---- shell slice progress, needed before atmosphere and lens ---- */
+  const shellU: number[] = [];
+  let shellAvg = 0;
+  for (let i = 0; i < LATHE_SLICES; i++) {
+    const start = 0.25 + (i / (LATHE_SLICES - 1)) * 0.37;
+    const u = easeOutCubic((e - start) / 0.18);
+    shellU.push(u);
+    shellAvg += u / LATHE_SLICES;
+  }
+
+  /* hatched shade, three thin arcs lower left, and the firming silhouette */
+  if (shellAvg > 0.05) {
+    for (let k = 0; k < 3; k++) {
+      ctx.strokeStyle = ink((0.05 - k * 0.012) * shellAvg);
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.arc(kx, ky, rr + breathe, 0, Math.PI * 2);
+      ctx.arc(cx, cy, R * (0.9 - k * 0.055), Math.PI * 0.55, Math.PI * 1.12);
       ctx.stroke();
     }
-    /* upholstery seams, falling toward the back point */
-    ctx.strokeStyle = "rgba(120,36,8,.45)";
-    ctx.lineWidth = 1.2;
+    ctx.strokeStyle = ink(0.15 * shellAvg);
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(opX - opR * 0.02, iy - opR * 0.96);
-    ctx.quadraticCurveTo(
-      lerp(opX, bx, 0.5) + opR * 0.1,
-      lerp(iy, by, 0.5) - opR * 0.2,
-      bx + opR * 0.02,
-      by + opR * 0.06,
+    ctx.arc(cx, cy, R, 0, TAU);
+    ctx.stroke();
+  }
+
+  /* ---- the mouth: per-slice gap geometry ---- */
+  const gapOf = (i: number): number => {
+    const v = sliceLatitude(i);
+    const du = (v - MOUTH_V) / MOUTH_SPAN;
+    if (Math.abs(du) >= 1) return 0;
+    return (
+      MOUTH_HALF *
+      Math.sqrt(Math.max(0, 1 - du * du)) *
+      gapScale *
+      (1 + 0.03 * Math.sin(t * 0.6 + i * 0.5))
     );
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(opX + opR * 0.62, iy - opR * 0.7);
-    ctx.quadraticCurveTo(
-      lerp(opX, bx, 0.5) + opR * 0.3,
-      lerp(iy, by, 0.5),
-      bx + opR * 0.1,
-      by + opR * 0.04,
-    );
-    ctx.stroke();
-    /* rim light where the opening catches the room */
-    ctx.strokeStyle = "rgba(255,190,140,.5)";
-    ctx.lineWidth = 1.4;
-    ctx.beginPath();
-    ctx.arc(opX, iy, opR * 0.97, -Math.PI * 0.75, -Math.PI * 0.15);
-    ctx.stroke();
-    ctx.restore();
+  };
+  const faceOf = (i: number): number =>
+    clamp(o.phis[i] ?? 0, -FACE_CLAMP, FACE_CLAMP);
+
+  /* warmth fill in the mouth lens, a fill strictly beneath the line work,
+     with the warm rim light on the upper opening edge (the drawBall grafts) */
+  if (gapScale > 0.02) {
+    const left: [number, number][] = [];
+    const right: [number, number][] = [];
+    let topSlice = -1;
+    for (let i = 0; i < LATHE_SLICES; i++) {
+      if (shellU[i] < 1) continue;
+      const g = gapOf(i);
+      if (g < 0.03) continue;
+      const v = sliceLatitude(i);
+      const rx = R * Math.sqrt(Math.max(0.002, 1 - v * v));
+      const yc = cy - v * R;
+      const face = faceOf(i);
+      left.push([hoopX(cx, rx, face - g), hoopY(yc, rx, face - g)]);
+      right.push([hoopX(cx, rx, face + g), hoopY(yc, rx, face + g)]);
+      topSlice = i;
+    }
+    if (left.length > 2) {
+      let mx = 0;
+      let my = 0;
+      for (const [x, y] of [...left, ...right]) {
+        mx += x / (left.length + right.length);
+        my += y / (left.length + right.length);
+      }
+      const grad = ctx.createRadialGradient(mx, my, R * 0.05, mx, my, R * 0.85);
+      grad.addColorStop(0, "rgba(240,129,47," + (0.3 * gapScale).toFixed(3) + ")");
+      grad.addColorStop(0.6, "rgba(220,94,31," + (0.16 * gapScale).toFixed(3) + ")");
+      grad.addColorStop(1, "rgba(152,56,15,0)");
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.moveTo(left[0][0], left[0][1]);
+      for (let k = 1; k < left.length; k++) ctx.lineTo(left[k][0], left[k][1]);
+      for (let k = right.length - 1; k >= 0; k--)
+        ctx.lineTo(right[k][0], right[k][1]);
+      ctx.closePath();
+      ctx.fill();
+
+      /* rim light where the opening catches the room */
+      if (topSlice >= 0) {
+        const v = sliceLatitude(topSlice);
+        const rx = R * Math.sqrt(Math.max(0.002, 1 - v * v));
+        strokeFlatArc(
+          ctx,
+          cx,
+          cy - v * R,
+          rx,
+          faceOf(topSlice) - gapOf(topSlice) * 0.85,
+          faceOf(topSlice) + gapOf(topSlice) * 0.85,
+          "rgba(255,190,140," + (0.5 * gapScale).toFixed(3) + ")",
+          1.4,
+        );
+      }
+    }
+  }
+
+  /* ---- the seventeen shell hoops ---- */
+  for (let i = 0; i < LATHE_SLICES; i++) {
+    const u = shellU[i];
+    if (u <= 0) continue;
+    const v = sliceLatitude(i);
+    const rx = R * Math.sqrt(Math.max(0.002, 1 - v * v));
+    const yc = cy - v * R + R * 0.1 * (1 - u);
+    const baseAlpha = 0.22 + 0.3 * (1 - Math.abs(v));
+    const mul = 0.2 + 0.8 * u;
+
+    if (u < 1) {
+      strokeHoopRange(
+        ctx,
+        cx,
+        yc,
+        rx,
+        Math.PI - u * Math.PI,
+        Math.PI + u * Math.PI,
+        baseAlpha,
+        mul,
+      );
+      penTips(ctx, cx, yc, rx, u, mul);
+      continue;
+    }
+
+    const g = gapOf(i);
+    const face = faceOf(i);
+    if (g > 0.01) {
+      /* the hoop runs the long way round; the mouth is absent line */
+      strokeHoopRange(ctx, cx, yc, rx, face + g, face + TAU - g, baseAlpha, 1);
+
+      /* cut faces: the shell wall in section at each gap end */
+      const tickA = 0.5 * Math.min(1, gapScale * 1.5);
+      ctx.strokeStyle = ink(tickA);
+      ctx.lineWidth = 1.2;
+      for (const phi of [face - g, face + g]) {
+        ctx.beginPath();
+        ctx.moveTo(hoopX(cx, rx, phi), hoopY(yc, rx, phi));
+        ctx.lineTo(hoopX(cx, rx * 0.9, phi), hoopY(yc, rx * 0.9, phi));
+        ctx.stroke();
+      }
+
+      /* cavity lining: two receding arcs, darkening with distance from the
+         mouth's centre latitude; the saturated heart of the room */
+      const uv = Math.abs((v - MOUTH_V) / MOUTH_SPAN);
+      strokeFlatArc(
+        ctx,
+        cx,
+        yc,
+        rx * 0.86,
+        face - g * 0.92,
+        face + g * 0.92,
+        cavityColour(uv, 0.85 * gapScale),
+        2,
+      );
+      strokeFlatArc(
+        ctx,
+        cx,
+        yc,
+        rx * 0.62,
+        face - g * 0.7,
+        face + g * 0.7,
+        cavityColour(uv + 0.3, 0.55 * gapScale),
+        1.3,
+      );
+      /* the seat, one warmer arc low in the cavity */
+      if (v >= -0.4 && v <= -0.2) {
+        strokeFlatArc(
+          ctx,
+          cx,
+          yc,
+          rx * 0.45,
+          face - g * 0.5,
+          face + g * 0.5,
+          "rgba(231,111,38," + (0.9 * gapScale).toFixed(3) + ")",
+          2.2,
+        );
+      }
+    } else {
+      strokeHoopRange(ctx, cx, yc, rx, 0, TAU, baseAlpha, 1);
+    }
   }
 }

@@ -23,8 +23,8 @@ components/
     useCanvasScene.ts     shared lifecycle: DPR-capped sizing, resize, IO pause,
                           pointer mapping, reduced-motion single-frame render
     Tide.tsx              hero field
-    BallChair.tsx         assembled instance, scroll-bound build + swivel
-    ExplodedBall.tsx      conservator's drawing, shares lib/drawBall.ts
+    BallChair.tsx         the abstract lathe chair, scroll-bound build + swivel
+    Seam.tsx              restoration, a grain figure cleaving along a seam
     Grove.tsx             branching shelving
     Strata.tsx            refracting cabinet
     ProvenanceRings.tsx   tables rings, click-to-ripple
@@ -39,7 +39,7 @@ components/
   scroll/
     LenisProvider.tsx     Lenis + GSAP ScrollTrigger sync (lenis/react)
 ```
-Rule: drawBall.ts is pure (ctx in, no React). Both chair components import it. Any improvement to the chair must land in the one renderer.
+Rule: drawBall.ts is pure (ctx in, no React) and remains the single chair renderer; any improvement to the chair lands there. Since the owner decoupled Restoration from the chair (July 2026), BallChair.tsx is its only consumer and Seam.tsx stands alone.
 
 ## Data model (Supabase, `mlf_` prefix, RLS-first)
 ```sql
