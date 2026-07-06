@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getCategories } from "@/lib/collection";
-import { rooms } from "@/content/landing";
+import { rooms, closing } from "@/content/landing";
+import RoomVisual from "@/components/canvas/RoomVisual";
+import FeatureBand from "@/components/gallery/FeatureBand";
 import RevealObserver from "@/components/scroll/RevealObserver";
 
 export const metadata: Metadata = {
@@ -11,13 +13,13 @@ export const metadata: Metadata = {
 };
 
 /**
- * The collection index: the four product rooms as catalogue entries, plus the
- * restoration service. Restoration lives at its own service page, so it links
- * out rather than to a product listing.
+ * The collection index: each category shown as a generative preview row, its
+ * own material study beside the name, in the landing's light and dark rhythm.
+ * Restoration lives at its own service page, so it links out.
  */
 export default async function CollectionIndex() {
   const categories = await getCategories();
-  const visualBySlug = new Map(rooms.map((r) => [r.slug, r]));
+  const bySlug = new Map(categories.map((c) => [c.slug, c]));
 
   return (
     <main className="page">
@@ -37,32 +39,51 @@ export default async function CollectionIndex() {
         </p>
       </div>
 
-      <div className="specimen-index">
-        {categories.map((category) => {
-          const room = visualBySlug.get(category.slug);
+      <div className="cat-rows">
+        {rooms.map((room) => {
+          const category = bySlug.get(room.slug);
+          const name = category?.name ?? room.title;
+          const hint = category?.hint ?? room.hint;
           const href =
-            category.slug === "restoration"
+            room.slug === "restoration"
               ? "/restoration"
-              : `/collection/${category.slug}`;
+              : `/collection/${room.slug}`;
           return (
-            <Link key={category.slug} href={href} className="specimen-entry reveal">
-              <div className="entry-attr mono">
-                <span>
-                  Category{" "}
-                  {String(category.position).padStart(2, "0")} of 05
+            <Link
+              key={room.id}
+              href={href}
+              className={`cat-row reveal${room.variant === "dark" ? " dark" : ""}`}
+              aria-label={`${name}, ${room.number}`}
+            >
+              <div className="cat-row-figure">
+                <RoomVisual
+                  visual={room.visual}
+                  label={room.canvasLabel}
+                  scrollBound={false}
+                />
+              </div>
+              <div className="cat-row-body">
+                <span className="mono no">{room.number}</span>
+                <h2>{name}</h2>
+                <span className="hint">{hint}</span>
+                <span className="cat-row-view">
+                  {room.slug === "restoration"
+                    ? "View restoration"
+                    : `View ${name.toLowerCase()}`}
                 </span>
-              </div>
-              <div className="entry-main">
-                <h3>{category.name}</h3>
-                <p className="entry-materials">{category.hint}</p>
-              </div>
-              <div className="entry-meta mono">
-                <span>{room?.facts?.[0]?.detail ?? "View"}</span>
               </div>
             </Link>
           );
         })}
       </div>
+
+      <FeatureBand
+        eyebrow="Ask about a piece"
+        heading="The best pieces rarely reach the website"
+        body={closing.body}
+        cta={{ label: "Tell us what you are after", href: "/enquire" }}
+        visual="rings"
+      />
 
       <RevealObserver />
     </main>

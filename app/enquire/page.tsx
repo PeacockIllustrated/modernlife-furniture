@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import EnquiryForm from "@/components/forms/EnquiryForm";
+import RoomVisual from "@/components/canvas/RoomVisual";
 
 export const metadata: Metadata = {
   title: "Enquire",
@@ -27,7 +28,19 @@ export default function EnquirePage() {
         </p>
       </div>
 
-      <EnquiryForm />
+      <div className="enquire-layout">
+        <div className="enquire-panel">
+          <EnquiryForm />
+        </div>
+        <aside className="enquire-aside" aria-hidden="true">
+          <RoomVisual
+            visual="rings"
+            label=""
+            scrollBound={false}
+          />
+          <span className="aside-note mono">Every piece leaves with its story</span>
+        </aside>
+      </div>
     </main>
   );
 }

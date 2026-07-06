@@ -62,15 +62,21 @@ export default function RestorationPage() {
         ))}
       </div>
 
-      <dl style={{ maxWidth: "40rem", marginBottom: "3rem" }}>
-        <dt>Turnaround</dt>
-        <dd>From three weeks, depending on the work</dd>
-        <dt>Collection</dt>
-        <dd>North East England, courier nationwide</dd>
-      </dl>
+      <div className="block" style={{ maxWidth: "40rem", marginBottom: "3.5rem" }}>
+        <span className="mono block-eyebrow">The practical matter</span>
+        <dl>
+          <dt>Turnaround</dt>
+          <dd>From three weeks, depending on the work</dd>
+          <dt>Collection</dt>
+          <dd>North East England, courier nationwide</dd>
+        </dl>
+      </div>
 
       <section aria-label="Bring us a piece">
-        <span className="mono eyebrow" style={{ display: "block", marginBottom: "1rem", opacity: 0.6 }}>
+        <span
+          className="mono eyebrow"
+          style={{ display: "block", marginBottom: "1rem", opacity: 0.6 }}
+        >
           Bring us a piece
         </span>
         <EnquiryForm defaultKind="restoration" />

@@ -5,6 +5,7 @@ import { getCategoryBySlug, getPieces } from "@/lib/collection";
 import { rooms } from "@/content/landing";
 import CategoryBand from "@/components/collection/CategoryBand";
 import SpecimenCard from "@/components/collection/SpecimenCard";
+import FeatureBand from "@/components/gallery/FeatureBand";
 import RevealObserver from "@/components/scroll/RevealObserver";
 
 const productSlugs = rooms
@@ -77,6 +78,14 @@ export default async function CategoryPage({
           the website; tell us what you are after and we will find it.
         </p>
       )}
+
+      <FeatureBand
+        eyebrow={`More ${data.name.toLowerCase()} than reach the website`}
+        heading="Looking for something in particular"
+        body="Tell us what you are after and we will find it. And if you have a piece the artists made, we buy."
+        cta={{ label: "Make an enquiry", href: "/enquire" }}
+        visual={room.visual}
+      />
 
       <RevealObserver />
     </main>

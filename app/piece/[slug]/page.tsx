@@ -69,24 +69,29 @@ export default async function PiecePage({
           ) : null}
           <p className="story">{piece.story}</p>
 
-          <dl>
-            <dt>Attribution</dt>
-            <dd>{piece.attribution}</dd>
-            <dt>Period</dt>
-            <dd>{periodRange(piece.periodLabel, piece.yearFrom, piece.yearTo)}</dd>
-            <dt>Origin</dt>
-            <dd>{piece.origin}</dd>
-            <dt>Materials</dt>
-            <dd>{piece.materials.join(", ")}</dd>
-            <dt>Status</dt>
-            <dd>{statusLabel(piece.status)}</dd>
-            <dt>Price</dt>
-            <dd>{priceLabel(piece.priceOnRequest, piece.pricePence)}</dd>
-          </dl>
+          <div className="block">
+            <span className="mono block-eyebrow">Specimen record</span>
+            <dl>
+              <dt>Attribution</dt>
+              <dd>{piece.attribution}</dd>
+              <dt>Period</dt>
+              <dd>
+                {periodRange(piece.periodLabel, piece.yearFrom, piece.yearTo)}
+              </dd>
+              <dt>Origin</dt>
+              <dd>{piece.origin}</dd>
+              <dt>Materials</dt>
+              <dd>{piece.materials.join(", ")}</dd>
+              <dt>Status</dt>
+              <dd>{statusLabel(piece.status)}</dd>
+              <dt>Price</dt>
+              <dd>{priceLabel(piece.priceOnRequest, piece.pricePence)}</dd>
+            </dl>
+          </div>
 
           {piece.restorationNotes ? (
-            <div className="section-rule">
-              <span className="mono eyebrow">Restoration</span>
+            <div className="block" style={{ marginTop: "1.4rem" }}>
+              <span className="mono block-eyebrow">Restoration</span>
               <p>{piece.restorationNotes}</p>
             </div>
           ) : null}

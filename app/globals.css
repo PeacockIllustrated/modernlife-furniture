@@ -17,6 +17,8 @@
   --sea: #5e7a6b; /* accent 3                      */
   --hair-colour: rgba(30, 33, 30, 0.28);
   --hair: 1px solid var(--hair-colour); /* hairline rules */
+  --hair-bone: 1px solid rgba(221, 217, 204, 0.28); /* hairline on dark */
+  --canvas-edge: clamp(1.25rem, 4vw, 3.75rem); /* breathing room around visuals */
 
   /* next/font families, injected on <html> in layout.tsx */
   --font-display: var(--font-fraunces), Georgia, serif;
@@ -72,6 +74,19 @@ button:focus-visible,
   font-family: var(--font-mono);
   font-size: 0.72rem;
   letter-spacing: 0.08em;
+}
+
+/* Breathing room: hold the generative visuals in from their panel edges
+   rather than bleeding them to full width. Vertical stays flush (top/bottom 0
+   from each canvas's inset:0); only the sides are inset. */
+.panel canvas,
+.category-band canvas,
+.service-band canvas,
+.piece-figure canvas,
+.provenance-figure canvas {
+  left: var(--canvas-edge);
+  right: var(--canvas-edge);
+  width: auto;
 }
 
 /* ---------- Header ---------- */
@@ -679,11 +694,14 @@ dd {
 }
 .service-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.5rem 2.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1.2rem;
   margin: 2.5rem 0 3.5rem;
-  border-top: var(--hair);
-  padding-top: 2.5rem;
+}
+.service-list > div {
+  border: var(--hair);
+  background: var(--stone-deep);
+  padding: 1.6rem 1.7rem;
 }
 .service-list h3 {
   font-family: var(--font-display);
@@ -749,6 +767,197 @@ button.enquire {
 .form-note[data-tone="ok"] {
   color: var(--sea);
   opacity: 1;
+}
+
+/* ============================================================
+   Blocking: tonal blocks, dark feature bands, generative rows.
+   Structure the inner pages so they read as designed rooms, not
+   plain text on stone.
+   ============================================================ */
+
+/* A framed, tonal block, for a dl or a facts group. */
+.block {
+  border: var(--hair);
+  background: var(--stone-deep);
+  padding: 1.7rem 1.9rem;
+}
+.block .block-eyebrow {
+  display: block;
+  margin-bottom: 1.1rem;
+  opacity: 0.6;
+}
+
+/* A dark feature band, bled to the page's padding edge, a faint generative
+   study behind a centred invitation. Reused to close the inner pages. */
+.feature {
+  position: relative;
+  margin: 5rem -1.5rem 0;
+  background: var(--basalt);
+  color: var(--bone);
+  overflow: hidden;
+  border-top: var(--hair);
+  padding: 6rem 1.5rem;
+  text-align: center;
+}
+.feature-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.32;
+  pointer-events: none;
+}
+.feature-bg canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.feature-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 46ch;
+  margin: 0 auto;
+}
+.feature .eyebrow {
+  display: block;
+  margin-bottom: 1.2rem;
+  opacity: 0.7;
+}
+.feature h2 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  margin-bottom: 1.2rem;
+}
+.feature p {
+  opacity: 0.85;
+  margin-bottom: 2.2rem;
+}
+.feature .enquire {
+  border-color: var(--bone);
+}
+.feature .enquire:hover {
+  background: var(--bone);
+  color: var(--basalt);
+}
+
+/* Collection index as generative preview rows */
+.cat-rows {
+  border-top: var(--hair);
+}
+.cat-row {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 2.5rem;
+  padding: 2.5rem 0;
+  border-bottom: var(--hair);
+  text-decoration: none;
+}
+.cat-row-figure {
+  position: relative;
+  min-height: 32vh;
+  overflow: hidden;
+  border: var(--hair);
+}
+.cat-row.dark .cat-row-figure {
+  background: var(--basalt);
+}
+.cat-row-figure canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: pan-y;
+}
+.cat-row-body {
+  align-self: center;
+}
+.cat-row-body .no {
+  display: block;
+  margin-bottom: 1.3rem;
+  opacity: 0.6;
+}
+.cat-row-body h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  margin-bottom: 1rem;
+}
+.cat-row-body .hint {
+  display: block;
+  max-width: 42ch;
+  opacity: 0.85;
+  margin-bottom: 1.6rem;
+}
+.cat-row-view {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 3px;
+}
+.cat-row:hover .cat-row-body h2 {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+
+/* Enquire page: a form held in a framed block beside a tonal rail. */
+.enquire-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 2.5rem;
+  align-items: start;
+}
+.enquire-panel {
+  border: var(--hair);
+  background: var(--stone-deep);
+  padding: 2rem 2.1rem;
+}
+.enquire-aside {
+  position: relative;
+  min-height: 100%;
+  border: var(--hair);
+  background: var(--basalt);
+  overflow: hidden;
+}
+.enquire-aside canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0.85;
+  touch-action: pan-y;
+}
+.enquire-aside .aside-note {
+  position: absolute;
+  inset: auto 1.2rem 1.2rem;
+  color: var(--bone);
+  opacity: 0.7;
+}
+
+@media (max-width: 860px) {
+  .cat-row {
+    grid-template-columns: 1fr;
+    gap: 1.4rem;
+  }
+  .cat-row-figure {
+    min-height: 40vh;
+  }
+  .feature {
+    padding: 4rem 1.25rem;
+  }
+  .enquire-layout {
+    grid-template-columns: 1fr;
+  }
+  .enquire-aside {
+    min-height: 40vh;
+  }
 }
 
 /* Admin dashboard */

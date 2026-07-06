@@ -59,7 +59,10 @@ export default function Joint({ label }: { label: string }) {
       }
       const e = eRef.current;
       const off = e * U * 0.2; // half-draw per member
-      const enter = s.reduced ? 1 : clamp(t / 0.7, 0, 1);
+      // Draw at full strength from the first frame (like the other finished
+      // visuals), so the initial and off-screen frames, and the reduced-motion
+      // still, are never a blank panel.
+      const enter = 1;
 
       // Member and joint proportions.
       const stileW = U * 0.16;
