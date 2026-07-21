@@ -6,7 +6,7 @@ import type { Database } from "@/lib/supabase/types";
 
 /**
  * "I want this": a lightweight expression of interest against a piece, with an
- * optional email so the owner can follow up. Stored in mlf_interest and rolled
+ * optional email so the owner can follow up. Stored in modern_interest and rolled
  * up per piece in the dashboard. Rate limited, and accepted gracefully when no
  * database is configured.
  */
@@ -59,7 +59,7 @@ export async function POST(req: Request) {
     const supabase = await createClient();
 
     const { data: piece } = await supabase
-      .from("mlf_pieces")
+      .from("modern_pieces")
       .select("id")
       .eq("slug", pieceSlug)
       .maybeSingle();
@@ -68,12 +68,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Piece not found." }, { status: 404 });
     }
 
-    const payload: Database["public"]["Tables"]["mlf_interest"]["Insert"] = {
+    const payload: Database["public"]["Tables"]["modern_interest"]["Insert"] = {
       piece_id: pieceId,
       email,
     };
     const { error } = await supabase
-      .from("mlf_interest")
+      .from("modern_interest")
       .insert(payload as never);
     if (error) {
       return NextResponse.json(

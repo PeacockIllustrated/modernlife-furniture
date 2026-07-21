@@ -1,4 +1,4 @@
-// Database types for the mlf_ schema. Hand-written to match
+// Database types for the modern_ schema. Hand-written to match
 // supabase/migrations; regenerate with `supabase gen types typescript` once a
 // project is provisioned. Row/Insert are named so Update can be a plain
 // Partial without a circular reference through the Database index.
@@ -145,37 +145,37 @@ export interface Database {
   };
   public: {
     Tables: {
-      mlf_categories: {
+      modern_categories: {
         Row: CategoryRow;
         Insert: CategoryInsert;
         Update: Partial<CategoryInsert>;
         Relationships: [];
       };
-      mlf_pieces: {
+      modern_pieces: {
         Row: PieceRow;
         Insert: PieceInsert;
         Update: Partial<PieceInsert>;
         Relationships: [];
       };
-      mlf_piece_images: {
+      modern_piece_images: {
         Row: PieceImageRow;
         Insert: PieceImageInsert;
         Update: Partial<PieceImageInsert>;
         Relationships: [];
       };
-      mlf_provenance: {
+      modern_provenance: {
         Row: ProvenanceRow;
         Insert: ProvenanceInsert;
         Update: Partial<ProvenanceInsert>;
         Relationships: [];
       };
-      mlf_enquiries: {
+      modern_enquiries: {
         Row: EnquiryRow;
         Insert: EnquiryInsert;
         Update: Partial<EnquiryInsert>;
         Relationships: [];
       };
-      mlf_interest: {
+      modern_interest: {
         Row: InterestRow;
         Insert: InterestInsert;
         Update: Partial<InterestInsert>;
@@ -186,15 +186,15 @@ export interface Database {
     // would intersect with Tables and collapse every table to never.
     Views: { [_ in never]: never };
     Functions: {
-      mlf_is_owner: {
+      modern_is_owner: {
         Args: Record<string, never>;
         Returns: boolean;
       };
     };
     Enums: {
-      mlf_piece_status: PieceStatus;
-      mlf_image_kind: ImageKind;
-      mlf_enquiry_kind: EnquiryKind;
+      modern_piece_status: PieceStatus;
+      modern_image_kind: ImageKind;
+      modern_enquiry_kind: EnquiryKind;
     };
     CompositeTypes: { [_ in never]: never };
   };

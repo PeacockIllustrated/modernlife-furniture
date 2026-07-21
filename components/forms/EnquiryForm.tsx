@@ -14,7 +14,7 @@ const MAILTO = "mailto:studio@modernlifefurniture.co.uk";
 
 /**
  * The enquiry form. Posts to /api/enquire, which rate limits and writes to
- * mlf_enquiries. A mailto fallback is always offered, per CONTENT.md, so an
+ * modern_enquiries. A mailto fallback is always offered, per CONTENT.md, so an
  * enquiry is never lost if the database is unreachable.
  */
 export default function EnquiryForm({

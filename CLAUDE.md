@@ -11,7 +11,7 @@ The locked design concept lives at `reference/concept-v5.html`. Open it in a bro
 - GSAP (fully free since v3.13) + ScrollTrigger for scroll choreography
 - Lenis for smooth scroll (`lenis` package, `lenis/react`)
 - Canvas 2D for the five generative visuals in phase one; React Three Fiber upgrades are phase two options only (see ARCHITECTURE.md)
-- Supabase (Postgres + Auth, RLS-first) for collection stock, `mlf_` table prefix
+- Supabase (Postgres + Auth, RLS-first) for collection stock, `modern_` table prefix
 - Vercel deployment
 - Motion (`motion/react`) only if a specific micro-interaction needs it; GSAP is primary
 

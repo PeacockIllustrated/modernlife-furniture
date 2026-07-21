@@ -5,7 +5,7 @@ import type { CategoryFact, PieceStatus, Database } from "./supabase/types";
 import { rooms } from "@/content/landing";
 import { staticPieces } from "@/content/pieces";
 
-type PieceRow = Database["public"]["Tables"]["mlf_pieces"]["Row"];
+type PieceRow = Database["public"]["Tables"]["modern_pieces"]["Row"];
 
 /**
  * The collection, read from Supabase when it is configured and from the static
@@ -110,7 +110,7 @@ export const getCategories = cache(async (): Promise<Category[]> => {
     const { createClient } = await import("./supabase/server");
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from("mlf_categories")
+      .from("modern_categories")
       .select("slug,name,position,story,hint,facts,placeholder")
       .order("position");
     if (!error && data) return data as Category[];
@@ -143,22 +143,22 @@ export const getPieces = cache(
       const { createClient } = await import("./supabase/server");
       const supabase = await createClient();
       let query = supabase
-        .from("mlf_pieces")
-        .select("*, mlf_categories!inner(slug)")
+        .from("modern_pieces")
+        .select("*, modern_categories!inner(slug)")
         .neq("status", "draft")
         .order("created_at", { ascending: false });
       if (categorySlug) {
-        query = query.eq("mlf_categories.slug", categorySlug);
+        query = query.eq("modern_categories.slug", categorySlug);
       }
       const { data, error } = await query;
       if (!error && data) {
         const rows = data as unknown as Array<
-          PieceRow & { mlf_categories: { slug: string } }
+          PieceRow & { modern_categories: { slug: string } }
         >;
         return rows.map(
           (row): Piece => ({
             slug: row.slug,
-            categorySlug: row.mlf_categories.slug,
+            categorySlug: row.modern_categories.slug,
             title: row.title,
             attribution: row.attribution,
             periodLabel: row.period_label,
@@ -199,9 +199,9 @@ export const getPieceBySlug = cache(
         const { createClient } = await import("./supabase/server");
         const supabase = await createClient();
         const { data, error } = await supabase
-          .from("mlf_pieces")
+          .from("modern_pieces")
           .select(
-            "*, mlf_categories!inner(slug), mlf_provenance(position,label,detail), mlf_piece_images(path,alt,position,kind)",
+            "*, modern_categories!inner(slug), modern_provenance(position,label,detail), modern_piece_images(path,alt,position,kind)",
           )
           .eq("slug", slug)
           .neq("status", "draft")
@@ -209,7 +209,7 @@ export const getPieceBySlug = cache(
         if (!error && data) {
           const row = data as unknown as {
             slug: string;
-            mlf_categories: { slug: string };
+            modern_categories: { slug: string };
             title: string;
             attribution: string;
             period_label: string;
@@ -226,12 +226,12 @@ export const getPieceBySlug = cache(
             featured: boolean;
             featured_position: number | null;
             provenance_verified: boolean;
-            mlf_provenance: Provenance[];
-            mlf_piece_images: PieceImage[];
+            modern_provenance: Provenance[];
+            modern_piece_images: PieceImage[];
           };
           return {
             slug: row.slug,
-            categorySlug: row.mlf_categories.slug,
+            categorySlug: row.modern_categories.slug,
             title: row.title,
             attribution: row.attribution,
             periodLabel: row.period_label,
@@ -248,10 +248,10 @@ export const getPieceBySlug = cache(
             featured: row.featured,
             featuredPosition: row.featured_position,
             provenanceVerified: row.provenance_verified,
-            provenance: [...row.mlf_provenance].sort(
+            provenance: [...row.modern_provenance].sort(
               (a, b) => a.position - b.position,
             ),
-            images: [...row.mlf_piece_images].sort(
+            images: [...row.modern_piece_images].sort(
               (a, b) => a.position - b.position,
             ),
           };
@@ -286,20 +286,20 @@ export const getFeaturedPieces = cache(async (): Promise<Piece[]> => {
     const { createClient } = await import("./supabase/server");
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from("mlf_pieces")
-      .select("*, mlf_categories!inner(slug)")
+      .from("modern_pieces")
+      .select("*, modern_categories!inner(slug)")
       .eq("featured", true)
       .neq("status", "draft")
       .order("featured_position", { ascending: true, nullsFirst: false })
       .order("created_at", { ascending: false });
     if (!error && data) {
       const rows = data as unknown as Array<
-        PieceRow & { mlf_categories: { slug: string } }
+        PieceRow & { modern_categories: { slug: string } }
       >;
       return rows.map(
         (row): Piece => ({
           slug: row.slug,
-          categorySlug: row.mlf_categories.slug,
+          categorySlug: row.modern_categories.slug,
           title: row.title,
           attribution: row.attribution,
           periodLabel: row.period_label,

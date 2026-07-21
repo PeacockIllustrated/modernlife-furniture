@@ -88,12 +88,12 @@ export default function AdminDashboard({ email }: { email: string }) {
   const loadAll = useCallback(async () => {
     setLoading(true);
     const [c, p, pr, im, en, it] = await Promise.all([
-      supabase.from("mlf_categories").select("id,slug,name").order("position"),
-      supabase.from("mlf_pieces").select("*").order("created_at", { ascending: false }),
-      supabase.from("mlf_provenance").select("*").order("position"),
-      supabase.from("mlf_piece_images").select("*").order("position"),
-      supabase.from("mlf_enquiries").select("*").order("created_at", { ascending: false }),
-      supabase.from("mlf_interest").select("*").order("created_at", { ascending: false }),
+      supabase.from("modern_categories").select("id,slug,name").order("position"),
+      supabase.from("modern_pieces").select("*").order("created_at", { ascending: false }),
+      supabase.from("modern_provenance").select("*").order("position"),
+      supabase.from("modern_piece_images").select("*").order("position"),
+      supabase.from("modern_enquiries").select("*").order("created_at", { ascending: false }),
+      supabase.from("modern_interest").select("*").order("created_at", { ascending: false }),
     ]);
     setCategories((c.data ?? []) as AdminCategory[]);
     setPieces((p.data ?? []) as AdminPiece[]);
@@ -114,7 +114,7 @@ export default function AdminDashboard({ email }: { email: string }) {
   }
 
   async function deleteEnquiry(id: string) {
-    const { error } = await supabase.from("mlf_enquiries").delete().eq("id", id);
+    const { error } = await supabase.from("modern_enquiries").delete().eq("id", id);
     // Only drop it from the view if it really went; otherwise reload so the
     // dashboard reflects the truth rather than hiding a still-present enquiry.
     if (error) loadAll();
@@ -122,14 +122,14 @@ export default function AdminDashboard({ email }: { email: string }) {
   }
 
   async function deletePiece(id: string) {
-    await supabase.from("mlf_pieces").delete().eq("id", id);
+    await supabase.from("modern_pieces").delete().eq("id", id);
     setEditing(null);
     loadAll();
   }
 
   async function clearInterest(pieceId: string) {
     const { error } = await supabase
-      .from("mlf_interest")
+      .from("modern_interest")
       .delete()
       .eq("piece_id", pieceId);
     if (error) loadAll();
@@ -413,13 +413,13 @@ function PieceForm({
       let pieceId = piece?.id;
       if (piece) {
         const { error } = await supabase
-          .from("mlf_pieces")
+          .from("modern_pieces")
           .update(payload as never)
           .eq("id", piece.id);
         if (error) throw error;
       } else {
         const { data, error } = await supabase
-          .from("mlf_pieces")
+          .from("modern_pieces")
           .insert(payload as never)
           .select("id")
           .single();
@@ -432,12 +432,12 @@ function PieceForm({
       // (and the form keeps its state) so a failed write is visible and can be
       // retried rather than silently losing the rows.
       const provDel = await supabase
-        .from("mlf_provenance")
+        .from("modern_provenance")
         .delete()
         .eq("piece_id", pieceId);
       if (provDel.error) throw provDel.error;
       if (rows.length) {
-        const { error } = await supabase.from("mlf_provenance").insert(
+        const { error } = await supabase.from("modern_provenance").insert(
           rows.map((r, i) => ({
             piece_id: pieceId,
             position: i + 1,
@@ -448,12 +448,12 @@ function PieceForm({
         if (error) throw error;
       }
       const imgDel = await supabase
-        .from("mlf_piece_images")
+        .from("modern_piece_images")
         .delete()
         .eq("piece_id", pieceId);
       if (imgDel.error) throw imgDel.error;
       if (imgRows.length) {
-        const { error } = await supabase.from("mlf_piece_images").insert(
+        const { error } = await supabase.from("modern_piece_images").insert(
           imgRows.map((r, i) => ({
             piece_id: pieceId,
             position: i + 1,

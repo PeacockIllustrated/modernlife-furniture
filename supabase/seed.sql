@@ -4,7 +4,7 @@
 -- safe to run repeatedly.
 
 -- ---- Categories: the five gallery rooms ----
-insert into mlf_categories (slug, name, position, story, hint, facts, placeholder)
+insert into modern_categories (slug, name, position, story, hint, facts, placeholder)
 values
   (
     'chairs', 'Chairs', 1,
@@ -50,7 +50,7 @@ on conflict (slug) do update set
   placeholder = excluded.placeholder;
 
 -- ---- Pieces: six placeholders. Attribution stays a hedge until confirmed. ----
-insert into mlf_pieces (
+insert into modern_pieces (
   slug, category_id, title, attribution, period_label, year_from, year_to,
   origin, materials, status, price_on_request, story, restoration_notes, placeholder,
   featured, featured_position, provenance_verified
@@ -58,7 +58,7 @@ insert into mlf_pieces (
 values
   (
     'fibreglass-ball-chair',
-    (select id from mlf_categories where slug = 'chairs'),
+    (select id from modern_categories where slug = 'chairs'),
     'Fibreglass ball chair',
     'Attributed, space age',
     'Space age', 1966, 1972,
@@ -72,7 +72,7 @@ values
   ),
   (
     'cantilever-side-chair',
-    (select id from mlf_categories where slug = 'chairs'),
+    (select id from modern_categories where slug = 'chairs'),
     'Cantilever side chair',
     'School of the Bauhaus',
     'Interwar modern', 1928, 1934,
@@ -86,7 +86,7 @@ values
   ),
   (
     'teak-wall-unit',
-    (select id from mlf_categories where slug = 'shelving-and-storage'),
+    (select id from modern_categories where slug = 'shelving-and-storage'),
     'Teak wall unit',
     'School of Danish modern',
     'Danish modern', 1958, 1968,
@@ -100,7 +100,7 @@ values
   ),
   (
     'rosewood-sideboard',
-    (select id from mlf_categories where slug = 'cabinets-and-sideboards'),
+    (select id from modern_categories where slug = 'cabinets-and-sideboards'),
     'Rosewood sideboard',
     'In the manner of Danish modern',
     'Danish modern', 1960, 1970,
@@ -114,7 +114,7 @@ values
   ),
   (
     'sculptural-coffee-table',
-    (select id from mlf_categories where slug = 'tables'),
+    (select id from modern_categories where slug = 'tables'),
     'Sculptural coffee table',
     'Maker unconfirmed',
     'Mid-century', 1955, 1965,
@@ -128,7 +128,7 @@ values
   ),
   (
     'nesting-tables',
-    (select id from mlf_categories where slug = 'tables'),
+    (select id from modern_categories where slug = 'tables'),
     'Nesting tables',
     'School of Danish modern',
     'Danish modern', 1962, 1972,
@@ -158,20 +158,20 @@ on conflict (slug) do update set
   provenance_verified = excluded.provenance_verified;
 
 -- ---- Provenance rings for the ball chair, the dry-humour placeholder ----
-delete from mlf_provenance
-where piece_id = (select id from mlf_pieces where slug = 'fibreglass-ball-chair');
+delete from modern_provenance
+where piece_id = (select id from modern_pieces where slug = 'fibreglass-ball-chair');
 
-insert into mlf_provenance (piece_id, position, label, detail)
+insert into modern_provenance (piece_id, position, label, detail)
 values
   (
-    (select id from mlf_pieces where slug = 'fibreglass-ball-chair'),
+    (select id from modern_pieces where slug = 'fibreglass-ball-chair'),
     1, 'Found', 'A Copenhagen apartment, a Northumberland farmhouse, and a very patient dog'
   ),
   (
-    (select id from mlf_pieces where slug = 'fibreglass-ball-chair'),
+    (select id from modern_pieces where slug = 'fibreglass-ball-chair'),
     2, 'Restored', 'On our bench, over five weeks'
   ),
   (
-    (select id from mlf_pieces where slug = 'fibreglass-ball-chair'),
+    (select id from modern_pieces where slug = 'fibreglass-ball-chair'),
     3, 'Rehomed', 'Awaiting its next forty years'
   );

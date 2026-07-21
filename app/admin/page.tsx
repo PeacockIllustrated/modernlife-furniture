@@ -20,7 +20,7 @@ export default async function AdminPage() {
           <p>
             Connect a Supabase project to manage the collection. Set
             NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY, run the
-            migrations in supabase/, and add yourself to mlf_owners.
+            migrations in supabase/, and add yourself to modern_owners.
           </p>
         </div>
       </main>
@@ -47,7 +47,7 @@ export default async function AdminPage() {
   }
 
   const { data: owner } = await supabase
-    .from("mlf_owners")
+    .from("modern_owners")
     .select("user_id")
     .eq("user_id", user.id)
     .maybeSingle();
@@ -60,7 +60,7 @@ export default async function AdminPage() {
           <h1>Not an owner</h1>
           <p>
             You are signed in as {user.email}, but this account is not on the
-            owners roster. Add its user id to mlf_owners to gain access.
+            owners roster. Add its user id to modern_owners to gain access.
           </p>
         </div>
       </main>

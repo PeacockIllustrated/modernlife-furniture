@@ -41,24 +41,24 @@ components/
 ```
 Rule: drawBall.ts is pure (ctx in, no React) and remains the single chair renderer; any improvement to the chair lands there. Since the owner decoupled Restoration from the chair (July 2026), BallChair.tsx is its only consumer and Seam.tsx stands alone.
 
-## Data model (Supabase, `mlf_` prefix, RLS-first)
+## Data model (Supabase, `modern_` prefix, RLS-first)
 ```sql
-mlf_categories   id, slug, name, position, story, hint, facts jsonb
-mlf_pieces       id, slug, category_id, title, attribution, period_label,
+modern_categories   id, slug, name, position, story, hint, facts jsonb
+modern_pieces       id, slug, category_id, title, attribution, period_label,
                  year_from, year_to, origin, materials text[],
                  status (available|reserved|sold|restoration),
                  price_pence int null, price_on_request bool,
                  story, restoration_notes, created_at
-mlf_piece_images id, piece_id, path, alt, position, kind (hero|detail|as_found|restored)
-mlf_provenance   id, piece_id, position, label, detail        -- the "rings"
-mlf_enquiries    id, piece_id null, name, email, message, kind (piece|restoration|sourcing|selling), created_at
+modern_piece_images id, piece_id, path, alt, position, kind (hero|detail|as_found|restored)
+modern_provenance   id, piece_id, position, label, detail        -- the "rings"
+modern_enquiries    id, piece_id null, name, email, message, kind (piece|restoration|sourcing|selling), created_at
 ```
 RLS: public SELECT on categories, pieces (status != draft), images, provenance. INSERT on enquiries for anon with rate limiting via edge function. Everything else owner-only (auth uid check). No open-SELECT on enquiries, ever.
 
 Attribution honesty is schema-level: `attribution` is free text and seed data uses "attributed" or "school of" phrasing. Never seed a named designer as fact.
 
 ## Piece page = specimen page
-The piece page inherits the gallery language: generative category visual as a backdrop at low intensity, photography as the specimen, provenance rendered as an actual rings diagram (reuse ProvenanceRings with the piece's `mlf_provenance` rows labelling the coloured rings), restoration before/after photography where `as_found` and `restored` images exist. dl card mirrors the landing labels: attribution, period, materials, restoration, status.
+The piece page inherits the gallery language: generative category visual as a backdrop at low intensity, photography as the specimen, provenance rendered as an actual rings diagram (reuse ProvenanceRings with the piece's `modern_provenance` rows labelling the coloured rings), restoration before/after photography where `as_found` and `restored` images exist. dl card mirrors the landing labels: attribution, period, materials, restoration, status.
 
 ## Phase two options (do not start in phase one)
 - R3F/WebGL ports of Tide and the ball chair for true depth-of-field and lighting; keep Canvas 2D as the reduced-capability fallback

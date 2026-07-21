@@ -3,7 +3,7 @@
  * (sections s01 to s05). British spelling, sentence case, no em-dashes.
  *
  * The dl facts here are the plausible placeholders flagged in CONTENT.md.
- * In session 4 they are replaced by mlf_categories rows carrying
+ * In session 4 they are replaced by modern_categories rows carrying
  * `placeholder: true`; until then they render statically so the page reads
  * complete.
  */

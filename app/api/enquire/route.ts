@@ -80,7 +80,7 @@ export async function POST(req: Request) {
     let pieceId: string | null = null;
     if (pieceSlug) {
       const { data } = await supabase
-        .from("mlf_pieces")
+        .from("modern_pieces")
         .select("id")
         .eq("slug", pieceSlug)
         .maybeSingle();
@@ -91,7 +91,7 @@ export async function POST(req: Request) {
     // asserted because the hand-written Database types do not satisfy
     // postgrest 2.110's builder generics (regenerate with the Supabase CLI once
     // a project is provisioned to restore full inference).
-    const payload: Database["public"]["Tables"]["mlf_enquiries"]["Insert"] = {
+    const payload: Database["public"]["Tables"]["modern_enquiries"]["Insert"] = {
       piece_id: pieceId,
       name,
       email,
@@ -99,7 +99,7 @@ export async function POST(req: Request) {
       kind,
     };
     const { error } = await supabase
-      .from("mlf_enquiries")
+      .from("modern_enquiries")
       .insert(payload as never);
     if (error) {
       return NextResponse.json(

@@ -19,7 +19,7 @@ Port drawBall to lib/drawBall.ts exactly per DESIGN.md spec. Build useCanvasScen
 Tide, Grove, Strata, ProvenanceRings as components on the shared hook, each per its DESIGN.md spec, wired into the five rooms with the light/dark rhythm. Accept: every canvas pauses off-screen, cursor interactions match the concept, 60fps on a mid-range laptop, mobile touch scroll never trapped.
 
 ## Session 4 — Data layer (standard tier)
-Supabase project, mlf_ schema and RLS per ARCHITECTURE.md, seed data (categories from CONTENT.md, six placeholder pieces flagged placeholder), typed client, landing dl facts and category pages reading from the database, enquiry form writing to mlf_enquiries with rate limiting.
+Supabase project, modern_ schema and RLS per ARCHITECTURE.md, seed data (categories from CONTENT.md, six placeholder pieces flagged placeholder), typed client, landing dl facts and category pages reading from the database, enquiry form writing to modern_enquiries with rate limiting.
 
 ## Session 5 — Piece and service pages (top tier for the specimen page, standard for the rest)
 /piece/[slug] specimen page per ARCHITECTURE.md including provenance rings fed by real rows; /restoration, /sell, /enquire; /admin with magic-link auth and plain-English CRUD for pieces, images, provenance and enquiry triage.
