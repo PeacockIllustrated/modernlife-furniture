@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { rateLimit } from "@/lib/rateLimit";
+import { notifyOwner } from "@/lib/email";
 import type { Database, EnquiryKind } from "@/lib/supabase/types";
 
 const KINDS: EnquiryKind[] = ["piece", "restoration", "sourcing", "selling"];
@@ -106,6 +107,14 @@ export async function POST(req: Request) {
         { status: 502 },
       );
     }
+    await notifyOwner(`New ${kind} enquiry from ${name}`, [
+      `Kind: ${kind}`,
+      pieceSlug ? `Piece: ${pieceSlug}` : "Piece: not specified",
+      `Name: ${name}`,
+      `Email: ${email}`,
+      "",
+      message,
+    ]);
     return NextResponse.json({ ok: true, stored: true });
   } catch {
     return NextResponse.json(

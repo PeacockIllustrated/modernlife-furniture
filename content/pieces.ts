@@ -29,6 +29,9 @@ export interface StaticPiece {
   story: string;
   restorationNotes: string;
   placeholder: boolean;
+  featured: boolean;
+  featuredPosition: number | null;
+  provenanceVerified: boolean;
   provenance: StaticProvenance[];
 }
 
@@ -37,6 +40,9 @@ export const staticPieces: StaticPiece[] = [
     slug: "fibreglass-ball-chair",
     categorySlug: "chairs",
     title: "Fibreglass ball chair",
+    featured: true,
+    featuredPosition: 1,
+    provenanceVerified: true,
     attribution: "Attributed, space age",
     periodLabel: "Space age",
     yearFrom: 1966,
@@ -66,6 +72,9 @@ export const staticPieces: StaticPiece[] = [
     slug: "cantilever-side-chair",
     categorySlug: "chairs",
     title: "Cantilever side chair",
+    featured: false,
+    featuredPosition: null,
+    provenanceVerified: false,
     attribution: "School of the Bauhaus",
     periodLabel: "Interwar modern",
     yearFrom: 1928,
@@ -85,6 +94,9 @@ export const staticPieces: StaticPiece[] = [
     slug: "teak-wall-unit",
     categorySlug: "shelving-and-storage",
     title: "Teak wall unit",
+    featured: true,
+    featuredPosition: 2,
+    provenanceVerified: false,
     attribution: "School of Danish modern",
     periodLabel: "Danish modern",
     yearFrom: 1958,
@@ -105,6 +117,9 @@ export const staticPieces: StaticPiece[] = [
     slug: "rosewood-sideboard",
     categorySlug: "cabinets-and-sideboards",
     title: "Rosewood sideboard",
+    featured: false,
+    featuredPosition: null,
+    provenanceVerified: true,
     attribution: "In the manner of Danish modern",
     periodLabel: "Danish modern",
     yearFrom: 1960,
@@ -124,6 +139,9 @@ export const staticPieces: StaticPiece[] = [
     slug: "sculptural-coffee-table",
     categorySlug: "tables",
     title: "Sculptural coffee table",
+    featured: true,
+    featuredPosition: 3,
+    provenanceVerified: false,
     attribution: "Maker unconfirmed",
     periodLabel: "Mid-century",
     yearFrom: 1955,
@@ -144,6 +162,9 @@ export const staticPieces: StaticPiece[] = [
     slug: "nesting-tables",
     categorySlug: "tables",
     title: "Nesting tables",
+    featured: false,
+    featuredPosition: null,
+    provenanceVerified: false,
     attribution: "School of Danish modern",
     periodLabel: "Danish modern",
     yearFrom: 1962,

@@ -1,6 +1,7 @@
 import Hero from "@/components/gallery/Hero";
 import Manifesto from "@/components/gallery/Manifesto";
 import Room from "@/components/gallery/Room";
+import Featured from "@/components/gallery/Featured";
 import Closing from "@/components/gallery/Closing";
 import Tide from "@/components/canvas/Tide";
 import RoomVisual from "@/components/canvas/RoomVisual";
@@ -50,6 +51,8 @@ export default async function Home() {
           />
         );
       })}
+
+      <Featured />
 
       <Closing />
 

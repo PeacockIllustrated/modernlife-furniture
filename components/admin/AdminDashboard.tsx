@@ -30,6 +30,9 @@ interface AdminPiece {
   story: string;
   restoration_notes: string;
   placeholder: boolean;
+  featured: boolean;
+  featured_position: number | null;
+  provenance_verified: boolean;
 }
 interface AdminProvenance {
   id: string;
@@ -55,6 +58,12 @@ interface AdminEnquiry {
   kind: EnquiryKind;
   created_at: string;
 }
+interface AdminInterest {
+  id: string;
+  piece_id: string;
+  email: string | null;
+  created_at: string;
+}
 
 const STATUSES: PieceStatus[] = [
   "draft",
@@ -72,23 +81,26 @@ export default function AdminDashboard({ email }: { email: string }) {
   const [provenance, setProvenance] = useState<AdminProvenance[]>([]);
   const [images, setImages] = useState<AdminImage[]>([]);
   const [enquiries, setEnquiries] = useState<AdminEnquiry[]>([]);
+  const [interest, setInterest] = useState<AdminInterest[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<string | "new" | null>(null);
 
   const loadAll = useCallback(async () => {
     setLoading(true);
-    const [c, p, pr, im, en] = await Promise.all([
+    const [c, p, pr, im, en, it] = await Promise.all([
       supabase.from("mlf_categories").select("id,slug,name").order("position"),
       supabase.from("mlf_pieces").select("*").order("created_at", { ascending: false }),
       supabase.from("mlf_provenance").select("*").order("position"),
       supabase.from("mlf_piece_images").select("*").order("position"),
       supabase.from("mlf_enquiries").select("*").order("created_at", { ascending: false }),
+      supabase.from("mlf_interest").select("*").order("created_at", { ascending: false }),
     ]);
     setCategories((c.data ?? []) as AdminCategory[]);
     setPieces((p.data ?? []) as AdminPiece[]);
     setProvenance((pr.data ?? []) as AdminProvenance[]);
     setImages((im.data ?? []) as AdminImage[]);
     setEnquiries((en.data ?? []) as AdminEnquiry[]);
+    setInterest((it.data ?? []) as AdminInterest[]);
     setLoading(false);
   }, [supabase]);
 
@@ -114,6 +126,39 @@ export default function AdminDashboard({ email }: { email: string }) {
     setEditing(null);
     loadAll();
   }
+
+  async function clearInterest(pieceId: string) {
+    const { error } = await supabase
+      .from("mlf_interest")
+      .delete()
+      .eq("piece_id", pieceId);
+    if (error) loadAll();
+    else setInterest((r) => r.filter((x) => x.piece_id !== pieceId));
+  }
+
+  // Roll interest up per piece: a count and the emails that were left, most
+  // wanted first. Pieces with no interest are omitted.
+  const interestByPiece = useMemo(() => {
+    const titles = new Map(pieces.map((p) => [p.id, p.title]));
+    const groups = new Map<
+      string,
+      { pieceId: string; title: string; count: number; emails: string[] }
+    >();
+    for (const row of interest) {
+      const existing =
+        groups.get(row.piece_id) ??
+        {
+          pieceId: row.piece_id,
+          title: titles.get(row.piece_id) ?? "Unknown piece",
+          count: 0,
+          emails: [],
+        };
+      existing.count += 1;
+      if (row.email) existing.emails.push(row.email);
+      groups.set(row.piece_id, existing);
+    }
+    return [...groups.values()].sort((a, b) => b.count - a.count);
+  }, [interest, pieces]);
 
   if (loading) {
     return (
@@ -156,6 +201,51 @@ export default function AdminDashboard({ email }: { email: string }) {
                   className="enquire"
                   type="button"
                   onClick={() => deleteEnquiry(en.id)}
+                >
+                  Clear
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="admin-section">
+        <h2 className="admin-h">Interest</h2>
+        {interestByPiece.length === 0 ? (
+          <p className="mono" style={{ opacity: 0.6 }}>
+            No one has registered interest yet.
+          </p>
+        ) : (
+          <ul className="admin-list">
+            {interestByPiece.map((g) => (
+              <li key={g.pieceId} className="admin-enquiry">
+                <div>
+                  <span className="mono">
+                    {g.count} {g.count === 1 ? "person" : "people"} interested
+                  </span>
+                  <p>
+                    <strong>{g.title}</strong>
+                  </p>
+                  {g.emails.length ? (
+                    <p style={{ opacity: 0.85 }}>
+                      {g.emails.map((em, i) => (
+                        <span key={em + i}>
+                          <a href={`mailto:${em}`}>{em}</a>
+                          {i < g.emails.length - 1 ? ", " : ""}
+                        </span>
+                      ))}
+                    </p>
+                  ) : (
+                    <p className="mono" style={{ opacity: 0.55 }}>
+                      No contact details left.
+                    </p>
+                  )}
+                </div>
+                <button
+                  className="enquire"
+                  type="button"
+                  onClick={() => clearInterest(g.pieceId)}
                 >
                   Clear
                 </button>
@@ -268,7 +358,13 @@ function PieceForm({
     origin: piece?.origin ?? "",
     materials: piece?.materials.join(", ") ?? "",
     status: piece?.status ?? "available",
+    price: piece?.price_pence != null ? String(piece.price_pence / 100) : "",
+    price_on_request: piece?.price_on_request ?? true,
     placeholder: piece?.placeholder ?? true,
+    featured: piece?.featured ?? false,
+    featured_position:
+      piece?.featured_position != null ? String(piece.featured_position) : "",
+    provenance_verified: piece?.provenance_verified ?? false,
     story: piece?.story ?? "",
     restoration_notes: piece?.restoration_notes ?? "",
   });
@@ -298,7 +394,18 @@ function PieceForm({
           .map((m) => m.trim())
           .filter(Boolean),
         status: form.status as PieceStatus,
+        price_on_request: form.price_on_request,
+        price_pence:
+          form.price_on_request || !form.price.trim()
+            ? null
+            : Math.round(Number(form.price.trim().replace(/[^0-9.]/g, "")) * 100),
         placeholder: form.placeholder,
+        featured: form.featured,
+        featured_position:
+          form.featured && form.featured_position.trim()
+            ? Math.round(Number(form.featured_position.trim()))
+            : null,
+        provenance_verified: form.provenance_verified,
         story: form.story.trim(),
         restoration_notes: form.restoration_notes.trim(),
       };
@@ -427,6 +534,25 @@ function PieceForm({
           ))}
         </select>
       </div>
+      <label className="mono" style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
+        <input
+          type="checkbox"
+          checked={form.price_on_request}
+          onChange={(e) => set("price_on_request", e.target.checked)}
+        />
+        Price on request (hide the figure)
+      </label>
+      {!form.price_on_request ? (
+        <div className="field">
+          <label>Price (pounds)</label>
+          <input
+            inputMode="decimal"
+            value={form.price}
+            onChange={(e) => set("price", e.target.value)}
+            placeholder="2400"
+          />
+        </div>
+      ) : null}
       <div className="field">
         <label>Story</label>
         <textarea value={form.story} onChange={(e) => set("story", e.target.value)} />
@@ -446,6 +572,33 @@ function PieceForm({
         />
         Placeholder listing (details unconfirmed)
       </label>
+      <label className="mono" style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
+        <input
+          type="checkbox"
+          checked={form.provenance_verified}
+          onChange={(e) => set("provenance_verified", e.target.checked)}
+        />
+        Provenance verified (show the seal)
+      </label>
+      <label className="mono" style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
+        <input
+          type="checkbox"
+          checked={form.featured}
+          onChange={(e) => set("featured", e.target.checked)}
+        />
+        Feature on the homepage
+      </label>
+      {form.featured ? (
+        <div className="field">
+          <label>Homepage position (lower shows first)</label>
+          <input
+            inputMode="numeric"
+            value={form.featured_position}
+            onChange={(e) => set("featured_position", e.target.value)}
+            placeholder="1"
+          />
+        </div>
+      ) : null}
 
       <fieldset className="admin-fieldset">
         <legend className="mono">Provenance rings</legend>

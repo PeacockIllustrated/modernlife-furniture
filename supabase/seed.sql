@@ -52,7 +52,8 @@ on conflict (slug) do update set
 -- ---- Pieces: six placeholders. Attribution stays a hedge until confirmed. ----
 insert into mlf_pieces (
   slug, category_id, title, attribution, period_label, year_from, year_to,
-  origin, materials, status, price_on_request, story, restoration_notes, placeholder
+  origin, materials, status, price_on_request, story, restoration_notes, placeholder,
+  featured, featured_position, provenance_verified
 )
 values
   (
@@ -66,7 +67,8 @@ values
     'available', true,
     'A hollow fibreglass shell on a turned steel pedestal, the interior reupholstered in a warm wool the colour of the original. It swivels quietly and keeps the room out until you want it back.',
     'Shell refinished, upholstery replaced, foam renewed, stem re-enamelled, base rebalanced.',
-    true
+    true,
+    true, 1, true
   ),
   (
     'cantilever-side-chair',
@@ -79,7 +81,8 @@ values
     'reserved', true,
     'Chromed tubular steel sprung into a single cantilever, the seat and back re-caned by hand. Lighter than it looks, and it gives a little as you sit.',
     'Re-chromed, re-caned, feet replaced.',
-    true
+    true,
+    false, null, false
   ),
   (
     'teak-wall-unit',
@@ -92,7 +95,8 @@ values
     'available', true,
     'A modular wall system that grew with the household that owned it, shelves and a drop-front desk hung on a pair of uprights. It comes to us in five parts and leaves in five parts.',
     'French polished, brass fittings cleaned, one shelf replaced in matched teak.',
-    true
+    true,
+    true, 2, false
   ),
   (
     'rosewood-sideboard',
@@ -105,7 +109,8 @@ values
     'sold', true,
     'A long credenza in book-matched rosewood, sliding doors over an oak interior. The lacquer had gone to craze and colour; we took it back to the wood and built the finish up again.',
     'Stripped, re-lacquered, runners re-cut, one foot rebuilt.',
-    true
+    true,
+    false, null, true
   ),
   (
     'sculptural-coffee-table',
@@ -118,7 +123,8 @@ values
     'available', true,
     'A low table with a shaped walnut frame and a floating glass top, the sort of piece a room is arranged around. It keeps the rings of every glass ever set down on it, which is rather the point.',
     'Frame re-polished, a split in one leg glued and pinned, new glass cut to the original template.',
-    true
+    true,
+    true, 3, false
   ),
   (
     'nesting-tables',
@@ -131,7 +137,8 @@ values
     'restoration', true,
     'A graduated set of three, each sliding under the last, teak throughout. On the bench now, back on the site when the tops are level and the finish is even.',
     'In progress: tops flattened, joints re-glued, finish to follow.',
-    true
+    true,
+    false, null, false
   )
 on conflict (slug) do update set
   category_id = excluded.category_id,
@@ -145,7 +152,10 @@ on conflict (slug) do update set
   status = excluded.status,
   story = excluded.story,
   restoration_notes = excluded.restoration_notes,
-  placeholder = excluded.placeholder;
+  placeholder = excluded.placeholder,
+  featured = excluded.featured,
+  featured_position = excluded.featured_position,
+  provenance_verified = excluded.provenance_verified;
 
 -- ---- Provenance rings for the ball chair, the dry-humour placeholder ----
 delete from mlf_provenance

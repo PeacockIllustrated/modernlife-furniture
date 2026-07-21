@@ -366,6 +366,133 @@ dd {
   background: var(--ink);
   color: var(--stone);
 }
+/* ---------- Featured rail, the owner's homepage selection ---------- */
+.featured-rail {
+  border-top: var(--hair);
+  padding: 12vh 1.5rem;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+.featured-head {
+  margin-bottom: 3.5rem;
+  max-width: 46ch;
+}
+.featured-head .eyebrow {
+  display: block;
+  opacity: 0.6;
+  margin-bottom: 1rem;
+}
+.featured-head h2 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2rem, 4.4vw, 3.4rem);
+  letter-spacing: -0.015em;
+  line-height: 1.04;
+  margin-bottom: 1.2rem;
+}
+.featured-head p {
+  opacity: 0.85;
+}
+.featured-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+  gap: 1px;
+  background: var(--hair-colour);
+  border: var(--hair);
+}
+.featured-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 2rem 1.9rem 2.2rem;
+  background: var(--stone-deep);
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.25s ease;
+}
+.featured-entry:hover {
+  background: var(--stone);
+}
+.featured-entry-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  opacity: 0.75;
+}
+.featured-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--sea);
+  opacity: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.featured-verified .seal-mark {
+  width: 10px;
+  height: 10px;
+}
+.featured-entry h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  margin-top: 0.3rem;
+}
+.featured-entry:hover h3 {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.featured-materials {
+  font-size: 0.9rem;
+  opacity: 0.75;
+}
+.featured-entry-meta {
+  margin-top: auto;
+  padding-top: 1.2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.1rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  opacity: 0.8;
+}
+.featured-entry-meta [data-status="sold"],
+.featured-entry-meta [data-status="reserved"] {
+  color: var(--rose);
+  opacity: 1;
+}
+.featured-entry-meta [data-status="available"] {
+  color: var(--sea);
+  opacity: 1;
+}
+.featured-entry-meta [data-status="restoration"] {
+  color: var(--amber);
+  opacity: 1;
+}
+.featured-all {
+  display: inline-block;
+  margin-top: 2.5rem;
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid currentColor;
+  padding: 0.8rem 1.4rem;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease;
+}
+.featured-all:hover {
+  background: var(--ink);
+  color: var(--stone);
+}
+
 .site-footer {
   display: flex;
   justify-content: space-between;
@@ -624,6 +751,167 @@ dd {
   display: block;
   opacity: 0.6;
   margin-bottom: 0.8rem;
+}
+
+/* ---------- Provenance seal, the verified marker ---------- */
+.seal {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 1.6rem;
+  padding: 0.4rem 0.8rem 0.4rem 0.55rem;
+  border: 1px solid var(--sea);
+  color: var(--sea);
+}
+.seal .mono {
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.seal-mark {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  border: 1px solid var(--sea);
+  transform: rotate(45deg);
+}
+.seal-mark::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  background: var(--sea);
+}
+
+/* ---------- Acquire block, price, status and interest ---------- */
+.acquire {
+  border: var(--hair);
+  background: var(--stone-deep);
+  padding: 1.7rem 1.9rem;
+  max-width: 46rem;
+}
+.acquire-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.2rem;
+  padding-bottom: 1.3rem;
+  border-bottom: var(--hair);
+}
+.acquire-label {
+  display: block;
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 0.4rem;
+}
+.acquire-figure {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.acquire-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.acquire-status .mono {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+.acquire-dot {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  background: var(--ink);
+}
+.acquire-status[data-status="available"] {
+  color: var(--sea);
+}
+.acquire-status[data-status="available"] .acquire-dot {
+  background: var(--sea);
+}
+.acquire-status[data-status="reserved"],
+.acquire-status[data-status="sold"] {
+  color: var(--rose);
+}
+.acquire-status[data-status="reserved"] .acquire-dot,
+.acquire-status[data-status="sold"] .acquire-dot {
+  background: var(--rose);
+}
+.acquire-status[data-status="restoration"] {
+  color: var(--amber);
+}
+.acquire-status[data-status="restoration"] .acquire-dot {
+  background: var(--amber);
+}
+.acquire-note {
+  margin: 1.3rem 0 1.6rem;
+  max-width: 52ch;
+  opacity: 0.9;
+}
+.acquire-form {
+  margin-top: 2.4rem;
+}
+.acquire-form .block-eyebrow {
+  display: block;
+  margin-bottom: 1.1rem;
+  opacity: 0.6;
+}
+
+.interest-open {
+  cursor: pointer;
+  background: transparent;
+  color: inherit;
+  min-height: 44px;
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
+  border: 1px solid currentColor;
+  padding: 0.75rem 1.3rem;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease;
+}
+.interest-open:hover {
+  background: var(--ink);
+  color: var(--stone);
+}
+.interest-lead {
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  opacity: 0.7;
+  max-width: 46ch;
+  margin-bottom: 1rem;
+}
+.interest-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  align-items: stretch;
+}
+.interest-row input {
+  flex: 1 1 16rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: inherit;
+  background: transparent;
+  border: var(--hair);
+  padding: 0.75rem 0.9rem;
+}
+.interest-row input:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+.interest-done {
+  margin-top: 0.2rem;
+  color: var(--sea);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  max-width: 46ch;
 }
 
 /* Provenance diagram on the piece page */

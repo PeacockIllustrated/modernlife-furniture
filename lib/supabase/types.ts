@@ -55,6 +55,9 @@ interface PieceRow {
   story: string;
   restoration_notes: string;
   placeholder: boolean;
+  featured: boolean;
+  featured_position: number | null;
+  provenance_verified: boolean;
   created_at: string;
 }
 interface PieceInsert {
@@ -73,6 +76,9 @@ interface PieceInsert {
   story?: string;
   restoration_notes?: string;
   placeholder?: boolean;
+  featured?: boolean;
+  featured_position?: number | null;
+  provenance_verified?: boolean;
 }
 
 interface PieceImageRow {
@@ -122,6 +128,17 @@ interface EnquiryInsert {
   kind?: EnquiryKind;
 }
 
+interface InterestRow {
+  id: string;
+  piece_id: string;
+  email: string | null;
+  created_at: string;
+}
+interface InterestInsert {
+  piece_id: string;
+  email?: string | null;
+}
+
 export interface Database {
   __InternalSupabase: {
     PostgrestVersion: "12";
@@ -156,6 +173,12 @@ export interface Database {
         Row: EnquiryRow;
         Insert: EnquiryInsert;
         Update: Partial<EnquiryInsert>;
+        Relationships: [];
+      };
+      mlf_interest: {
+        Row: InterestRow;
+        Insert: InterestInsert;
+        Update: Partial<InterestInsert>;
         Relationships: [];
       };
     };

@@ -52,6 +52,9 @@ export interface Piece {
   story: string;
   restorationNotes: string;
   placeholder: boolean;
+  featured: boolean;
+  featuredPosition: number | null;
+  provenanceVerified: boolean;
 }
 
 export interface PieceDetail extends Piece {
@@ -90,6 +93,9 @@ function toPiece(p: (typeof staticPieces)[number]): Piece {
     story: p.story,
     restorationNotes: p.restorationNotes,
     placeholder: p.placeholder,
+    featured: p.featured,
+    featuredPosition: p.featuredPosition,
+    provenanceVerified: p.provenanceVerified,
   };
 }
 
@@ -166,6 +172,9 @@ export const getPieces = cache(
             story: row.story,
             restorationNotes: row.restoration_notes,
             placeholder: row.placeholder,
+            featured: row.featured,
+            featuredPosition: row.featured_position,
+            provenanceVerified: row.provenance_verified,
           }),
         );
       }
@@ -214,6 +223,9 @@ export const getPieceBySlug = cache(
             story: string;
             restoration_notes: string;
             placeholder: boolean;
+            featured: boolean;
+            featured_position: number | null;
+            provenance_verified: boolean;
             mlf_provenance: Provenance[];
             mlf_piece_images: PieceImage[];
           };
@@ -233,6 +245,9 @@ export const getPieceBySlug = cache(
             story: row.story,
             restorationNotes: row.restoration_notes,
             placeholder: row.placeholder,
+            featured: row.featured,
+            featuredPosition: row.featured_position,
+            provenanceVerified: row.provenance_verified,
             provenance: [...row.mlf_provenance].sort(
               (a, b) => a.position - b.position,
             ),
@@ -248,3 +263,64 @@ export const getPieceBySlug = cache(
     return null;
   },
 );
+
+/**
+ * The owner's featured selection for the homepage, ordered by the position the
+ * owner set, then most recent. Falls back to the flagged static pieces without
+ * a database.
+ */
+export const getFeaturedPieces = cache(async (): Promise<Piece[]> => {
+  const order = (a: Piece, b: Piece) => {
+    const pa = a.featuredPosition ?? 9999;
+    const pb = b.featuredPosition ?? 9999;
+    return pa - pb;
+  };
+
+  if (!isSupabaseConfigured) {
+    return staticPieces
+      .map(toPiece)
+      .filter((p) => p.featured)
+      .sort(order);
+  }
+  try {
+    const { createClient } = await import("./supabase/server");
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("mlf_pieces")
+      .select("*, mlf_categories!inner(slug)")
+      .eq("featured", true)
+      .neq("status", "draft")
+      .order("featured_position", { ascending: true, nullsFirst: false })
+      .order("created_at", { ascending: false });
+    if (!error && data) {
+      const rows = data as unknown as Array<
+        PieceRow & { mlf_categories: { slug: string } }
+      >;
+      return rows.map(
+        (row): Piece => ({
+          slug: row.slug,
+          categorySlug: row.mlf_categories.slug,
+          title: row.title,
+          attribution: row.attribution,
+          periodLabel: row.period_label,
+          yearFrom: row.year_from,
+          yearTo: row.year_to,
+          origin: row.origin,
+          materials: row.materials,
+          status: row.status,
+          priceOnRequest: row.price_on_request,
+          pricePence: row.price_pence,
+          story: row.story,
+          restorationNotes: row.restoration_notes,
+          placeholder: row.placeholder,
+          featured: row.featured,
+          featuredPosition: row.featured_position,
+          provenanceVerified: row.provenance_verified,
+        }),
+      );
+    }
+  } catch {
+    // configured but unreachable
+  }
+  return [];
+});
