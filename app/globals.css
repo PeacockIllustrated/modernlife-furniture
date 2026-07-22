@@ -18,7 +18,14 @@
   --hair-colour: rgba(30, 33, 30, 0.28);
   --hair: 1px solid var(--hair-colour); /* hairline rules */
   --hair-bone: 1px solid rgba(221, 217, 204, 0.28); /* hairline on dark */
-  --canvas-edge: clamp(1.25rem, 4vw, 3.75rem); /* breathing room around visuals */
+  --canvas-edge: clamp(0.75rem, 2vw, 1.5rem); /* breathing room around visuals */
+
+  /* Page container: content is capped at --shell and centred, with a comfortable
+     side gutter, so nothing runs edge to edge on a wide desktop. Backgrounds
+     stay full bleed; only the content is inset, via --edge-pad. */
+  --shell: 1200px;
+  --gutter: clamp(1.25rem, 4vw, 3.25rem);
+  --edge-pad: max(var(--gutter), calc((100vw - var(--shell)) / 2));
 
   /* next/font families, injected on <html> in layout.tsx */
   --font-display: var(--font-fraunces), Georgia, serif;
@@ -97,7 +104,7 @@ button:focus-visible,
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.1rem 1.5rem;
+  padding: 1.1rem var(--edge-pad);
   mix-blend-mode: difference;
   color: #e4e2db;
 }
@@ -123,7 +130,7 @@ button:focus-visible,
   /* Let the header wrap: the wordmark holds row one on the gallery gutter, the
      nav drops to a right-aligned second row rather than colliding with it. */
   .site-header {
-    padding: 0.9rem 1.5rem;
+    padding: 0.9rem var(--edge-pad);
     flex-wrap: wrap;
     column-gap: 1rem;
     row-gap: 0.35rem;
@@ -166,14 +173,14 @@ button:focus-visible,
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 0 1.5rem 2rem;
+  padding: 0 var(--edge-pad) 2rem;
   pointer-events: none;
 }
 .hero h1 {
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: clamp(3rem, 14vw, 10.5rem);
-  line-height: 0.92;
+  font-size: clamp(2.8rem, 11vw, 8rem);
+  line-height: 0.94;
   letter-spacing: -0.02em;
 }
 .hero h1 em {
@@ -199,7 +206,7 @@ button:focus-visible,
 
 /* ---------- Manifesto ---------- */
 .manifesto {
-  padding: 22vh 1.5rem;
+  padding: 16vh var(--edge-pad);
   border-top: var(--hair);
 }
 .manifesto p {
@@ -218,7 +225,8 @@ button:focus-visible,
 .specimen {
   display: grid;
   grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  min-height: 100vh;
+  min-height: clamp(560px, 84vh, 820px);
+  padding-inline: var(--edge-pad);
   border-top: var(--hair);
 }
 .specimen.dark {
@@ -333,7 +341,7 @@ dd {
 /* ---------- Closing and footer ---------- */
 .closing {
   border-top: var(--hair);
-  padding: 20vh 1.5rem;
+  padding: 15vh var(--edge-pad);
   text-align: center;
   background: var(--stone-deep);
 }
@@ -369,9 +377,7 @@ dd {
 /* ---------- Featured rail, the owner's homepage selection ---------- */
 .featured-rail {
   border-top: var(--hair);
-  padding: 12vh 1.5rem;
-  max-width: 1180px;
-  margin: 0 auto;
+  padding: 12vh var(--edge-pad);
 }
 .featured-head {
   margin-bottom: 3.5rem;
@@ -498,7 +504,7 @@ dd {
   justify-content: space-between;
   gap: 1rem;
   flex-wrap: wrap;
-  padding: 1.4rem 1.5rem;
+  padding: 1.4rem var(--edge-pad);
   border-top: var(--hair);
   opacity: 0.8;
 }
@@ -528,7 +534,7 @@ dd {
   .label {
     border-left: none;
     border-top: var(--hair);
-    padding: 2.4rem 1.5rem 3.4rem;
+    padding: 2.4rem 0 3.4rem;
   }
   .hero-sub {
     flex-direction: column;
@@ -555,9 +561,7 @@ dd {
 
 .page {
   min-height: 100vh;
-  padding: 7.5rem 1.5rem 6rem;
-  max-width: 1180px;
-  margin: 0 auto;
+  padding: 7.5rem var(--edge-pad) 6rem;
 }
 .breadcrumb {
   display: flex;
@@ -671,7 +675,7 @@ dd {
   position: relative;
   height: 42vh;
   min-height: 280px;
-  margin: 0 -1.5rem 3.5rem;
+  margin: 0 calc(-1 * var(--edge-pad)) 3.5rem;
   overflow: hidden;
   border-bottom: var(--hair);
 }
@@ -968,7 +972,7 @@ dd {
   position: relative;
   height: 52vh;
   min-height: 320px;
-  margin: 0 -1.5rem 3.5rem;
+  margin: 0 calc(-1 * var(--edge-pad)) 3.5rem;
   overflow: hidden;
   border-bottom: var(--hair);
 }
@@ -1079,12 +1083,12 @@ button.enquire {
    study behind a centred invitation. Reused to close the inner pages. */
 .feature {
   position: relative;
-  margin: 5rem -1.5rem 0;
+  margin: 5rem calc(-1 * var(--edge-pad)) 0;
   background: var(--basalt);
   color: var(--bone);
   overflow: hidden;
   border-top: var(--hair);
-  padding: 6rem 1.5rem;
+  padding: 6rem var(--edge-pad);
   text-align: center;
 }
 .feature-bg {
@@ -1357,7 +1361,7 @@ button.enquire {
   .category-band {
     height: 30vh;
     min-height: 200px;
-    margin: 0 -1.5rem 2.5rem;
+    margin: 0 calc(-1 * var(--edge-pad)) 2.5rem;
   }
   /* Reclaim the desktop-scale dead space around the stacked sections. */
   .page {
@@ -1368,10 +1372,10 @@ button.enquire {
     margin-bottom: 2rem;
   }
   .manifesto {
-    padding: 14vh 1.5rem;
+    padding: 14vh var(--edge-pad);
   }
   .closing {
-    padding: 12vh 1.5rem;
+    padding: 12vh var(--edge-pad);
   }
   /* Align the ledger rows to the left rag, and collapse the page-head rule
      into the ledger's own top rule so there is no stranded empty band. */
