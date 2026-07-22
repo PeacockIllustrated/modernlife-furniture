@@ -11,6 +11,8 @@ import EnquiryForm from "@/components/forms/EnquiryForm";
 import InterestButton from "@/components/piece/InterestButton";
 import RevealObserver from "@/components/scroll/RevealObserver";
 
+export const revalidate = 60;
+
 export function generateStaticParams() {
   return staticPieces.map((p) => ({ slug: p.slug }));
 }

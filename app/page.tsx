@@ -9,6 +9,10 @@ import RevealObserver from "@/components/scroll/RevealObserver";
 import { rooms } from "@/content/landing";
 import { getCategories } from "@/lib/collection";
 
+// Prerender and serve from cache, refreshing at most once a minute, so
+// navigation is instant rather than waiting on a database round-trip.
+export const revalidate = 60;
+
 /**
  * The shop home: a hero banner, the owner's highlighted pieces as a
  * promotional range, the collection to shop by category (each room keeping its

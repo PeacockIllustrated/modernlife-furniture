@@ -107,8 +107,8 @@ export const getCategories = cache(async (): Promise<Category[]> => {
   // table returns an empty list rather than the placeholder demo content.
   if (!isSupabaseConfigured) return staticCategories();
   try {
-    const { createClient } = await import("./supabase/server");
-    const supabase = await createClient();
+    const { createPublicClient } = await import("./supabase/public");
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("modern_categories")
       .select("slug,name,position,story,hint,facts,placeholder")
@@ -140,8 +140,8 @@ export const getPieces = cache(
         : all;
     }
     try {
-      const { createClient } = await import("./supabase/server");
-      const supabase = await createClient();
+      const { createPublicClient } = await import("./supabase/public");
+      const supabase = createPublicClient();
       let query = supabase
         .from("modern_pieces")
         .select("*, modern_categories!inner(slug)")
@@ -196,8 +196,8 @@ export const getPieceBySlug = cache(
     }
     try {
       {
-        const { createClient } = await import("./supabase/server");
-        const supabase = await createClient();
+        const { createPublicClient } = await import("./supabase/public");
+        const supabase = createPublicClient();
         const { data, error } = await supabase
           .from("modern_pieces")
           .select(
@@ -283,8 +283,8 @@ export const getFeaturedPieces = cache(async (): Promise<Piece[]> => {
       .sort(order);
   }
   try {
-    const { createClient } = await import("./supabase/server");
-    const supabase = await createClient();
+    const { createPublicClient } = await import("./supabase/public");
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("modern_pieces")
       .select("*, modern_categories!inner(slug)")

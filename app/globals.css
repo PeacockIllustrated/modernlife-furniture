@@ -416,7 +416,6 @@ dd {
 /* ---------- Shop by category heading ---------- */
 .shop-by {
   padding: 11vh var(--edge-pad) 0;
-  max-width: 60ch;
 }
 .shop-by .eyebrow {
   display: block;
@@ -430,9 +429,11 @@ dd {
   letter-spacing: -0.015em;
   line-height: 1.04;
   margin-bottom: 1rem;
+  max-width: 18ch;
 }
 .shop-by p {
   opacity: 0.85;
+  max-width: 52ch;
 }
 
 /* ---------- Highlighted, the promotional range ---------- */

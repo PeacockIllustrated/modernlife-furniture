@@ -12,6 +12,8 @@ export const metadata: Metadata = {
     "Chairs, shelving and storage, cabinets and sideboards, and tables. Vintage designer furniture, bought, restored and rehomed.",
 };
 
+export const revalidate = 60;
+
 /**
  * The collection index: each category shown as a generative preview row, its
  * own material study beside the name, in the landing's light and dark rhythm.

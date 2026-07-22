@@ -8,6 +8,8 @@ import SpecimenCard from "@/components/collection/SpecimenCard";
 import FeatureBand from "@/components/gallery/FeatureBand";
 import RevealObserver from "@/components/scroll/RevealObserver";
 
+export const revalidate = 60;
+
 export function generateStaticParams() {
   return rooms.map((r) => ({ category: r.slug }));
 }
