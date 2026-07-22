@@ -1,12 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import type {
   PieceStatus,
   ImageKind,
   EnquiryKind,
 } from "@/lib/supabase/types";
+
+/**
+ * The owner dashboard. Behind the username and password gate, it reads and
+ * writes the collection through the /api/admin routes, which use the service
+ * role on the server. No Supabase session lives in the browser.
+ */
 
 interface AdminCategory {
   id: string;
@@ -74,8 +79,7 @@ const STATUSES: PieceStatus[] = [
 ];
 const IMAGE_KINDS: ImageKind[] = ["hero", "detail", "as_found", "restored"];
 
-export default function AdminDashboard({ email }: { email: string }) {
-  const supabase = useMemo(() => createClient(), []);
+export default function AdminDashboard() {
   const [categories, setCategories] = useState<AdminCategory[]>([]);
   const [pieces, setPieces] = useState<AdminPiece[]>([]);
   const [provenance, setProvenance] = useState<AdminProvenance[]>([]);
@@ -83,57 +87,65 @@ export default function AdminDashboard({ email }: { email: string }) {
   const [enquiries, setEnquiries] = useState<AdminEnquiry[]>([]);
   const [interest, setInterest] = useState<AdminInterest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [editing, setEditing] = useState<string | "new" | null>(null);
 
   const loadAll = useCallback(async () => {
     setLoading(true);
-    const [c, p, pr, im, en, it] = await Promise.all([
-      supabase.from("modern_categories").select("id,slug,name").order("position"),
-      supabase.from("modern_pieces").select("*").order("created_at", { ascending: false }),
-      supabase.from("modern_provenance").select("*").order("position"),
-      supabase.from("modern_piece_images").select("*").order("position"),
-      supabase.from("modern_enquiries").select("*").order("created_at", { ascending: false }),
-      supabase.from("modern_interest").select("*").order("created_at", { ascending: false }),
-    ]);
-    setCategories((c.data ?? []) as AdminCategory[]);
-    setPieces((p.data ?? []) as AdminPiece[]);
-    setProvenance((pr.data ?? []) as AdminProvenance[]);
-    setImages((im.data ?? []) as AdminImage[]);
-    setEnquiries((en.data ?? []) as AdminEnquiry[]);
-    setInterest((it.data ?? []) as AdminInterest[]);
-    setLoading(false);
-  }, [supabase]);
+    setLoadError("");
+    try {
+      const res = await fetch("/api/admin/data", { cache: "no-store" });
+      if (res.status === 401) {
+        window.location.reload();
+        return;
+      }
+      if (!res.ok) throw new Error("load failed");
+      const d = await res.json();
+      setCategories(d.categories ?? []);
+      setPieces(d.pieces ?? []);
+      setProvenance(d.provenance ?? []);
+      setImages(d.images ?? []);
+      setEnquiries(d.enquiries ?? []);
+      setInterest(d.interest ?? []);
+    } catch {
+      setLoadError("Could not load the collection just now.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     loadAll();
   }, [loadAll]);
 
   async function signOut() {
-    await supabase.auth.signOut();
+    await fetch("/api/admin/login", { method: "DELETE" });
     window.location.href = "/";
   }
 
   async function deleteEnquiry(id: string) {
-    const { error } = await supabase.from("modern_enquiries").delete().eq("id", id);
-    // Only drop it from the view if it really went; otherwise reload so the
-    // dashboard reflects the truth rather than hiding a still-present enquiry.
-    if (error) loadAll();
-    else setEnquiries((e) => e.filter((x) => x.id !== id));
-  }
-
-  async function deletePiece(id: string) {
-    await supabase.from("modern_pieces").delete().eq("id", id);
-    setEditing(null);
-    loadAll();
+    const res = await fetch(`/api/admin/enquiries?id=${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    });
+    if (res.ok) setEnquiries((e) => e.filter((x) => x.id !== id));
+    else loadAll();
   }
 
   async function clearInterest(pieceId: string) {
-    const { error } = await supabase
-      .from("modern_interest")
-      .delete()
-      .eq("piece_id", pieceId);
-    if (error) loadAll();
-    else setInterest((r) => r.filter((x) => x.piece_id !== pieceId));
+    const res = await fetch(
+      `/api/admin/interest?pieceId=${encodeURIComponent(pieceId)}`,
+      { method: "DELETE" },
+    );
+    if (res.ok) setInterest((r) => r.filter((x) => x.piece_id !== pieceId));
+    else loadAll();
+  }
+
+  async function deletePiece(id: string) {
+    await fetch(`/api/admin/pieces?id=${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    });
+    setEditing(null);
+    loadAll();
   }
 
   // Roll interest up per piece: a count and the emails that were left, most
@@ -171,11 +183,17 @@ export default function AdminDashboard({ email }: { email: string }) {
   return (
     <div className="admin">
       <div className="admin-bar mono">
-        <span>Signed in as {email}</span>
+        <span>Signed in</span>
         <button className="enquire" onClick={signOut} type="button">
           Sign out
         </button>
       </div>
+
+      {loadError ? (
+        <p className="form-note mono" data-tone="error" role="status">
+          {loadError}
+        </p>
+      ) : null}
 
       <section className="admin-section">
         <h2 className="admin-h">Enquiries</h2>
@@ -269,7 +287,6 @@ export default function AdminDashboard({ email }: { email: string }) {
 
         {editing === "new" ? (
           <PieceForm
-            supabase={supabase}
             categories={categories}
             onDone={() => {
               setEditing(null);
@@ -286,6 +303,7 @@ export default function AdminDashboard({ email }: { email: string }) {
                   <span className="mono" style={{ opacity: 0.6 }}>
                     {piece.status}
                     {piece.placeholder ? " · placeholder" : ""}
+                    {piece.featured ? " · featured" : ""}
                   </span>
                   <p>
                     <strong>{piece.title}</strong>
@@ -313,7 +331,6 @@ export default function AdminDashboard({ email }: { email: string }) {
               </div>
               {editing === piece.id ? (
                 <PieceForm
-                  supabase={supabase}
                   categories={categories}
                   piece={piece}
                   provenance={provenance.filter((r) => r.piece_id === piece.id)}
@@ -332,17 +349,13 @@ export default function AdminDashboard({ email }: { email: string }) {
   );
 }
 
-type SupabaseClient = ReturnType<typeof createClient>;
-
 function PieceForm({
-  supabase,
   categories,
   piece,
   provenance = [],
   images = [],
   onDone,
 }: {
-  supabase: SupabaseClient;
   categories: AdminCategory[];
   piece?: AdminPiece;
   provenance?: AdminProvenance[];
@@ -383,86 +396,54 @@ function PieceForm({
     setError("");
     try {
       const payload = {
-        slug: form.slug.trim(),
-        category_id: form.category_id,
-        title: form.title.trim(),
-        attribution: form.attribution.trim(),
-        period_label: form.period_label.trim(),
-        origin: form.origin.trim(),
-        materials: form.materials
-          .split(",")
-          .map((m) => m.trim())
-          .filter(Boolean),
-        status: form.status as PieceStatus,
-        price_on_request: form.price_on_request,
-        price_pence:
-          form.price_on_request || !form.price.trim()
-            ? null
-            : Math.round(Number(form.price.trim().replace(/[^0-9.]/g, "")) * 100),
-        placeholder: form.placeholder,
-        featured: form.featured,
-        featured_position:
-          form.featured && form.featured_position.trim()
-            ? Math.round(Number(form.featured_position.trim()))
-            : null,
-        provenance_verified: form.provenance_verified,
-        story: form.story.trim(),
-        restoration_notes: form.restoration_notes.trim(),
+        id: piece?.id,
+        piece: {
+          slug: form.slug.trim(),
+          category_id: form.category_id,
+          title: form.title.trim(),
+          attribution: form.attribution.trim(),
+          period_label: form.period_label.trim(),
+          year_from: piece?.year_from ?? null,
+          year_to: piece?.year_to ?? null,
+          origin: form.origin.trim(),
+          materials: form.materials
+            .split(",")
+            .map((m) => m.trim())
+            .filter(Boolean),
+          status: form.status as PieceStatus,
+          price_on_request: form.price_on_request,
+          price_pence:
+            form.price_on_request || !form.price.trim()
+              ? null
+              : Math.round(
+                  Number(form.price.trim().replace(/[^0-9.]/g, "")) * 100,
+                ),
+          placeholder: form.placeholder,
+          featured: form.featured,
+          featured_position:
+            form.featured && form.featured_position.trim()
+              ? Math.round(Number(form.featured_position.trim()))
+              : null,
+          provenance_verified: form.provenance_verified,
+          story: form.story.trim(),
+          restoration_notes: form.restoration_notes.trim(),
+        },
+        provenance: rows.map((r) => ({ label: r.label, detail: r.detail })),
+        images: imgRows.map((r) => ({
+          path: r.path,
+          alt: r.alt,
+          kind: r.kind,
+        })),
       };
 
-      let pieceId = piece?.id;
-      if (piece) {
-        const { error } = await supabase
-          .from("modern_pieces")
-          .update(payload as never)
-          .eq("id", piece.id);
-        if (error) throw error;
-      } else {
-        const { data, error } = await supabase
-          .from("modern_pieces")
-          .insert(payload as never)
-          .select("id")
-          .single();
-        if (error) throw error;
-        pieceId = (data as { id: string } | null)?.id;
-      }
-      if (!pieceId) throw new Error("Could not save the piece.");
-
-      // Replace provenance and images with the edited set. Errors are surfaced
-      // (and the form keeps its state) so a failed write is visible and can be
-      // retried rather than silently losing the rows.
-      const provDel = await supabase
-        .from("modern_provenance")
-        .delete()
-        .eq("piece_id", pieceId);
-      if (provDel.error) throw provDel.error;
-      if (rows.length) {
-        const { error } = await supabase.from("modern_provenance").insert(
-          rows.map((r, i) => ({
-            piece_id: pieceId,
-            position: i + 1,
-            label: r.label.trim(),
-            detail: r.detail.trim(),
-          })) as never,
-        );
-        if (error) throw error;
-      }
-      const imgDel = await supabase
-        .from("modern_piece_images")
-        .delete()
-        .eq("piece_id", pieceId);
-      if (imgDel.error) throw imgDel.error;
-      if (imgRows.length) {
-        const { error } = await supabase.from("modern_piece_images").insert(
-          imgRows.map((r, i) => ({
-            piece_id: pieceId,
-            position: i + 1,
-            path: r.path.trim(),
-            alt: r.alt.trim(),
-            kind: r.kind,
-          })) as never,
-        );
-        if (error) throw error;
+      const res = await fetch("/api/admin/pieces", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}));
+        throw new Error(json.error ?? "Could not save.");
       }
       onDone();
     } catch (err) {
