@@ -374,129 +374,272 @@ dd {
   background: var(--ink);
   color: var(--stone);
 }
-/* ---------- Featured rail, the owner's homepage selection ---------- */
-.featured-rail {
-  border-top: var(--hair);
-  padding: 12vh var(--edge-pad);
+/* ---------- Shop calls to action ---------- */
+.btn {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
+  padding: 0.9rem 1.6rem;
+  min-height: 44px;
+  text-decoration: none;
+  border: 1px solid var(--ink);
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
 }
-.featured-head {
-  margin-bottom: 3.5rem;
-  max-width: 46ch;
+.btn-solid {
+  background: var(--ink);
+  color: var(--stone);
 }
-.featured-head .eyebrow {
+.btn-solid:hover {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: var(--basalt);
+}
+.btn-line {
+  background: transparent;
+  color: var(--ink);
+}
+.btn-line:hover {
+  background: var(--ink);
+  color: var(--stone);
+}
+.hero-cta {
+  display: flex;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  margin-top: 1.9rem;
+}
+
+/* ---------- Shop by category heading ---------- */
+.shop-by {
+  padding: 11vh var(--edge-pad) 0;
+  max-width: 60ch;
+}
+.shop-by .eyebrow {
   display: block;
   opacity: 0.6;
   margin-bottom: 1rem;
 }
-.featured-head h2 {
+.shop-by h2 {
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: clamp(2rem, 4.4vw, 3.4rem);
+  font-size: clamp(2rem, 4.4vw, 3.2rem);
   letter-spacing: -0.015em;
   line-height: 1.04;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1rem;
 }
-.featured-head p {
+.shop-by p {
   opacity: 0.85;
 }
-.featured-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
-  gap: 1px;
-  background: var(--hair-colour);
-  border: var(--hair);
+
+/* ---------- Highlighted, the promotional range ---------- */
+.highlight {
+  border-top: var(--hair);
+  padding: 9vh var(--edge-pad);
 }
-.featured-entry {
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-  padding: 2rem 1.9rem 2.2rem;
-  background: var(--stone-deep);
+.highlight-head {
+  max-width: 52ch;
+  margin-bottom: 2.6rem;
+}
+.highlight-head .eyebrow {
+  display: block;
+  opacity: 0.6;
+  margin-bottom: 1rem;
+}
+.highlight-head h2 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2rem, 4.6vw, 3.4rem);
+  letter-spacing: -0.015em;
+  line-height: 1.04;
+  margin-bottom: 1.1rem;
+}
+.highlight-head p {
+  opacity: 0.85;
+}
+
+/* Accent per card, for a little colour pop */
+.promo {
   text-decoration: none;
   color: inherit;
-  transition: background 0.25s ease;
+  --accent: var(--amber);
 }
-.featured-entry:hover {
-  background: var(--stone);
+.promo[data-accent="sea"] {
+  --accent: var(--sea);
 }
-.featured-entry-top {
+.promo[data-accent="rose"] {
+  --accent: var(--rose);
+}
+.promo-figure {
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--accent) 16%, var(--stone-deep));
+  border-bottom: 3px solid var(--accent);
+}
+.promo-figure canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: pan-y;
+}
+
+/* Lead banner */
+.promo-lead {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  border: var(--hair);
+  background: var(--stone-deep);
+  margin-bottom: 1.4rem;
+}
+.promo-lead .promo-figure {
+  min-height: 420px;
+  border-bottom: none;
+  border-right: 3px solid var(--accent);
+}
+.promo-body {
+  display: flex;
+  flex-direction: column;
+}
+.promo-lead .promo-body {
+  padding: 2.6rem 2.4rem;
+}
+.promo-tag {
+  align-self: flex-start;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 0.3rem 0.7rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 1.4rem;
+}
+.promo-attr {
+  opacity: 0.7;
+  margin-bottom: 0.6rem;
+}
+.promo-lead h3 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.8rem, 3.4vw, 2.8rem);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin-bottom: 1rem;
+}
+.promo-story {
+  opacity: 0.85;
+  max-width: 42ch;
+  margin-bottom: 1.6rem;
+}
+.promo-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 1rem;
-  justify-content: space-between;
+  gap: 0.6rem 1.4rem;
   align-items: baseline;
-  font-size: 0.68rem;
-  letter-spacing: 0.06em;
-  opacity: 0.75;
+  margin-bottom: 1.6rem;
 }
-.featured-verified {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
+.promo-price {
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+.promo-status {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+.promo-status[data-status="available"] {
   color: var(--sea);
-  opacity: 1;
-  text-transform: uppercase;
+}
+.promo-status[data-status="reserved"],
+.promo-status[data-status="sold"] {
+  color: var(--rose);
+}
+.promo-status[data-status="restoration"] {
+  color: var(--amber);
+}
+.promo-cta {
+  margin-top: auto;
+  align-self: flex-start;
+  font-size: 0.74rem;
   letter-spacing: 0.1em;
+  border-bottom: 1px solid var(--accent);
+  padding-bottom: 3px;
+  color: var(--accent);
 }
-.featured-verified .seal-mark {
-  width: 10px;
-  height: 10px;
+.promo-lead:hover .promo-cta {
+  border-bottom-width: 2px;
 }
-.featured-entry h3 {
+
+/* Card row */
+.promo-rest {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  gap: 1.4rem;
+}
+.promo-card {
+  border: var(--hair);
+  background: var(--stone-deep);
+  transition: transform 0.25s ease;
+}
+.promo-card:hover {
+  transform: translateY(-3px);
+}
+.promo-card .promo-figure {
+  min-height: 230px;
+}
+.promo-card .promo-body {
+  padding: 1.5rem 1.6rem 1.8rem;
+  gap: 0.4rem;
+}
+.promo-card h3 {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  font-size: clamp(1.3rem, 2.2vw, 1.7rem);
   line-height: 1.1;
   letter-spacing: -0.01em;
-  margin-top: 0.3rem;
+  margin-top: 0.2rem;
 }
-.featured-entry:hover h3 {
+.promo-card:hover h3 {
   text-decoration: underline;
   text-underline-offset: 4px;
 }
-.featured-materials {
-  font-size: 0.9rem;
-  opacity: 0.75;
+.promo-sub {
+  opacity: 0.6;
+  font-size: 0.68rem;
+  margin-top: 0.3rem;
 }
-.featured-entry-meta {
-  margin-top: auto;
-  padding-top: 1.2rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem 1.1rem;
-  font-size: 0.72rem;
-  letter-spacing: 0.04em;
-  opacity: 0.8;
-}
-.featured-entry-meta [data-status="sold"],
-.featured-entry-meta [data-status="reserved"] {
-  color: var(--rose);
-  opacity: 1;
-}
-.featured-entry-meta [data-status="available"] {
-  color: var(--sea);
-  opacity: 1;
-}
-.featured-entry-meta [data-status="restoration"] {
-  color: var(--amber);
-  opacity: 1;
-}
-.featured-all {
+.highlight-all {
   display: inline-block;
-  margin-top: 2.5rem;
+  margin-top: 2.6rem;
   font-size: 0.74rem;
   letter-spacing: 0.1em;
   text-decoration: none;
   color: inherit;
   border: 1px solid currentColor;
-  padding: 0.8rem 1.4rem;
+  padding: 0.85rem 1.5rem;
   transition:
     background 0.25s ease,
     color 0.25s ease;
 }
-.featured-all:hover {
+.highlight-all:hover {
   background: var(--ink);
   color: var(--stone);
+}
+@media (max-width: 760px) {
+  .promo-lead {
+    grid-template-columns: 1fr;
+  }
+  .promo-lead .promo-figure {
+    min-height: 260px;
+    border-right: none;
+    border-bottom: 3px solid var(--accent);
+  }
+  .promo-lead .promo-body {
+    padding: 2rem 1.6rem;
+  }
 }
 
 .site-footer {

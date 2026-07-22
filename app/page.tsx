@@ -1,7 +1,7 @@
 import Hero from "@/components/gallery/Hero";
+import Highlighted from "@/components/gallery/Highlighted";
 import Manifesto from "@/components/gallery/Manifesto";
 import Room from "@/components/gallery/Room";
-import Featured from "@/components/gallery/Featured";
 import Closing from "@/components/gallery/Closing";
 import Tide from "@/components/canvas/Tide";
 import RoomVisual from "@/components/canvas/RoomVisual";
@@ -10,15 +10,11 @@ import { rooms } from "@/content/landing";
 import { getCategories } from "@/lib/collection";
 
 /**
- * The landing gallery: hero, manifesto, five category rooms in the light,
- * dark, light, dark, light rhythm, then the closing. Panels carry static
- * placeholders in session 1; the live generative visuals replace them in
- * sessions 2 and 3.
+ * The shop home: a hero banner, the owner's highlighted pieces as a
+ * promotional range, the collection to shop by category (each room keeping its
+ * generative visual), a brand note, then the closing invitation.
  */
 export default async function Home() {
-  // Story, hint and dl facts come from the collection layer (Supabase when
-  // configured, the static catalogue otherwise); the room's visual, variant and
-  // CTA stay in the presentational scaffold.
   const categories = await getCategories();
   const bySlug = new Map(categories.map((c) => [c.slug, c]));
 
@@ -28,7 +24,17 @@ export default async function Home() {
         <Tide label="Tide, the hero field, the grain of time" />
       </Hero>
 
-      <Manifesto />
+      <Highlighted />
+
+      <section className="shop-by" aria-labelledby="shop-by-title">
+        <span className="mono eyebrow">Shop by category</span>
+        <h2 id="shop-by-title">Four rooms of the collection</h2>
+        <p>
+          Chairs, shelving and storage, cabinets and sideboards, and tables.
+          Each room keeps its own material study; step into any one to see what
+          is in.
+        </p>
+      </section>
 
       {rooms.map((room) => {
         const category = bySlug.get(room.slug);
@@ -52,7 +58,7 @@ export default async function Home() {
         );
       })}
 
-      <Featured />
+      <Manifesto />
 
       <Closing />
 

@@ -1,10 +1,10 @@
+import Link from "next/link";
 import { hero } from "@/content/landing";
 
 /**
- * Hero room. The live Tide canvas (the grain of time) lands in session 3;
- * for now the field is a still stone ground so the wordmark and sub read as
- * intended. The wordmark treatment is "Modern / Life furniture", italic on
- * furniture, per CONTENT.md.
+ * Hero banner. The live Tide canvas (the grain of time) sits behind the
+ * wordmark, tagline and the two shop calls to action. The wordmark treatment
+ * is "Modern / Life furniture", italic on furniture, per CONTENT.md.
  */
 export default function Hero({ children }: { children?: React.ReactNode }) {
   return (
@@ -18,7 +18,14 @@ export default function Hero({ children }: { children?: React.ReactNode }) {
         </h1>
         <div className="hero-sub">
           <p>{hero.sub}</p>
-          <span className="mono scroll-cue">{hero.cue}</span>
+          <div className="hero-cta">
+            <Link className="btn btn-solid" href="/collection">
+              Browse the collection
+            </Link>
+            <Link className="btn btn-line" href="/enquire">
+              Enquire
+            </Link>
+          </div>
         </div>
       </div>
     </section>
