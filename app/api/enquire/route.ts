@@ -4,7 +4,7 @@ import { rateLimit } from "@/lib/rateLimit";
 import { notifyOwner } from "@/lib/email";
 import type { Database, EnquiryKind } from "@/lib/supabase/types";
 
-const KINDS: EnquiryKind[] = ["piece", "restoration", "sourcing", "selling"];
+const KINDS: EnquiryKind[] = ["piece", "sourcing", "selling"];
 
 function clientKey(req: Request): string {
   const fwd = req.headers.get("x-forwarded-for");

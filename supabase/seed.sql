@@ -33,13 +33,6 @@ values
     'Touch the surface to add a ring of your own',
     '[{"term":"In collection","detail":"Dining, coffee, side and nesting"},{"term":"Periods","detail":"1930 to 1975"},{"term":"Origins","detail":"Denmark, Italy, Britain"}]'::jsonb,
     true
-  ),
-  (
-    'restoration', 'Restoration', 5,
-    'Every piece comes apart before it comes back. We strip a chair to its parts, shell, upholstery, foam and frame, put right what the decades took, and reassemble it with nothing hidden. The drawing below is how we think.',
-    'Move to the edge of the panel to take the piece apart',
-    '[{"term":"Services","detail":"French polishing, re-caning, reupholstery, re-chroming"},{"term":"Turnaround","detail":"From three weeks"},{"term":"Collection","detail":"North East England, courier nationwide"}]'::jsonb,
-    true
   )
 on conflict (slug) do update set
   name = excluded.name,

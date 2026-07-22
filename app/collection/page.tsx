@@ -15,7 +15,6 @@ export const metadata: Metadata = {
 /**
  * The collection index: each category shown as a generative preview row, its
  * own material study beside the name, in the landing's light and dark rhythm.
- * Restoration lives at its own service page, so it links out.
  */
 export default async function CollectionIndex() {
   const categories = await getCategories();
@@ -30,7 +29,7 @@ export default async function CollectionIndex() {
       </nav>
 
       <div className="page-head">
-        <span className="mono eyebrow">Five rooms, one bench</span>
+        <span className="mono eyebrow">Four rooms</span>
         <h1>The collection</h1>
         <p>
           Each category is a room in the gallery. The collection changes weekly
@@ -44,14 +43,10 @@ export default async function CollectionIndex() {
           const category = bySlug.get(room.slug);
           const name = category?.name ?? room.title;
           const hint = category?.hint ?? room.hint;
-          const href =
-            room.slug === "restoration"
-              ? "/restoration"
-              : `/collection/${room.slug}`;
           return (
             <Link
               key={room.id}
-              href={href}
+              href={`/collection/${room.slug}`}
               className={`cat-row reveal${room.variant === "dark" ? " dark" : ""}`}
               aria-label={`${name}, ${room.number}`}
             >
@@ -67,9 +62,7 @@ export default async function CollectionIndex() {
                 <h2>{name}</h2>
                 <span className="hint">{hint}</span>
                 <span className="cat-row-view">
-                  {room.slug === "restoration"
-                    ? "View restoration"
-                    : `View ${name.toLowerCase()}`}
+                  View {name.toLowerCase()}
                 </span>
               </div>
             </Link>

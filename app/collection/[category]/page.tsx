@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { getCategoryBySlug, getPieces } from "@/lib/collection";
 import { rooms } from "@/content/landing";
 import CategoryBand from "@/components/collection/CategoryBand";
@@ -8,12 +8,8 @@ import SpecimenCard from "@/components/collection/SpecimenCard";
 import FeatureBand from "@/components/gallery/FeatureBand";
 import RevealObserver from "@/components/scroll/RevealObserver";
 
-const productSlugs = rooms
-  .filter((r) => r.slug !== "restoration")
-  .map((r) => r.slug);
-
 export function generateStaticParams() {
-  return productSlugs.map((category) => ({ category }));
+  return rooms.map((r) => ({ category: r.slug }));
 }
 
 export async function generateMetadata({
@@ -33,9 +29,6 @@ export default async function CategoryPage({
   params: Promise<{ category: string }>;
 }) {
   const { category } = await params;
-  // Restoration is a service, not a product listing.
-  if (category === "restoration") redirect("/restoration");
-
   const data = await getCategoryBySlug(category);
   const room = rooms.find((r) => r.slug === category);
   if (!data || !room) notFound();

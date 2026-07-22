@@ -1,6 +1,6 @@
 /**
  * Landing copy, verbatim from CONTENT.md and reference/concept-v5.html
- * (sections s01 to s05). British spelling, sentence case, no em-dashes.
+ * (sections s01 to s04). British spelling, sentence case, no em-dashes.
  *
  * The dl facts here are the plausible placeholders flagged in CONTENT.md.
  * In session 4 they are replaced by modern_categories rows carrying
@@ -55,7 +55,7 @@ export const closing = {
 export const rooms: Room[] = [
   {
     id: "s01",
-    number: "Category 01 of 05",
+    number: "Category 01 of 04",
     slug: "chairs",
     title: "Chairs",
     story:
@@ -73,7 +73,7 @@ export const rooms: Room[] = [
   },
   {
     id: "s02",
-    number: "Category 02 of 05",
+    number: "Category 02 of 04",
     slug: "shelving-and-storage",
     title: "Shelving and storage",
     story:
@@ -94,7 +94,7 @@ export const rooms: Room[] = [
   },
   {
     id: "s03",
-    number: "Category 03 of 05",
+    number: "Category 03 of 04",
     slug: "cabinets-and-sideboards",
     title: "Cabinets and sideboards",
     story:
@@ -116,7 +116,7 @@ export const rooms: Room[] = [
   },
   {
     id: "s04",
-    number: "Category 04 of 05",
+    number: "Category 04 of 04",
     slug: "tables",
     title: "Tables",
     story:
@@ -131,27 +131,5 @@ export const rooms: Room[] = [
     variant: "dark",
     visual: "rings",
     canvasLabel: "Tables, rings of grain and ownership, touch to add one",
-  },
-  {
-    id: "s05",
-    number: "Category 05 of 05",
-    slug: "restoration",
-    title: "Restoration",
-    story:
-      "Every piece comes apart before it comes back. We strip a chair to its parts, shell, upholstery, foam and frame, put right what the decades took, and reassemble it with nothing hidden. The drawing below is how we think.",
-    hint: "Move to the edge of the panel to take the piece apart",
-    facts: [
-      {
-        term: "Services",
-        detail: "French polishing, re-caning, reupholstery, re-chroming",
-      },
-      { term: "Turnaround", detail: "From three weeks" },
-      { term: "Collection", detail: "North East England, courier nationwide" },
-    ],
-    cta: { label: "Bring us a piece", href: "/restoration" },
-    variant: "light",
-    visual: "bench",
-    canvasLabel:
-      "Restoration, a mortise and tenon joint that draws apart, move outward to take it apart",
   },
 ];

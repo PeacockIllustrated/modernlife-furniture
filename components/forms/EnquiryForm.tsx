@@ -3,9 +3,8 @@
 import { useState } from "react";
 import type { EnquiryKind } from "@/lib/supabase/types";
 
-const KIND_LABELS: Record<EnquiryKind, string> = {
+const KIND_LABELS: Partial<Record<EnquiryKind, string>> = {
   piece: "About a piece",
-  restoration: "Restoration",
   sourcing: "Find me something",
   selling: "I have a piece to sell",
 };
