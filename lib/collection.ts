@@ -1,9 +1,21 @@
 import "server-only";
 import { cache } from "react";
 import { isSupabaseConfigured } from "./supabase/env";
-import type { CategoryFact, PieceStatus, Database } from "./supabase/types";
+import type {
+  CategoryFact,
+  Database,
+  FeatureLayout,
+  PieceStatus,
+} from "./supabase/types";
 import { rooms } from "@/content/landing";
 import { staticPieces } from "@/content/pieces";
+import {
+  defaultIncluded,
+  globalFaqs,
+  globalWords,
+  storeSettings,
+  type StoreSettings,
+} from "@/content/store";
 
 type PieceRow = Database["public"]["Tables"]["modern_pieces"]["Row"];
 
@@ -36,6 +48,42 @@ export interface PieceImage {
   kind: "hero" | "detail" | "as_found" | "restored";
 }
 
+export interface PieceFeature {
+  position: number;
+  eyebrow: string;
+  title: string;
+  body: string;
+  imagePath: string;
+  imageAlt: string;
+  layout: FeatureLayout;
+}
+
+export interface SpecRow {
+  position: number;
+  grouping: string;
+  term: string;
+  detail: string;
+}
+
+export interface IncludedItem {
+  position: number;
+  label: string;
+  note: string;
+}
+
+export interface Faq {
+  position: number;
+  question: string;
+  answer: string;
+}
+
+export interface Word {
+  position: number;
+  quote: string;
+  name: string;
+  context: string;
+}
+
 export interface Piece {
   slug: string;
   categorySlug: string;
@@ -55,11 +103,20 @@ export interface Piece {
   featured: boolean;
   featuredPosition: number | null;
   provenanceVerified: boolean;
+  catalogueNumber: string;
 }
 
 export interface PieceDetail extends Piece {
   provenance: Provenance[];
   images: PieceImage[];
+  // Explicit booleans per named section; an absent key means enabled. The
+  // piece page is a fixed template, so this object is its whole configuration.
+  sectionToggles: Record<string, boolean>;
+  features: PieceFeature[];
+  specs: SpecRow[];
+  included: IncludedItem[];
+  faqs: Faq[];
+  words: Word[];
 }
 
 // ---- Static fallbacks, derived from the same copy the landing renders ----
@@ -96,7 +153,14 @@ function toPiece(p: (typeof staticPieces)[number]): Piece {
     featured: p.featured,
     featuredPosition: p.featuredPosition,
     provenanceVerified: p.provenanceVerified,
+    catalogueNumber: p.catalogueNumber,
   };
+}
+
+// Children come back from PostgREST in table order; the page reads them in
+// the order the owner arranged.
+function byPosition<T extends { position: number }>(rows: T[]): T[] {
+  return [...rows].sort((a, b) => a.position - b.position);
 }
 
 // ---- Public API ----
@@ -175,6 +239,7 @@ export const getPieces = cache(
             featured: row.featured,
             featuredPosition: row.featured_position,
             provenanceVerified: row.provenance_verified,
+            catalogueNumber: row.catalogue_number,
           }),
         );
       }
@@ -192,7 +257,23 @@ export const getPieceBySlug = cache(
     if (!isSupabaseConfigured) {
       const found = staticPieces.find((p) => p.slug === slug);
       if (!found) return null;
-      return { ...toPiece(found), provenance: found.provenance, images: [] };
+      return {
+        ...toPiece(found),
+        provenance: found.provenance,
+        images: [],
+        sectionToggles: found.sectionToggles,
+        features: found.features,
+        specs: found.specs,
+        // A piece with no items of its own comes with the house four.
+        included:
+          found.included.length > 0
+            ? found.included
+            : defaultIncluded.map((item, i) => ({ position: i + 1, ...item })),
+        faqs: found.faqs,
+        // Site-wide words are fetched separately; the page tops itself up
+        // from getGlobalWords.
+        words: [],
+      };
     }
     try {
       {
@@ -201,7 +282,7 @@ export const getPieceBySlug = cache(
         const { data, error } = await supabase
           .from("modern_pieces")
           .select(
-            "*, modern_categories!inner(slug), modern_provenance(position,label,detail), modern_piece_images(path,alt,position,kind)",
+            "*, modern_categories!inner(slug), modern_provenance(position,label,detail), modern_piece_images(path,alt,position,kind), modern_piece_features(position,eyebrow,title,body,image_path,image_alt,layout), modern_piece_specs(position,grouping,term,detail), modern_piece_included(position,label,note), modern_faqs(position,question,answer,published), modern_testimonials(position,quote,name,context,published)",
           )
           .eq("slug", slug)
           .neq("status", "draft")
@@ -226,8 +307,23 @@ export const getPieceBySlug = cache(
             featured: boolean;
             featured_position: number | null;
             provenance_verified: boolean;
+            catalogue_number: string;
+            section_toggles: Record<string, boolean>;
             modern_provenance: Provenance[];
             modern_piece_images: PieceImage[];
+            modern_piece_features: Array<{
+              position: number;
+              eyebrow: string;
+              title: string;
+              body: string;
+              image_path: string;
+              image_alt: string;
+              layout: FeatureLayout;
+            }>;
+            modern_piece_specs: SpecRow[];
+            modern_piece_included: IncludedItem[];
+            modern_faqs: Array<Faq & { published: boolean }>;
+            modern_testimonials: Array<Word & { published: boolean }>;
           };
           return {
             slug: row.slug,
@@ -248,12 +344,46 @@ export const getPieceBySlug = cache(
             featured: row.featured,
             featuredPosition: row.featured_position,
             provenanceVerified: row.provenance_verified,
-            provenance: [...row.modern_provenance].sort(
-              (a, b) => a.position - b.position,
+            catalogueNumber: row.catalogue_number,
+            sectionToggles: row.section_toggles ?? {},
+            provenance: byPosition(row.modern_provenance),
+            images: byPosition(row.modern_piece_images),
+            features: byPosition(row.modern_piece_features).map((f) => ({
+              position: f.position,
+              eyebrow: f.eyebrow,
+              title: f.title,
+              body: f.body,
+              imagePath: f.image_path,
+              imageAlt: f.image_alt,
+              layout: f.layout,
+            })),
+            specs: byPosition(row.modern_piece_specs),
+            // A piece with no items of its own comes with the house four,
+            // matching the static path; the included toggle still hides them.
+            included:
+              row.modern_piece_included.length > 0
+                ? byPosition(row.modern_piece_included)
+                : defaultIncluded.map((item, i) => ({
+                    position: i + 1,
+                    ...item,
+                  })),
+            // The published filter is applied here rather than in the join;
+            // the embedded rows are small and the query stays one select.
+            faqs: byPosition(row.modern_faqs.filter((f) => f.published)).map(
+              ({ position, question, answer }) => ({
+                position,
+                question,
+                answer,
+              }),
             ),
-            images: [...row.modern_piece_images].sort(
-              (a, b) => a.position - b.position,
-            ),
+            words: byPosition(
+              row.modern_testimonials.filter((w) => w.published),
+            ).map(({ position, quote, name, context }) => ({
+              position,
+              quote,
+              name,
+              context,
+            })),
           };
         }
       }
@@ -316,6 +446,7 @@ export const getFeaturedPieces = cache(async (): Promise<Piece[]> => {
           featured: row.featured,
           featuredPosition: row.featured_position,
           provenanceVerified: row.provenance_verified,
+          catalogueNumber: row.catalogue_number,
         }),
       );
     }
@@ -324,3 +455,157 @@ export const getFeaturedPieces = cache(async (): Promise<Piece[]> => {
   }
   return [];
 });
+
+/**
+ * The lead photograph for each of a handful of pieces, keyed by slug, for the
+ * featured cards on the home page. One query across modern_piece_images; a
+ * hero-kind image wins, otherwise the lowest position stands in. The static
+ * catalogue carries no photography, so the static path answers empty and the
+ * cards keep their generative figures.
+ */
+export const getPieceHeroImages = cache(
+  async (slugs: string[]): Promise<Record<string, PieceImage | null>> => {
+    if (!isSupabaseConfigured || slugs.length === 0) return {};
+    try {
+      const { createPublicClient } = await import("./supabase/public");
+      const supabase = createPublicClient();
+      const { data, error } = await supabase
+        .from("modern_piece_images")
+        .select("path,alt,position,kind, modern_pieces!inner(slug)")
+        .in("modern_pieces.slug", slugs)
+        .order("position");
+      if (!error && data) {
+        const rows = data as unknown as Array<
+          PieceImage & { modern_pieces: { slug: string } }
+        >;
+        const bySlug: Record<string, PieceImage | null> = {};
+        for (const row of rows) {
+          const slug = row.modern_pieces.slug;
+          const current = bySlug[slug];
+          // Rows arrive position-ordered, so the first hero seen is the
+          // lowest-position hero and the first row is the overall fallback.
+          if (!current || (row.kind === "hero" && current.kind !== "hero")) {
+            bySlug[slug] = {
+              path: row.path,
+              alt: row.alt,
+              position: row.position,
+              kind: row.kind,
+            };
+          }
+        }
+        return bySlug;
+      }
+    } catch {
+      // configured but unreachable
+    }
+    return {};
+  },
+);
+
+/**
+ * Site-wide questions, shown on every piece page after any piece-specific
+ * ones. Static fallback only when no database is configured; a configured
+ * database is authoritative, so an empty table stays empty.
+ */
+export const getGlobalFaqs = cache(async (): Promise<Faq[]> => {
+  if (!isSupabaseConfigured) {
+    return globalFaqs.map((f, i) => ({ position: i + 1, ...f }));
+  }
+  try {
+    const { createPublicClient } = await import("./supabase/public");
+    const supabase = createPublicClient();
+    const { data, error } = await supabase
+      .from("modern_faqs")
+      .select("position,question,answer")
+      .is("piece_id", null)
+      .eq("published", true)
+      .order("position");
+    if (!error && data) return data as Faq[];
+  } catch {
+    // configured but unreachable
+  }
+  return [];
+});
+
+/**
+ * Site-wide collector words, staff-curated, for the home page and to top up a
+ * piece page that has fewer than three of its own. Same fallback bargain as
+ * the questions above.
+ */
+export const getGlobalWords = cache(async (limit = 3): Promise<Word[]> => {
+  if (!isSupabaseConfigured) {
+    return globalWords
+      .slice(0, limit)
+      .map((w, i) => ({ position: i + 1, ...w }));
+  }
+  try {
+    const { createPublicClient } = await import("./supabase/public");
+    const supabase = createPublicClient();
+    const { data, error } = await supabase
+      .from("modern_testimonials")
+      .select("position,quote,name,context")
+      .is("piece_id", null)
+      .eq("published", true)
+      .order("position")
+      .limit(limit);
+    if (!error && data) return data as Word[];
+  } catch {
+    // configured but unreachable
+  }
+  return [];
+});
+
+/**
+ * The store prose from the modern_settings 'store' row, shallow-merged over
+ * the static defaults so a key the owner has not written yet still reads.
+ * Unlike the lists above this never returns empty; the chrome must not blank.
+ */
+export const getStoreSettings = cache(async (): Promise<StoreSettings> => {
+  if (!isSupabaseConfigured) return storeSettings;
+  try {
+    const { createPublicClient } = await import("./supabase/public");
+    const supabase = createPublicClient();
+    const { data, error } = await supabase
+      .from("modern_settings")
+      .select("value")
+      .eq("key", "store")
+      .maybeSingle();
+    if (!error && data) {
+      // Cast through unknown, as elsewhere: the hand-written Database type
+      // does not satisfy the postgrest builder generics for this select.
+      const row = data as unknown as { value: Partial<StoreSettings> };
+      return { ...storeSettings, ...row.value };
+    }
+  } catch {
+    // configured but unreachable
+  }
+  return storeSettings;
+});
+
+// The browse order for "from the same room": pieces still for sale lead,
+// sold pieces bring up the rear. Draft never reaches this code path.
+const relatedOrder: Record<PieceStatus, number> = {
+  available: 0,
+  reserved: 1,
+  restoration: 2,
+  sold: 3,
+  draft: 4,
+};
+
+/**
+ * Companions from the same category for the foot of a piece page. Reuses the
+ * cached category read, so a piece page costs no extra query for these.
+ */
+export const getRelatedPieces = cache(
+  async (
+    categorySlug: string,
+    excludeSlug: string,
+    limit = 3,
+  ): Promise<Piece[]> => {
+    const all = await getPieces(categorySlug);
+    return all
+      .filter((p) => p.slug !== excludeSlug)
+      .sort((a, b) => relatedOrder[a.status] - relatedOrder[b.status])
+      .slice(0, limit);
+  },
+);

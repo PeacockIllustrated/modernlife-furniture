@@ -1,23 +1,28 @@
 @import "tailwindcss";
 
 /* ============================================================
-   Modern Life Furniture, design system
-   Ported from reference/concept-v5.html. Tokens are CSS
-   variables (see DESIGN.md); Tailwind carries layout only.
+   Modern Life Furniture, design system v2
+   Clean commercial store. Tokens are CSS variables (see
+   DESIGN.md); Tailwind carries layout only.
    ============================================================ */
 
 :root {
-  --stone: #e4e2db; /* gallery ground, light rooms   */
-  --stone-deep: #d8d6ce; /* closing section ground        */
-  --ink: #1e211e; /* line work, text on light      */
-  --basalt: #151c18; /* dark rooms                    */
-  --bone: #ddd9cc; /* line work, text on dark       */
-  --amber: #c97b3d; /* accent 1, ownership, cane     */
-  --rose: #b4685e; /* accent 2                      */
-  --sea: #5e7a6b; /* accent 3                      */
-  --hair-colour: rgba(30, 33, 30, 0.28);
+  --paper: #f5f3ef; /* page ground                   */
+  --panel: #eae7e1; /* panel tone, tonal blocks      */
+  --stone: var(--paper); /* legacy alias, page ground     */
+  --stone-deep: var(--panel); /* legacy alias, panel tone      */
+  --ink: #1e211e; /* text on light                 */
+  --basalt: #151c18; /* dark bands and footer         */
+  --bone: #ddd9cc; /* text on dark                  */
+  --amber: #c97b3d; /* brand accent, prepared status */
+  --rose: #b4685e; /* status, reserved and sold     */
+  --sea: #5e7a6b; /* status, available             */
+  --hair-colour: rgba(30, 33, 30, 0.16);
   --hair: 1px solid var(--hair-colour); /* hairline rules */
   --hair-bone: 1px solid rgba(221, 217, 204, 0.28); /* hairline on dark */
+  --radius-s: 6px; /* inputs and small elements     */
+  --radius-m: 12px; /* cards and figures             */
+  --shadow-float: 0 8px 24px rgba(30, 33, 30, 0.12); /* floating elements only */
   --canvas-edge: clamp(0.75rem, 2vw, 1.5rem); /* breathing room around visuals */
 
   /* Page container: content is capped at --shell and centred, with a comfortable
@@ -31,14 +36,6 @@
   --font-display: var(--font-fraunces), Georgia, serif;
   --font-body: var(--font-archivo), system-ui, sans-serif;
   --font-mono: var(--font-spline-mono), ui-monospace, monospace;
-}
-
-/* Square corners and no shadows, everywhere, forever */
-*,
-*::before,
-*::after {
-  border-radius: 0 !important;
-  box-shadow: none !important;
 }
 
 * {
@@ -97,6 +94,9 @@ button:focus-visible,
 }
 
 /* ---------- Header ---------- */
+/* A plain fixed bar on the paper ground with a bottom hairline. The old
+   difference blend suited the alternating museum rooms; on the light store
+   ground a quiet opaque bar reads cleaner and never fights the photography. */
 .site-header {
   position: fixed;
   inset: 0 0 auto 0;
@@ -105,8 +105,11 @@ button:focus-visible,
   justify-content: space-between;
   align-items: center;
   padding: 1.1rem var(--edge-pad);
-  mix-blend-mode: difference;
-  color: #e4e2db;
+  background: rgba(245, 243, 239, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: var(--hair);
+  color: var(--ink);
 }
 .site-header .mono {
   opacity: 0.85;
@@ -311,7 +314,8 @@ dd {
   font-size: 0.74rem;
   letter-spacing: 0.1em;
   border: 1px solid currentColor;
-  padding: 0.75rem 1.3rem;
+  border-radius: 999px;
+  padding: 0.75rem 1.6rem;
   transition:
     background 0.25s ease,
     color 0.25s ease;
@@ -364,7 +368,8 @@ dd {
   letter-spacing: 0.12em;
   text-decoration: none;
   border: 1px solid var(--ink);
-  padding: 1rem 2rem;
+  border-radius: 999px;
+  padding: 1rem 2.2rem;
   transition:
     background 0.25s ease,
     color 0.25s ease;
@@ -380,10 +385,11 @@ dd {
   font-family: var(--font-mono);
   font-size: 0.74rem;
   letter-spacing: 0.1em;
-  padding: 0.9rem 1.6rem;
+  padding: 0.9rem 1.9rem;
   min-height: 44px;
   text-decoration: none;
   border: 1px solid var(--ink);
+  border-radius: 999px;
   transition:
     background 0.25s ease,
     color 0.25s ease,
@@ -462,7 +468,9 @@ dd {
   opacity: 0.85;
 }
 
-/* Accent per card, for a little colour pop */
+/* Accent per card, for a little colour pop. The promo family now serves the
+   piece page's related row only; the home page trio uses the featured
+   classes in the chrome and home layer below. */
 .promo {
   text-decoration: none;
   color: inherit;
@@ -477,6 +485,7 @@ dd {
 .promo-figure {
   position: relative;
   overflow: hidden;
+  border-radius: var(--radius-m) var(--radius-m) 0 0;
   background: color-mix(in srgb, var(--accent) 16%, var(--stone-deep));
   border-bottom: 3px solid var(--accent);
 }
@@ -489,52 +498,13 @@ dd {
   touch-action: pan-y;
 }
 
-/* Lead banner */
-.promo-lead {
-  display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-  border: var(--hair);
-  background: var(--stone-deep);
-  margin-bottom: 1.4rem;
-}
-.promo-lead .promo-figure {
-  min-height: 420px;
-  border-bottom: none;
-  border-right: 3px solid var(--accent);
-}
 .promo-body {
   display: flex;
   flex-direction: column;
 }
-.promo-lead .promo-body {
-  padding: 2.6rem 2.4rem;
-}
-.promo-tag {
-  align-self: flex-start;
-  color: var(--accent);
-  border: 1px solid var(--accent);
-  padding: 0.3rem 0.7rem;
-  font-size: 0.62rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  margin-bottom: 1.4rem;
-}
 .promo-attr {
   opacity: 0.7;
   margin-bottom: 0.6rem;
-}
-.promo-lead h3 {
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-size: clamp(1.8rem, 3.4vw, 2.8rem);
-  line-height: 1.02;
-  letter-spacing: -0.015em;
-  margin-bottom: 1rem;
-}
-.promo-story {
-  opacity: 0.85;
-  max-width: 42ch;
-  margin-bottom: 1.6rem;
 }
 .promo-meta {
   display: flex;
@@ -561,18 +531,6 @@ dd {
 .promo-status[data-status="restoration"] {
   color: var(--amber);
 }
-.promo-cta {
-  margin-top: auto;
-  align-self: flex-start;
-  font-size: 0.74rem;
-  letter-spacing: 0.1em;
-  border-bottom: 1px solid var(--accent);
-  padding-bottom: 3px;
-  color: var(--accent);
-}
-.promo-lead:hover .promo-cta {
-  border-bottom-width: 2px;
-}
 
 /* Card row */
 .promo-rest {
@@ -582,6 +540,8 @@ dd {
 }
 .promo-card {
   border: var(--hair);
+  border-radius: var(--radius-m);
+  overflow: hidden;
   background: var(--stone-deep);
   transition: transform 0.25s ease;
 }
@@ -607,11 +567,6 @@ dd {
   text-decoration: underline;
   text-underline-offset: 4px;
 }
-.promo-sub {
-  opacity: 0.6;
-  font-size: 0.68rem;
-  margin-top: 0.3rem;
-}
 .highlight-all {
   display: inline-block;
   margin-top: 2.6rem;
@@ -620,7 +575,8 @@ dd {
   text-decoration: none;
   color: inherit;
   border: 1px solid currentColor;
-  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  padding: 0.85rem 1.8rem;
   transition:
     background 0.25s ease,
     color 0.25s ease;
@@ -628,19 +584,6 @@ dd {
 .highlight-all:hover {
   background: var(--ink);
   color: var(--stone);
-}
-@media (max-width: 760px) {
-  .promo-lead {
-    grid-template-columns: 1fr;
-  }
-  .promo-lead .promo-figure {
-    min-height: 260px;
-    border-right: none;
-    border-bottom: 3px solid var(--accent);
-  }
-  .promo-lead .promo-body {
-    padding: 2rem 1.6rem;
-  }
 }
 
 .site-footer {
@@ -845,6 +788,7 @@ dd {
   position: relative;
   min-height: 60vh;
   border: var(--hair);
+  border-radius: var(--radius-m);
   overflow: hidden;
 }
 .piece-figure canvas {
@@ -914,7 +858,6 @@ dd {
 .seal .mono {
   font-size: 0.66rem;
   letter-spacing: 0.12em;
-  text-transform: uppercase;
 }
 .seal-mark {
   position: relative;
@@ -934,6 +877,7 @@ dd {
 /* ---------- Acquire block, price, status and interest ---------- */
 .acquire {
   border: var(--hair);
+  border-radius: var(--radius-m);
   background: var(--stone-deep);
   padding: 1.7rem 1.9rem;
   max-width: 46rem;
@@ -951,7 +895,6 @@ dd {
   display: block;
   font-size: 0.66rem;
   letter-spacing: 0.12em;
-  text-transform: uppercase;
   opacity: 0.6;
   margin-bottom: 0.4rem;
 }
@@ -1019,7 +962,8 @@ dd {
   font-size: 0.74rem;
   letter-spacing: 0.1em;
   border: 1px solid currentColor;
-  padding: 0.75rem 1.3rem;
+  border-radius: 999px;
+  padding: 0.75rem 1.6rem;
   transition:
     background 0.25s ease,
     color 0.25s ease;
@@ -1048,6 +992,7 @@ dd {
   color: inherit;
   background: transparent;
   border: var(--hair);
+  border-radius: var(--radius-s);
   padding: 0.75rem 0.9rem;
 }
 .interest-row input:focus-visible {
@@ -1136,6 +1081,7 @@ dd {
 }
 .service-list > div {
   border: var(--hair);
+  border-radius: var(--radius-m);
   background: var(--stone-deep);
   padding: 1.6rem 1.7rem;
 }
@@ -1174,6 +1120,7 @@ dd {
   color: inherit;
   background: transparent;
   border: var(--hair);
+  border-radius: var(--radius-s);
   padding: 0.8rem 0.9rem;
 }
 .field textarea {
@@ -1214,6 +1161,7 @@ button.enquire {
 /* A framed, tonal block, for a dl or a facts group. */
 .block {
   border: var(--hair);
+  border-radius: var(--radius-m);
   background: var(--stone-deep);
   padding: 1.7rem 1.9rem;
 }
@@ -1296,6 +1244,7 @@ button.enquire {
   min-height: 32vh;
   overflow: hidden;
   border: var(--hair);
+  border-radius: var(--radius-m);
 }
 .cat-row.dark .cat-row-figure {
   background: var(--basalt);
@@ -1351,6 +1300,7 @@ button.enquire {
 }
 .enquire-panel {
   border: var(--hair);
+  border-radius: var(--radius-m);
   background: var(--stone-deep);
   padding: 2rem 2.1rem;
 }
@@ -1358,6 +1308,7 @@ button.enquire {
   position: relative;
   min-height: 100%;
   border: var(--hair);
+  border-radius: var(--radius-m);
   background: var(--basalt);
   overflow: hidden;
 }
@@ -1538,5 +1489,1311 @@ button.enquire {
   .piece-figure {
     min-height: 0;
     aspect-ratio: 4 / 5;
+  }
+}
+
+/* ============================================================
+   Store layer, piece page (owned by the piece agent)
+   ============================================================ */
+
+/* ---------- Gallery: main figure plus thumbnail rail ---------- */
+/* The figure itself reuses .piece-figure, so the canvas inset rule and the
+   mobile aspect ratio keep working untouched. */
+.piece-gallery {
+  min-width: 0;
+}
+.gallery-rail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+}
+.gallery-thumb {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 5rem;
+  min-height: 44px; /* comfortable tap target on touch */
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-m);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+.gallery-thumb-img {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border: var(--hair);
+  border-radius: var(--radius-m);
+  background: var(--stone-deep);
+}
+.gallery-thumb-img img {
+  object-fit: cover;
+}
+.gallery-thumb[aria-pressed="true"] .gallery-thumb-img {
+  border: 1px solid var(--ink);
+}
+.gallery-kind {
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  opacity: 0.65;
+}
+
+/* ---------- Buy box: the label grown into the store's counter ---------- */
+/* The buy panel sits directly under the title, so price, availability and
+   the enquiry actions land in the first phone screen; the story and the
+   condensed record follow beneath the panel's closing hairline. */
+.buy-eyebrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.4rem;
+}
+.buy-cat {
+  opacity: 0.7;
+}
+.buy-panel {
+  border-top: var(--hair);
+  border-bottom: var(--hair);
+  padding: 1.5rem 0;
+  margin-top: 0.4rem;
+}
+.buy-panel .acquire-note {
+  margin: 1.2rem 0 0;
+}
+.buy-panel .interest,
+.buy-panel .interest-done {
+  margin-top: 1rem;
+}
+.buy-box .buy-panel ~ .story {
+  margin-top: 2rem;
+}
+.buy-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1.4rem;
+}
+.buy-ctas .enquire {
+  margin-top: 0;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.buy-ctas .enquire:hover {
+  background: var(--ink);
+  color: var(--stone);
+}
+.buy-trust {
+  margin-top: 1.3rem;
+  padding-top: 1.1rem;
+  border-top: var(--hair);
+  display: grid;
+  gap: 0.4rem;
+  opacity: 0.65;
+}
+/* Desktop: the gallery pins while the longer detail column scrolls past,
+   clearing the fixed header. Below the stack breakpoint it simply flows. */
+@media (min-width: 861px) {
+  .piece-gallery {
+    position: sticky;
+    top: 6rem;
+    align-self: start;
+  }
+}
+
+/* ---------- Store sections: one quiet heading treatment ---------- */
+.store-head {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+  margin-bottom: 1.6rem;
+}
+/* Anchored arrivals from the buy box and the sticky bar land clear of the
+   fixed header. */
+#enquire {
+  scroll-margin-top: 5.5rem;
+}
+
+/* ---------- Story bands: the piece, in detail ---------- */
+.story-band {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+  gap: clamp(1.5rem, 3vw, 3rem);
+  align-items: center;
+  padding: 2.4rem 0;
+}
+.story-band + .story-band {
+  border-top: var(--hair);
+}
+.story-band-figure {
+  position: relative;
+  min-height: 44vh;
+  border: var(--hair);
+  border-radius: var(--radius-m);
+  overflow: hidden;
+}
+.story-band-figure canvas {
+  position: absolute;
+  inset: 0;
+  left: var(--canvas-edge);
+  right: var(--canvas-edge);
+  width: auto;
+  height: 100%;
+  display: block;
+  touch-action: pan-y;
+}
+.story-band-backdrop {
+  position: absolute;
+  inset: 0;
+  opacity: 0.55; /* the study stands in for photography at low intensity */
+}
+.story-band-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-m);
+}
+.story-band[data-layout="right"] .story-band-figure {
+  order: 2;
+}
+.story-band-eyebrow {
+  display: block;
+  opacity: 0.6;
+  margin-bottom: 1rem;
+}
+.story-band-text h2 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.7rem, 3.4vw, 2.7rem);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  margin-bottom: 1rem;
+}
+.story-band-text h2 em {
+  font-style: italic;
+  font-weight: 400;
+}
+.story-band-text p {
+  max-width: 44ch;
+  opacity: 0.9;
+}
+.story-band[data-layout="full"] {
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+.story-band[data-layout="full"] .story-band-figure {
+  min-height: 52vh;
+  order: 0;
+}
+.story-band[data-layout="full"] .story-band-text {
+  max-width: 60ch;
+  padding-top: 0.4rem;
+}
+
+/* ---------- Specimen record: the house dl with hairline rows ---------- */
+.record {
+  max-width: 56rem;
+}
+.record-list {
+  display: block; /* row wrappers carry the grid, not the dl itself */
+}
+.record-row {
+  display: grid;
+  grid-template-columns: minmax(9rem, 13rem) minmax(0, 1fr);
+  gap: 0.45rem 1.4rem;
+  padding: 0.65rem 0;
+  border-top: var(--hair);
+}
+.record-row dd {
+  font-size: 0.92rem;
+}
+.record-group {
+  display: block;
+  margin: 1.9rem 0 0.4rem;
+  opacity: 0.6;
+  font-weight: 400;
+}
+
+/* ---------- What comes with the piece ---------- */
+.included-list {
+  list-style: none;
+  max-width: 56rem;
+  border-bottom: var(--hair);
+}
+.included-item {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(9rem, 16rem) minmax(0, 1fr);
+  gap: 0.4rem 1.4rem;
+  align-items: baseline;
+  padding: 1.05rem 0;
+  border-top: var(--hair);
+}
+.included-no {
+  opacity: 0.55;
+}
+.included-label {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.15rem;
+  line-height: 1.25;
+}
+.included-note {
+  opacity: 0.85;
+  font-size: 0.95rem;
+  max-width: 52ch;
+}
+
+/* ---------- Condition ---------- */
+.condition-notes {
+  max-width: 52ch;
+  opacity: 0.92;
+}
+.condition-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.4rem;
+  margin-top: 2rem;
+}
+.condition-shot {
+  border-radius: var(--radius-m);
+}
+.condition-img {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: var(--hair);
+  border-radius: var(--radius-m);
+  background: var(--stone-deep);
+}
+.condition-img img {
+  object-fit: cover;
+}
+.condition-caption {
+  display: block;
+  margin-top: 0.5rem;
+  opacity: 0.65;
+}
+
+/* ---------- Care and delivery ---------- */
+.care-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.4rem 3rem;
+  max-width: 62rem;
+}
+.care-cell h3 {
+  font-weight: 400;
+  opacity: 0.6;
+  margin-bottom: 0.8rem;
+}
+.care-cell p {
+  max-width: 52ch;
+  opacity: 0.9;
+}
+.care-cell p + p {
+  margin-top: 0.8rem;
+}
+
+/* ---------- Questions: square details, a rotating hairline plus ---------- */
+.faq-list {
+  max-width: 56rem;
+  border-bottom: var(--hair);
+}
+.faq-item {
+  border-top: var(--hair);
+  interpolate-size: allow-keywords; /* lets block-size animate to auto */
+}
+.faq-item summary {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  min-height: 44px;
+  padding: 0.9rem 0;
+  cursor: pointer;
+  list-style: none;
+}
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+.faq-no {
+  flex: 0 0 2rem;
+  opacity: 0.55;
+}
+.faq-q {
+  flex: 1 1 auto;
+  font-size: 1rem;
+}
+.faq-plus {
+  position: relative;
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+}
+.faq-plus::before,
+.faq-plus::after {
+  content: "";
+  position: absolute;
+  background: currentColor;
+  opacity: 0.7;
+  transition: transform 0.25s ease;
+}
+.faq-plus::before {
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+}
+.faq-plus::after {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+}
+/* Open: the upright bar lies down and the plus reads as a minus. */
+.faq-item[open] .faq-plus::after {
+  transform: rotate(90deg);
+}
+/* The measured unfold. A browser without animatable details content simply
+   opens at once, the native behaviour. */
+.faq-item::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition:
+    block-size 0.25s ease,
+    content-visibility 0.25s ease allow-discrete;
+}
+.faq-item[open]::details-content {
+  block-size: auto;
+}
+.faq-answer {
+  padding: 0.1rem 2.6rem 1.3rem 3.2rem; /* left aligns with the question */
+  max-width: 56ch;
+  opacity: 0.9;
+}
+
+/* ---------- Collector words ---------- */
+.words-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.2rem 2.6rem;
+}
+.word {
+  border-top: var(--hair);
+  padding-top: 1.4rem;
+}
+.word-quote {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.15rem, 2vw, 1.4rem);
+  line-height: 1.35;
+  margin-bottom: 1.1rem;
+}
+.word-attr {
+  opacity: 0.65;
+}
+
+/* ---------- Sticky enquiry strip, mobile only ---------- */
+.sticky-sentinel {
+  height: 1px;
+}
+.sticky-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.55rem var(--edge-pad);
+  background: var(--stone);
+  border-top: var(--hair);
+  box-shadow: var(--shadow-float); /* the one floating element on this page */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.sticky-bar[data-show="true"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+.sticky-bar-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.05rem;
+}
+.sticky-bar-price {
+  flex: 0 0 auto;
+  opacity: 0.75;
+}
+.sticky-bar .enquire {
+  margin-top: 0;
+  padding: 0.7rem 1rem;
+  flex: 0 0 auto;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.sticky-bar .enquire:hover {
+  background: var(--ink);
+  color: var(--stone);
+}
+@media (min-width: 861px) {
+  .sticky-bar {
+    display: none;
+  }
+}
+/* Narrow phones: the price gives way so the title keeps the room. */
+@media (max-width: 480px) {
+  .sticky-bar-price {
+    display: none;
+  }
+}
+
+/* ---------- Piece page, stacked ---------- */
+@media (max-width: 860px) {
+  /* The first phone screen is the shop window: the figure takes a landscape
+     crop and the label spacing tightens so photograph, title, attribution,
+     price, availability and the enquiry action all land before any scroll. */
+  .piece {
+    gap: 1.25rem;
+  }
+  .piece-figure {
+    aspect-ratio: 3 / 2;
+  }
+  .buy-box .buy-eyebrow {
+    margin-bottom: 0.7rem;
+  }
+  .buy-box .attribution {
+    margin-bottom: 0.7rem;
+  }
+  .buy-box .seal {
+    margin-bottom: 0.7rem;
+  }
+  .buy-panel {
+    padding-top: 1.1rem;
+  }
+  .buy-panel .acquire-head {
+    padding-bottom: 0.9rem;
+  }
+  .buy-ctas {
+    margin-top: 1.1rem;
+  }
+  .story-band,
+  .story-band[data-layout="right"] {
+    grid-template-columns: 1fr;
+  }
+  .story-band[data-layout="right"] .story-band-figure {
+    order: 0;
+  }
+  .story-band-figure {
+    min-height: 40vh;
+  }
+  .record-row {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+  .included-item {
+    grid-template-columns: 2.2rem minmax(0, 1fr);
+  }
+  .included-note {
+    grid-column: 2;
+  }
+  .condition-pair {
+    grid-template-columns: 1fr;
+  }
+  .care-grid {
+    grid-template-columns: 1fr;
+  }
+  .words-grid {
+    grid-template-columns: 1fr;
+  }
+  .faq-answer {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  /* Keep the page foot readable under the fixed strip. */
+  .page:has(.sticky-bar) {
+    padding-bottom: 7rem;
+  }
+}
+
+/* Reduced motion: everything at rest, nothing lost. */
+@media (prefers-reduced-motion: reduce) {
+  .faq-plus::before,
+  .faq-plus::after {
+    transition: none;
+  }
+  .faq-item::details-content {
+    transition: none;
+  }
+  .sticky-bar {
+    transition: none;
+  }
+}
+
+/* ============================================================
+   Store layer, chrome and home (owned by the chrome agent)
+   ============================================================ */
+
+/* ---------- Announcement, the store notice under the header ---------- */
+/* The strip sits in normal flow and scrolls away while the opaque fixed
+   header stays. Its top padding is hidden behind the header bar, so the
+   announcement's own line reads just below the header at rest and never
+   collides with it, at any width. */
+.announcement {
+  background: var(--basalt);
+  color: var(--bone);
+  text-align: center;
+  font-size: 0.68rem;
+  line-height: 1.6;
+  padding: 3.5rem var(--edge-pad) 0.9rem;
+  border-bottom: var(--hair-bone);
+}
+
+/* ---------- Trust strip, four assurances after the highlighted range ---------- */
+.trust-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 2rem;
+  padding: 3rem var(--edge-pad) 3.4rem;
+  border-top: var(--hair);
+}
+.trust-item {
+  border-left: var(--hair);
+  padding-left: 1.5rem;
+}
+.trust-item:first-child {
+  border-left: none;
+  padding-left: 0;
+}
+.trust-no {
+  display: block;
+  margin-bottom: 0.7rem;
+  opacity: 0.55;
+}
+.trust-item p {
+  font-size: 0.95rem;
+  opacity: 0.88;
+  max-width: 26ch;
+}
+
+/* ---------- Collector words, the home page words band ---------- */
+.words-band {
+  border-top: var(--hair);
+  padding: 10vh var(--edge-pad) 11vh;
+}
+.words-band h2 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2rem, 4.4vw, 3.2rem);
+  letter-spacing: -0.015em;
+  line-height: 1.04;
+  margin-bottom: 2.6rem;
+}
+.words-band-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.4rem;
+}
+.words-item {
+  border-left: var(--hair);
+  padding-left: 1.6rem;
+}
+.words-item blockquote p {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.15rem, 1.9vw, 1.45rem);
+  line-height: 1.42;
+}
+.words-item figcaption {
+  margin-top: 1.1rem;
+  opacity: 0.6;
+}
+
+/* ---------- Store footer ---------- */
+.store-footer {
+  border-top: var(--hair);
+  padding: 0 var(--edge-pad);
+}
+.footer-news {
+  padding: 4.2rem 0 3.2rem;
+  max-width: 34rem;
+}
+.footer-news h2 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  margin-bottom: 0.9rem;
+}
+.footer-news > p {
+  opacity: 0.85;
+  max-width: 44ch;
+  margin-bottom: 1.6rem;
+}
+.news-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  align-items: stretch;
+}
+.news-row input {
+  flex: 1 1 14rem;
+  min-width: 0;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: inherit;
+  background: transparent;
+  border: var(--hair);
+  border-radius: var(--radius-m);
+  padding: 0.75rem 1.1rem;
+  min-height: 44px;
+}
+.news-row input:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+.news-row .enquire {
+  margin-top: 0;
+  white-space: nowrap;
+}
+.store-footer .enquire:hover {
+  background: var(--ink);
+  color: var(--stone);
+}
+.footer-cols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem;
+  padding: 2.6rem 0 3rem;
+  border-top: var(--hair);
+}
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.footer-col-h {
+  opacity: 0.55;
+  margin-bottom: 0.6rem;
+}
+/* Each link is its own 44px row, so the small mono targets stay comfortable
+   without negative-margin overlap between neighbours. */
+.footer-col a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  text-decoration: none;
+  opacity: 0.85;
+}
+.footer-col a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.footer-addr {
+  opacity: 0.6;
+  padding: 0.6rem 0;
+}
+.footer-legal {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1.4rem 0 1.6rem;
+  border-top: var(--hair);
+  opacity: 0.7;
+}
+
+/* ---------- Photographic hero, once the owner uploads an image ---------- */
+/* Full bleed photograph with an opaque basalt panel anchored bottom left.
+   No gradients and no scrims; the panel is solid so the type never fights
+   the picture. Until a hero image is set the Tide hero renders instead. */
+.photo-hero {
+  position: relative;
+  min-height: 86vh;
+  background: var(--basalt);
+  overflow: hidden;
+}
+.photo-hero-img {
+  object-fit: cover;
+}
+.photo-hero-panel {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  max-width: min(44rem, 92vw);
+  background: var(--basalt);
+  color: var(--bone);
+  border-top: var(--hair-bone);
+  border-right: var(--hair-bone);
+  border-radius: 0 var(--radius-m) 0 0; /* anchored bottom left, one soft corner */
+  overflow: hidden;
+  padding: 2.4rem 2.8rem 2.6rem var(--edge-pad);
+}
+.photo-hero-panel h1 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.6rem, 6vw, 5.4rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.1rem;
+}
+.photo-hero-panel h1 em {
+  font-style: italic;
+}
+.photo-hero-panel p {
+  max-width: 36ch;
+  opacity: 0.88;
+}
+/* The shop buttons re-grounded for the basalt panel. */
+.photo-hero-panel .btn {
+  border-color: var(--bone);
+}
+.photo-hero-panel .btn-solid {
+  background: var(--bone);
+  color: var(--basalt);
+}
+.photo-hero-panel .btn-solid:hover {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: var(--basalt);
+}
+.photo-hero-panel .btn-line {
+  color: var(--bone);
+}
+.photo-hero-panel .btn-line:hover {
+  background: var(--bone);
+  color: var(--basalt);
+}
+.photo-hero-panel a:focus-visible {
+  outline-color: var(--bone);
+}
+
+/* ---------- Featured trio, the highlighted pieces as labelled exhibits ---------- */
+/* Only the figure carries a frame; the text sits on the page ground. The
+   figure holds the piece's photograph once one exists, the category's
+   generative study over a plinth until then, on the room's own ground. */
+.featured-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.2rem 1.8rem;
+}
+.featured-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-decoration: none;
+  color: inherit;
+}
+.featured-figure {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border: var(--hair);
+  border-radius: var(--radius-m);
+  overflow: hidden;
+}
+.featured-figure[data-ground="dark"] {
+  background: var(--basalt);
+  color: var(--bone);
+}
+.featured-figure canvas,
+.room-tile-figure canvas,
+.buying-figure canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: pan-y;
+}
+.featured-photo {
+  object-fit: cover;
+}
+.featured-attr {
+  margin-top: 1.2rem;
+  opacity: 0.7;
+}
+.featured-card h3 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.35rem, 2.2vw, 1.8rem);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  margin-top: 0.45rem;
+}
+.featured-card:hover h3 {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.featured-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1.4rem;
+  margin-top: 0.6rem;
+}
+.featured-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+.featured-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  background: var(--ink);
+}
+.featured-status[data-status="available"] {
+  color: var(--sea);
+}
+.featured-status[data-status="available"] .featured-dot {
+  background: var(--sea);
+}
+.featured-status[data-status="reserved"],
+.featured-status[data-status="sold"] {
+  color: var(--rose);
+}
+.featured-status[data-status="reserved"] .featured-dot,
+.featured-status[data-status="sold"] .featured-dot {
+  background: var(--rose);
+}
+.featured-status[data-status="restoration"] {
+  color: var(--amber);
+}
+.featured-status[data-status="restoration"] .featured-dot {
+  background: var(--amber);
+}
+.featured-price {
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+.featured-cta {
+  margin-top: 1.5rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 0.7rem 1.5rem;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease;
+}
+.featured-card:hover .featured-cta {
+  background: var(--ink);
+  color: var(--stone);
+}
+
+/* ---------- Rooms row, the collection compressed to four tiles ---------- */
+.rooms {
+  border-top: var(--hair);
+  padding: 9vh var(--edge-pad) 10vh;
+}
+.rooms-head {
+  margin-bottom: 2.4rem;
+}
+.rooms-head .eyebrow {
+  display: block;
+  opacity: 0.6;
+  margin-bottom: 1rem;
+}
+.rooms-head h2 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2rem, 4.4vw, 3.2rem);
+  letter-spacing: -0.015em;
+  line-height: 1.04;
+}
+.rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.6rem;
+}
+.room-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-decoration: none;
+  color: inherit;
+}
+/* The tile keeps its room's ground: chairs and cabinets on stone, shelving
+   and tables on basalt, alternating down the row as the full rooms did. */
+.room-tile-figure {
+  position: relative;
+  width: 100%;
+  height: 30vh;
+  min-height: 200px;
+  border: var(--hair);
+  border-radius: var(--radius-m);
+  overflow: hidden;
+}
+.room-tile-figure[data-ground="dark"] {
+  background: var(--basalt);
+  color: var(--bone);
+}
+.room-tile h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.25rem, 1.8vw, 1.6rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin-top: 1rem;
+}
+.room-tile:hover h3 {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.room-tile-count {
+  margin-top: 0.4rem;
+  font-size: 0.68rem;
+  opacity: 0.6;
+}
+.room-tile-view {
+  margin-top: 0.9rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 3px;
+}
+
+/* ---------- Buying band, the buying-confidence facts ---------- */
+/* Full bleed by normal flow: home sections span the viewport and pad their
+   own content, so unlike .feature inside .page no negative margin is
+   needed here. The media panel keeps the bench drawing as a quiet
+   placeholder until the owner's photograph lands. */
+.buying {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  background: var(--basalt);
+  color: var(--bone);
+  border-top: var(--hair);
+}
+.buying-figure {
+  position: relative;
+  min-height: 56vh;
+  overflow: hidden;
+  border-right: var(--hair-bone);
+  /* The placeholder rings draw bone on basalt, so the plinth over them
+     inherits the band's bone and sits seamlessly on the dark ground. */
+}
+.buying-photo {
+  object-fit: cover;
+}
+.buying-body {
+  align-self: center;
+  padding: 4.5rem var(--edge-pad) 4.5rem 3.2rem;
+}
+.buying-body .eyebrow {
+  display: block;
+  opacity: 0.7;
+  margin-bottom: 1.2rem;
+}
+.buying-body h2 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.9rem, 3.2vw, 2.9rem);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  margin-bottom: 1.2rem;
+  max-width: 18ch;
+}
+.buying-body h2 em {
+  font-style: italic;
+  font-weight: 400;
+}
+.buying-body p {
+  opacity: 0.85;
+  max-width: 44ch;
+}
+.buying-body p + p {
+  margin-top: 0.8rem;
+}
+.buying .enquire:hover {
+  background: var(--bone);
+  color: var(--basalt);
+}
+.buying a:focus-visible {
+  outline-color: var(--bone);
+}
+
+/* ---------- Sell page: what we look for, three plain lines ---------- */
+.sell-points {
+  list-style: none;
+  max-width: 56rem;
+  margin: 2.5rem 0 3.5rem;
+  border-bottom: var(--hair);
+}
+.sell-points li {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr);
+  gap: 1.4rem;
+  align-items: baseline;
+  padding: 1.05rem 0;
+  border-top: var(--hair);
+}
+.sell-points .mono {
+  opacity: 0.55;
+}
+
+/* The one stack override for the chrome and home store layer. */
+@media (max-width: 860px) {
+  .trust-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 2.4rem;
+  }
+  .trust-item:nth-child(odd) {
+    border-left: none;
+    padding-left: 0;
+  }
+  .words-band-grid {
+    grid-template-columns: 1fr;
+  }
+  .footer-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 2.4rem;
+  }
+  .photo-hero-panel {
+    max-width: none;
+    right: 0;
+    border-right: none;
+    border-radius: var(--radius-m) var(--radius-m) 0 0;
+    padding: 2rem var(--edge-pad) 2.2rem;
+  }
+  .featured-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .rooms-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 2.4rem;
+  }
+  .buying {
+    grid-template-columns: 1fr;
+  }
+  .buying-figure {
+    min-height: 46vh;
+    border-right: none;
+    border-bottom: var(--hair-bone);
+  }
+  .buying-body {
+    padding: 3rem var(--edge-pad) 3.6rem;
+  }
+}
+
+/* Phones: the trio and the tiles run single file. */
+@media (max-width: 480px) {
+  .featured-row {
+    grid-template-columns: 1fr;
+  }
+  .rooms-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* The header wraps to two rows at this width; the announcement strip carries
+   more top padding to stay clear of it, and the join button takes the full
+   row rather than squeezing beside the field. */
+@media (max-width: 600px) {
+  .announcement {
+    font-size: 0.64rem;
+    padding-top: 4.5rem;
+  }
+  .news-row .enquire {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+}
+
+/* ============================================================
+   Store layer, admin editor (owned by the admin agent)
+   ============================================================ */
+
+/* The dashboard grows tabs and the full piece template editor. Everything
+   follows the existing admin idiom: hairlines, mono labels, square fields,
+   buttons on the shared .enquire outline. */
+
+/* ---------- Tab nav ---------- */
+.admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-bottom: 1rem;
+  margin-bottom: 2.5rem;
+  border-bottom: var(--hair);
+}
+.admin-tab {
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: inherit;
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 0.6rem 0.9rem;
+  min-height: 44px; /* comfortable tap target on touch */
+  opacity: 0.6;
+  transition:
+    opacity 0.25s ease,
+    background 0.25s ease,
+    color 0.25s ease;
+}
+.admin-tab:hover {
+  opacity: 1;
+}
+.admin-tab[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--stone);
+  opacity: 1;
+}
+
+/* ---------- Editor furniture ---------- */
+.admin-count {
+  opacity: 0.6;
+  margin-bottom: 1.4rem;
+}
+.admin-hint {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  opacity: 0.55;
+  margin-bottom: 0.9rem;
+  max-width: 44ch;
+}
+.admin-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.admin-check {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  min-height: 44px; /* comfortable tap target on touch */
+  cursor: pointer;
+}
+.admin-toggles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 1.2rem;
+}
+.admin-toggles .admin-check {
+  min-height: 40px;
+}
+
+/* Subrow textareas (band bodies, answers) take the full row and match the
+   subrow input styling; explicit focus so keyboards never lose the caret. */
+.admin-subrow textarea {
+  flex: 1 1 100%;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: inherit;
+  background: transparent;
+  border: var(--hair);
+  padding: 0.5rem 0.6rem;
+  min-height: 4.5rem;
+  resize: vertical;
+}
+.admin-subrow input:focus-visible,
+.admin-subrow select:focus-visible,
+.admin-subrow textarea:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* A multi-row child entry (story band, piece question) reads as one block
+   between hairlines. */
+.admin-band {
+  padding-bottom: 1.1rem;
+  margin-bottom: 1.1rem;
+  border-bottom: var(--hair);
+}
+.admin-band:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0.2rem;
+}
+
+/* ---------- Image rows ---------- */
+.admin-thumb {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border: var(--hair);
+  background: var(--stone-deep);
+  display: block;
+}
+.admin-row-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+/* The upload control is a label over a real file input, so keyboard focus
+   lands on the input and shows on the label. */
+.admin-upload {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  min-height: 44px; /* comfortable tap target on touch */
+}
+.admin-upload input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+.admin-upload:focus-within {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* Buttons inside rows sit on the row's own rhythm, not the page-level
+   .enquire top margin. */
+.admin-subrow .enquire,
+.admin-row-actions .enquire,
+.admin-band .enquire,
+.admin-upload {
+  margin-top: 0;
+}
+.admin-fieldset > .enquire {
+  margin-top: 0.8rem;
+}
+
+@media (max-width: 860px) {
+  .admin-tabs {
+    gap: 0.35rem;
+  }
+  .admin-toggles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .admin-split {
+    grid-template-columns: 1fr;
+    gap: 0;
   }
 }

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCategoryBySlug, getPieces } from "@/lib/collection";
+import { getCategories, getCategoryBySlug, getPieces } from "@/lib/collection";
 import { rooms } from "@/content/landing";
 import CategoryBand from "@/components/collection/CategoryBand";
 import SpecimenCard from "@/components/collection/SpecimenCard";
@@ -35,6 +35,8 @@ export default async function CategoryPage({
   const room = rooms.find((r) => r.slug === category);
   if (!data || !room) notFound();
 
+  // The same cached read as getCategoryBySlug, so the count costs nothing.
+  const categories = await getCategories();
   const pieces = await getPieces(category);
 
   return (
@@ -55,7 +57,8 @@ export default async function CategoryPage({
 
       <div className="page-head">
         <span className="mono eyebrow">
-          Category {String(data.position).padStart(2, "0")} of 05
+          Category {String(data.position).padStart(2, "0")} of{" "}
+          {String(categories.length).padStart(2, "0")}
         </span>
         <h1>{data.name}</h1>
         <p>{data.story}</p>
@@ -79,7 +82,7 @@ export default async function CategoryPage({
         heading="Looking for something in particular"
         body="Tell us what you are after and we will find it. And if you have a piece the artists made, we buy."
         cta={{ label: "Make an enquiry", href: "/enquire" }}
-        visual={room.visual}
+        visual="rings"
       />
 
       <RevealObserver />

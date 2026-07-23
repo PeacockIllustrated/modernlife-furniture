@@ -1,33 +1,34 @@
+import Image from "next/image";
 import Link from "next/link";
-import { getFeaturedPieces } from "@/lib/collection";
+import { getFeaturedPieces, getPieceHeroImages } from "@/lib/collection";
 import { rooms } from "@/content/landing";
-import { statusLabel, priceLabel, periodRange } from "@/lib/format";
+import { statusLabel, priceLabel, canOptimiseImage } from "@/lib/format";
 import RoomVisual from "@/components/canvas/RoomVisual";
+import Plinth from "@/components/gallery/Plinth";
 
 /**
- * The promotional highlights: the owner's featured pieces given pride of place
- * directly under the hero, laid out like a shop's featured range. The lead
- * piece takes a full banner, the rest a card row. Each carries the category's
- * generative study on a colour-washed panel, so the visuals keep their
- * character with a little more colour pop.
+ * The featured trio under the hero: the owner's top three pieces set as a
+ * uniform card row, photograph first once photography exists, the category's
+ * generative study over a plinth until then. Only the figure carries a frame;
+ * the attribution, title, status and price sit straight on the page ground,
+ * so the row reads as labelled exhibits rather than boxed products.
  */
 
-const ACCENTS = ["amber", "sea", "rose"] as const;
-
-function visualFor(categorySlug: string) {
+function roomFor(categorySlug: string) {
   const room = rooms.find((r) => r.slug === categorySlug);
   return {
-    visual: room?.visual ?? "rings",
+    visual: room?.visual ?? ("rings" as const),
     label: room?.canvasLabel ?? "A generative study of the piece",
+    ground: room?.variant ?? ("dark" as const),
   };
 }
 
 export default async function Highlighted() {
-  const pieces = await getFeaturedPieces();
+  // The owner curates featured order; the row holds the top three so it
+  // stays a uniform trio whatever is flagged.
+  const pieces = (await getFeaturedPieces()).slice(0, 3);
   if (pieces.length === 0) return null;
-
-  const [lead, ...rest] = pieces;
-  const leadVisual = visualFor(lead.categorySlug);
+  const heroImages = await getPieceHeroImages(pieces.map((p) => p.slug));
 
   return (
     <section className="highlight" aria-labelledby="highlight-title">
@@ -35,78 +36,58 @@ export default async function Highlighted() {
         <span className="mono eyebrow">Highlighted</span>
         <h2 id="highlight-title">This month on the floor</h2>
         <p>
-          A handful of pieces we have picked out, restored and ready to rehome.
-          The full collection sits below, room by room.
+          A handful of pieces we have picked out, checked over and ready to
+          go. The full collection sits below, category by category.
         </p>
       </div>
 
-      <Link
-        href={`/piece/${lead.slug}`}
-        className="promo promo-lead reveal"
-        data-accent={ACCENTS[0]}
-      >
-        <div className="promo-figure">
-          <RoomVisual
-            visual={leadVisual.visual}
-            label={leadVisual.label}
-            scrollBound={false}
-          />
-        </div>
-        <div className="promo-body">
-          <span className="mono promo-tag">Featured piece</span>
-          <span className="mono promo-attr">{lead.attribution}</span>
-          <h3>{lead.title}</h3>
-          <p className="promo-story">{lead.story}</p>
-          <div className="promo-meta mono">
-            <span className="promo-status" data-status={lead.status}>
-              {statusLabel(lead.status)}
-            </span>
-            <span className="promo-price">
-              {priceLabel(lead.priceOnRequest, lead.pricePence)}
-            </span>
-          </div>
-          <span className="promo-cta mono">View piece</span>
-        </div>
-      </Link>
-
-      {rest.length > 0 ? (
-        <div className="promo-rest">
-          {rest.map((piece, i) => {
-            const v = visualFor(piece.categorySlug);
-            return (
-              <Link
-                key={piece.slug}
-                href={`/piece/${piece.slug}`}
-                className="promo promo-card reveal"
-                data-accent={ACCENTS[(i + 1) % ACCENTS.length]}
-              >
-                <div className="promo-figure">
-                  <RoomVisual
-                    visual={v.visual}
-                    label={v.label}
-                    scrollBound={false}
+      <div className="featured-row">
+        {pieces.map((piece) => {
+          const room = roomFor(piece.categorySlug);
+          const image = heroImages[piece.slug] ?? null;
+          return (
+            <Link
+              key={piece.slug}
+              href={`/piece/${piece.slug}`}
+              className="featured-card reveal"
+            >
+              <div className="featured-figure" data-ground={room.ground}>
+                {image ? (
+                  <Image
+                    className="featured-photo"
+                    src={image.path}
+                    alt={image.alt || piece.title}
+                    fill
+                    sizes="(max-width: 480px) 100vw, (max-width: 860px) 50vw, 33vw"
+                    unoptimized={!canOptimiseImage(image.path)}
                   />
-                </div>
-                <div className="promo-body">
-                  <span className="mono promo-attr">{piece.attribution}</span>
-                  <h3>{piece.title}</h3>
-                  <div className="promo-meta mono">
-                    <span className="promo-status" data-status={piece.status}>
-                      {statusLabel(piece.status)}
-                    </span>
-                    <span className="promo-price">
-                      {priceLabel(piece.priceOnRequest, piece.pricePence)}
-                    </span>
-                  </div>
-                  <span className="promo-sub mono">
-                    {periodRange(piece.periodLabel, piece.yearFrom, piece.yearTo)}
-                  </span>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      ) : null}
+                ) : (
+                  <>
+                    <RoomVisual
+                      visual={room.visual}
+                      label={room.label}
+                      scrollBound={false}
+                    />
+                    <Plinth />
+                  </>
+                )}
+              </div>
+              <span className="featured-attr mono">{piece.attribution}</span>
+              <h3>{piece.title}</h3>
+              <div className="featured-meta mono">
+                <span className="featured-status" data-status={piece.status}>
+                  <span className="featured-dot" aria-hidden="true" />
+                  {statusLabel(piece.status)}
+                </span>
+                <span className="featured-price">
+                  {priceLabel(piece.priceOnRequest, piece.pricePence)}
+                </span>
+              </div>
+              <span className="featured-cta mono">View piece</span>
+            </Link>
+          );
+        })}
+      </div>
 
       <Link className="highlight-all mono" href="/collection">
         Browse the whole collection

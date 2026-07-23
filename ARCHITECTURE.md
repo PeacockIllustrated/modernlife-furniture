@@ -70,3 +70,16 @@ The piece page inherits the gallery language: generative category visual as a ba
 - next/image for all photography, AVIF/WebP
 - OG images generated from the category visuals (static renders)
 - Plausible or Vercel analytics, no cookie banner needed
+
+## Store layer, July 2026
+The piece page grew into a full specimen record while staying enquiry-led: no checkout, no payments, no public reviews. Migration 0004 adds the supporting tables, all inside the `modern_` namespace:
+```sql
+modern_piece_features  id, piece_id, position, eyebrow, title, body, image_path, image_alt, layout (left|right|full)
+modern_piece_specs     id, piece_id, position, grouping, term, detail   -- the specification record
+modern_piece_included  id, piece_id, position, label, note              -- what comes with the piece
+modern_faqs            id, piece_id null, position, question, answer, published
+modern_testimonials    id, piece_id null, position, quote, name, context, published
+modern_settings        key, value jsonb                                 -- the 'store' row carries site prose
+modern_subscribers     id, email, created_at                            -- the acquisitions list
+```
+A null `piece_id` on questions and collector words means site-wide. `modern_pieces` gains `catalogue_number` and `section_toggles` jsonb. The piece page is a fixed, toggleable template, not a block builder: nine named sections (features, record, included, condition, provenance, care, faq, words, related) render in a fixed order, and the owner switches them off per piece from the dashboard; an absent key means enabled, and a section with no content hides itself regardless. RLS follows the established pattern: public read of published rows gated on the parent piece, owner-only writes, and the subscriber list write-only for the public. No open-SELECT on subscribers, ever. Photography uploads land in the public `modern-pieces` storage bucket and render through next/image.

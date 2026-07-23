@@ -19,11 +19,11 @@ export default function Hero({ children }: { children?: React.ReactNode }) {
         <div className="hero-sub">
           <p>{hero.sub}</p>
           <div className="hero-cta">
-            <Link className="btn btn-solid" href="/collection">
-              Browse the collection
+            <Link className="btn btn-solid" href="/collection/chairs">
+              See the chairs
             </Link>
-            <Link className="btn btn-line" href="/enquire">
-              Enquire
+            <Link className="btn btn-line" href="/collection">
+              Browse the collection
             </Link>
           </div>
         </div>

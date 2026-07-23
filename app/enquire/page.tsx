@@ -9,6 +9,10 @@ export const metadata: Metadata = {
     "Tell us what you are after and we will find it. And if you have a piece the artists made, we buy.",
 };
 
+// The chrome around this page reads the owner-editable store settings, so
+// refresh on the same cadence as the rest of the site.
+export const revalidate = 60;
+
 export default function EnquirePage() {
   return (
     <main className="page">
@@ -19,7 +23,7 @@ export default function EnquirePage() {
       </nav>
 
       <div className="page-head">
-        <span className="mono eyebrow">We curate and explain</span>
+        <span className="mono eyebrow">Get in touch</span>
         <h1>Enquire</h1>
         <p>
           The collection changes weekly and the best pieces rarely reach the

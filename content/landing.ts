@@ -1,9 +1,10 @@
 /**
- * Landing copy, verbatim from CONTENT.md and reference/concept-v5.html
- * (sections s01 to s04). British spelling, sentence case, no em-dashes.
+ * Landing copy for the store. Quietly confident and commercial: facts a
+ * buyer cares about, warmth without theatre. British spelling, sentence
+ * case, no em-dashes.
  *
- * The dl facts here are the plausible placeholders flagged in CONTENT.md.
- * In session 4 they are replaced by modern_categories rows carrying
+ * The dl facts here are the plausible placeholders awaiting the owner. When
+ * Supabase is configured they are replaced by modern_categories rows carrying
  * `placeholder: true`; until then they render statically so the page reads
  * complete.
  */
@@ -36,19 +37,19 @@ export interface Room {
 }
 
 export const manifesto =
-  "We do not make furniture. The artists of the last century already did. We find their work, undo the years, and rehome it.";
+  "We do not make furniture. The designers of the last century already did. We find good pieces, describe them *honestly*, and sell them one at a time.";
 
 export const hero = {
-  sub: "Collected works by the furniture artists of the last century. Found in attics and auction rooms, restored on our bench, and passed on with the story intact.",
+  sub: "One-of-one chairs and pieces by the designers of the last century, photographed honestly, described plainly and delivered nationwide.",
   cue: "Scroll to enter the collection",
 };
 
 export const closing = {
-  heading: "Live with a piece of history",
-  body: "The collection changes weekly and the best pieces rarely reach the website. Tell us what you are after and we will find it. And if you have a piece the artists made, we buy.",
+  heading: "Tell us what you are after",
+  body: "The collection changes often. Tell us what you are after and we will let you know when the right piece comes in. And if you have a good piece to sell, we buy.",
   cta: {
     label: "Ask about a piece",
-    href: "mailto:studio@modernlifefurniture.co.uk?subject=Find me a piece",
+    href: "/enquire",
   },
 };
 
@@ -59,8 +60,8 @@ export const rooms: Room[] = [
     slug: "chairs",
     title: "Chairs",
     story:
-      "The heart of the collection. From the space-age pod to the Bauhaus cantilever, chairs by the schools and workshops that decided what sitting should look like. Every one restored, documented and ready for its next forty years.",
-    hint: "The piece turns to face you as you pass",
+      "The heart of the collection and the best place to start. Chairs by the schools that decided what sitting should look like, from the Bauhaus cantilever to the space-age pod. Every one is one of one, checked, honestly photographed and ready to sit on.",
+    hint: "New chairs are listed most weeks",
     facts: [
       { term: "In collection", detail: "Two dozen pieces, changing weekly" },
       { term: "Periods", detail: "1925 to 1975" },
@@ -77,8 +78,8 @@ export const rooms: Room[] = [
     slug: "shelving-and-storage",
     title: "Shelving and storage",
     story:
-      "Wall units, modular systems and room dividers, the furniture that was built to grow with a household. The collection branches the same way, one arrival deciding the next. Shown here as it grows.",
-    hint: "The collection grows as you arrive",
+      "Wall units, modular systems and room dividers, storage that hangs on the wall instead of standing on the floor. Each system is sold complete, with its measurements listed, and can be arranged to suit the wall it is going to.",
+    hint: "Systems are sold complete and hung for you on delivery",
     facts: [
       { term: "In collection", detail: "Wall units, systems, room dividers" },
       { term: "Periods", detail: "1950 to 1980" },
@@ -98,8 +99,8 @@ export const rooms: Room[] = [
     slug: "cabinets-and-sideboards",
     title: "Cabinets and sideboards",
     story:
-      "Credenzas, cocktail cabinets and bureaus, casework built in layers of veneer, lacquer and shellac. Decades settle into a finish the way sediment settles into stone, and the light bends around your hand the same way.",
-    hint: "Move across the surface and the layers refract",
+      "Credenzas, cocktail cabinets and bureaus in rosewood, teak and lacquer. Casework carries the most surface of anything we sell, so every piece is photographed close and its condition described plainly.",
+    hint: "Interiors are photographed as carefully as the outside",
     facts: [
       { term: "In collection", detail: "Credenzas, cocktail cabinets, bureaus" },
       { term: "Periods", detail: "1930 to 1975" },
@@ -120,8 +121,8 @@ export const rooms: Room[] = [
     slug: "tables",
     title: "Tables",
     story:
-      "Dining, coffee and side tables, the surfaces a household gathers around. Every top keeps its rings, of grain and of ownership, and each piece leaves us with both written down.",
-    hint: "Touch the surface to add a ring of your own",
+      "Dining, coffee and side tables from Denmark, Italy and Britain. Every table is solid, level and ready for daily use, with dimensions listed so you can check the fit before you enquire.",
+    hint: "Heights and clearances are listed on every table",
     facts: [
       { term: "In collection", detail: "Dining, coffee, side and nesting" },
       { term: "Periods", detail: "1930 to 1975" },
