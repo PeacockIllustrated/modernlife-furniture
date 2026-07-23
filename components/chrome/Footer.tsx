@@ -7,7 +7,7 @@ import { rooms } from "@/content/landing";
  * The store footer: the acquisitions list first, the site's map in three mono
  * columns, then the quiet legal line. Hairline separations only, per
  * DESIGN.md. The newsletter lead is owner-editable through the store
- * settings; the category links come from the same static rooms the home page
+ * settings; the era links come from the same static rooms the home page
  * uses, so the two never drift apart.
  */
 export default async function Footer() {

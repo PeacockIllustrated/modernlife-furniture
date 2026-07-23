@@ -1,17 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getFeaturedPieces, getPieceHeroImages } from "@/lib/collection";
+import { getPieces, getPieceHeroImages } from "@/lib/collection";
 import { rooms } from "@/content/landing";
 import { statusLabel, priceLabel, canOptimiseImage } from "@/lib/format";
 import RoomVisual from "@/components/canvas/RoomVisual";
 import Plinth from "@/components/gallery/Plinth";
 
 /**
- * The featured trio under the hero: the owner's top three pieces set as a
- * uniform card row, photograph first once photography exists, the category's
- * generative study over a plinth until then. Only the figure carries a frame;
- * the attribution, title, status and price sit straight on the page ground,
- * so the row reads as labelled exhibits rather than boxed products.
+ * New in: the most recent arrivals as a card row under the hero. The starred
+ * pieces already lead the hero, so this row excludes them and shows the
+ * newest listings still on the floor instead; sold pieces sit this one out.
+ * Only the figure carries a frame, photograph first once photography exists,
+ * the category's generative study over a plinth until then. If exclusions
+ * leave fewer than two pieces the row renders nothing rather than a stub.
  */
 
 function roomFor(categorySlug: string) {
@@ -23,21 +24,27 @@ function roomFor(categorySlug: string) {
   };
 }
 
-export default async function Highlighted() {
-  // The owner curates featured order; the row holds the top three so it
-  // stays a uniform trio whatever is flagged.
-  const pieces = (await getFeaturedPieces()).slice(0, 3);
-  if (pieces.length === 0) return null;
+export default async function Highlighted({
+  exclude = [],
+}: {
+  exclude?: string[];
+}) {
+  // getPieces answers newest first, so the head of the list is the newest
+  // through the door once the hero's starred pieces are set aside.
+  const pieces = (await getPieces())
+    .filter((p) => !exclude.includes(p.slug) && p.status !== "sold")
+    .slice(0, 3);
+  if (pieces.length < 2) return null;
   const heroImages = await getPieceHeroImages(pieces.map((p) => p.slug));
 
   return (
     <section className="highlight" aria-labelledby="highlight-title">
       <div className="highlight-head">
-        <span className="mono eyebrow">Highlighted</span>
-        <h2 id="highlight-title">This month on the floor</h2>
+        <span className="mono eyebrow">Latest arrivals</span>
+        <h2 id="highlight-title">New in</h2>
         <p>
-          A handful of pieces we have picked out, checked over and ready to
-          go. The full collection sits below, category by category.
+          The newest pieces to reach the floor, checked over and listed. The
+          full collection sits below, era by era.
         </p>
       </div>
 

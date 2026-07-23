@@ -5,11 +5,11 @@ import RoomVisual from "@/components/canvas/RoomVisual";
 import Plinth from "@/components/gallery/Plinth";
 
 /**
- * The collection compressed to one shopping row: four category tiles, chairs
- * first, each keeping its category's generative study as a quiet placeholder
- * until photography lands. The count line comes from the one cached
- * getPieces read, so the row costs no extra queries; a category with nothing
- * in simply drops the line rather than reading empty.
+ * The collection compressed to one shopping row: four era tiles, each keeping
+ * its era's generative study as a quiet placeholder until photography lands.
+ * The count line comes from the one cached getPieces read, so the row costs
+ * no extra queries; an era with nothing in simply drops the line rather than
+ * reading empty.
  */
 export default async function RoomsRow() {
   const [categories, pieces] = await Promise.all([
@@ -25,8 +25,8 @@ export default async function RoomsRow() {
   return (
     <section className="rooms" aria-labelledby="rooms-title">
       <div className="rooms-head">
-        <span className="mono eyebrow">Browse the collection</span>
-        <h2 id="rooms-title">Shop by category</h2>
+        <span className="mono eyebrow">The collection, era by era</span>
+        <h2 id="rooms-title">Shop by era</h2>
       </div>
       <div className="rooms-grid">
         {rooms.map((room, i) => {

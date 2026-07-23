@@ -135,17 +135,32 @@ export default function AdminDashboard() {
       </div>
 
       <nav className="admin-tabs" aria-label="Dashboard sections">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            className="admin-tab"
-            aria-pressed={tab === t.id}
-            onClick={() => setTab(t.id)}
-          >
-            {t.label}
-          </button>
-        ))}
+        {TABS.map((t) => {
+          // The inbox tabs carry a live row count, so what needs attention
+          // shows without opening them.
+          const count =
+            t.id === "enquiries"
+              ? data.enquiries.length
+              : t.id === "interest"
+                ? data.interest.length
+                : t.id === "list"
+                  ? data.subscribers.length
+                  : null;
+          return (
+            <button
+              key={t.id}
+              type="button"
+              className="admin-tab"
+              aria-pressed={tab === t.id}
+              onClick={() => setTab(t.id)}
+            >
+              {t.label}
+              {count != null ? (
+                <span className="admin-tab-count">{count}</span>
+              ) : null}
+            </button>
+          );
+        })}
       </nav>
 
       {loadError ? (

@@ -13,7 +13,7 @@ goes without saying.
 
 ## House lines as shipped (owner may amend)
 - Wordmark treatment: "Modern / Life *furniture*" (italic on furniture)
-- Hero primary CTA: "See the chairs" (routes to /collection/chairs)
+- Hero primary CTA: "See the chairs" (routes to /collection)
 - Manifesto: "We do not make furniture. The designers of the last century
   already did. We find the best of it and *rehome* it."
 - Buying band: eyebrow "Buying", heading "Checked, documented, *delivered*",

@@ -1,5 +1,6 @@
 "use client";
 
+import DeleteConfirm from "@/components/admin/DeleteConfirm";
 import type { AdminSubscriber } from "@/components/admin/types";
 
 /**
@@ -38,13 +39,11 @@ export default function SubscribersPanel({
                   <a href={`mailto:${s.email}`}>{s.email}</a>
                 </p>
               </div>
-              <button
-                className="enquire"
-                type="button"
-                onClick={() => onRemove(s.id)}
-              >
-                Remove
-              </button>
+              <DeleteConfirm
+                label="Remove"
+                message="Remove this address? This cannot be undone."
+                onConfirm={() => onRemove(s.id)}
+              />
             </li>
           ))}
         </ul>

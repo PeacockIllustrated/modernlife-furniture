@@ -154,7 +154,7 @@ export default async function PiecePage({
         <Link href="/collection">Collection</Link>
         <span aria-hidden="true">/</span>
         <Link href={`/collection/${piece.categorySlug}`}>
-          {category?.name ?? "Category"}
+          {category?.name ?? "Era"}
         </Link>
         <span aria-hidden="true">/</span>
         <span>{piece.title}</span>

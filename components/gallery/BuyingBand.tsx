@@ -10,7 +10,7 @@ import Plinth from "@/components/gallery/Plinth";
  * photograph fills the media panel once uploaded; until then the provenance
  * rings stand in as a quiet placeholder, the drawing that matches the
  * band's promise of history written down, so the band never renders empty.
- * The invitation routes to the chairs, the front of the collection.
+ * The invitation routes to the collection, which is all chairs now.
  */
 export default function BuyingBand({
   image,
@@ -56,7 +56,7 @@ export default function BuyingBand({
           We deliver nationwide and place the piece in the room. If it does
           not sit right once it is home, you have fourteen days to return it.
         </p>
-        <Link className="enquire" href="/collection/chairs">
+        <Link className="enquire" href="/collection">
           See the chairs
         </Link>
       </div>

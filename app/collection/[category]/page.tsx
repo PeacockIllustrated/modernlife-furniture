@@ -57,7 +57,7 @@ export default async function CategoryPage({
 
       <div className="page-head">
         <span className="mono eyebrow">
-          Category {String(data.position).padStart(2, "0")} of{" "}
+          Era {String(data.position).padStart(2, "0")} of{" "}
           {String(categories.length).padStart(2, "0")}
         </span>
         <h1>{data.name}</h1>
@@ -78,7 +78,7 @@ export default async function CategoryPage({
       )}
 
       <FeatureBand
-        eyebrow={`More ${data.name.toLowerCase()} than reach the website`}
+        eyebrow="More chairs than reach the website"
         heading="Looking for something in particular"
         body="Tell us what you are after and we will find it. And if you have a piece the artists made, we buy."
         cta={{ label: "Make an enquiry", href: "/enquire" }}

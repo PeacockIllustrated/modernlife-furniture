@@ -96,13 +96,13 @@ export const globalWords: StaticWord[] = [
     quote:
       "They talked me out of the piece I wanted and into the piece the room needed. Right on both counts.",
     name: "A first time buyer",
-    context: "Sideboard, County Durham",
+    context: "Cantilever chair, County Durham",
   },
   {
     quote:
       "Solid, clean and honestly described. The condition report matched the piece down to the small marks it listed.",
     name: "A returning collector",
-    context: "Nesting tables, York",
+    context: "Teak armchair, York",
   },
 ];
 

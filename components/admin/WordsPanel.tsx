@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import DeleteConfirm from "@/components/admin/DeleteConfirm";
 import type { AdminPiece, AdminWord } from "@/components/admin/types";
 
 /**
@@ -92,13 +93,11 @@ export default function WordsPanel({
                   >
                     {editing === w.id ? "Close" : "Edit"}
                   </button>
-                  <button
-                    className="enquire"
-                    type="button"
-                    onClick={() => remove(w.id)}
-                  >
-                    Remove
-                  </button>
+                  <DeleteConfirm
+                    label="Remove"
+                    message="Delete these words? This cannot be undone."
+                    onConfirm={() => remove(w.id)}
+                  />
                 </div>
               </div>
               {editing === w.id ? (

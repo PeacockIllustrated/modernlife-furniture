@@ -12,8 +12,7 @@ export default function Header() {
         Modern Life Furniture
       </Link>
       <nav className="mono" aria-label="Primary">
-        <Link href="/collection/chairs">Chairs</Link>
-        <Link href="/collection">Collection</Link>
+        <Link href="/collection">Chairs</Link>
         <Link href="/sell">Sell to us</Link>
         <Link href="/enquire">Enquire</Link>
       </nav>

@@ -34,6 +34,15 @@ const toYear = (v: string): number | null => {
   return Number.isFinite(n) ? Math.round(n) : null;
 };
 
+// A title becomes a url slug: ascii-folded, lowercased, hyphenated.
+const slugify = (v: string): string =>
+  v
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
 export default function PieceEditor({
   categories,
   piece,
@@ -44,6 +53,7 @@ export default function PieceEditor({
   included = [],
   faqs = [],
   onDone,
+  onCancel,
 }: {
   categories: AdminCategory[];
   piece?: AdminPiece;
@@ -54,6 +64,7 @@ export default function PieceEditor({
   included?: AdminIncluded[];
   faqs?: AdminFaq[];
   onDone: () => void;
+  onCancel?: () => void;
 }) {
   const [form, setForm] = useState({
     slug: piece?.slug ?? "",
@@ -79,7 +90,7 @@ export default function PieceEditor({
   });
   // An absent key means enabled, so every toggle starts true unless the
   // piece explicitly switched it off. Saving writes all nine back.
-  const [toggles, setToggles] = useState<Record<string, boolean>>(() =>
+  const [toggles, setTogglesRaw] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(
       SECTION_TOGGLES.map(({ key }) => [
         key,
@@ -87,13 +98,13 @@ export default function PieceEditor({
       ]),
     ),
   );
-  const [provRows, setProvRows] = useState<
+  const [provRows, setProvRowsRaw] = useState<
     { id?: string; label: string; detail: string }[]
   >(provenance.map((r) => ({ id: r.id, label: r.label, detail: r.detail })));
-  const [imgRows, setImgRows] = useState<ImageDraft[]>(
+  const [imgRows, setImgRowsRaw] = useState<ImageDraft[]>(
     images.map((r) => ({ id: r.id, path: r.path, alt: r.alt, kind: r.kind })),
   );
-  const [bandRows, setBandRows] = useState<BandDraft[]>(
+  const [bandRows, setBandRowsRaw] = useState<BandDraft[]>(
     features.map((r) => ({
       id: r.id,
       eyebrow: r.eyebrow,
@@ -104,7 +115,7 @@ export default function PieceEditor({
       layout: r.layout,
     })),
   );
-  const [specRows, setSpecRows] = useState<
+  const [specRows, setSpecRowsRaw] = useState<
     { id?: string; grouping: string; term: string; detail: string }[]
   >(
     specs.map((r) => ({
@@ -114,10 +125,10 @@ export default function PieceEditor({
       detail: r.detail,
     })),
   );
-  const [inclRows, setInclRows] = useState<
+  const [inclRows, setInclRowsRaw] = useState<
     { id?: string; label: string; note: string }[]
   >(included.map((r) => ({ id: r.id, label: r.label, note: r.note })));
-  const [faqRows, setFaqRows] = useState<
+  const [faqRows, setFaqRowsRaw] = useState<
     { id?: string; question: string; answer: string; published: boolean }[]
   >(
     faqs.map((r) => ({
@@ -130,6 +141,47 @@ export default function PieceEditor({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [uploadNote, setUploadNote] = useState("");
+
+  // One dirty flag, set on the first change to anything, drives the
+  // unsaved-changes note in the sticky actions bar. Every state setter the
+  // form and the child editors use is wrapped to flip it.
+  const [dirty, setDirty] = useState(false);
+  const setToggles: typeof setTogglesRaw = (v) => {
+    setDirty(true);
+    setTogglesRaw(v);
+  };
+  const setProvRows: typeof setProvRowsRaw = (v) => {
+    setDirty(true);
+    setProvRowsRaw(v);
+  };
+  const setImgRows: typeof setImgRowsRaw = (v) => {
+    setDirty(true);
+    setImgRowsRaw(v);
+  };
+  const setBandRows: typeof setBandRowsRaw = (v) => {
+    setDirty(true);
+    setBandRowsRaw(v);
+  };
+  const setSpecRows: typeof setSpecRowsRaw = (v) => {
+    setDirty(true);
+    setSpecRowsRaw(v);
+  };
+  const setInclRows: typeof setInclRowsRaw = (v) => {
+    setDirty(true);
+    setInclRowsRaw(v);
+  };
+  const setFaqRows: typeof setFaqRowsRaw = (v) => {
+    setDirty(true);
+    setFaqRowsRaw(v);
+  };
+
+  // A new piece writes its slug from the title until the slug is edited by
+  // hand; an existing piece's slug never changes on its own.
+  const [slugTouched, setSlugTouched] = useState(Boolean(piece));
+
+  // Child sections open by default on a new piece and start collapsed when
+  // editing, so a long existing piece reads as a short table of contents.
+  const sectionsOpen = !piece;
 
   async function save(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -219,18 +271,39 @@ export default function PieceEditor({
     }
   }
 
-  const set = (k: keyof typeof form, v: string | boolean) =>
+  const set = (k: keyof typeof form, v: string | boolean) => {
+    setDirty(true);
     setForm((f) => ({ ...f, [k]: v }));
+  };
 
   return (
     <form className="form admin-form" onSubmit={save}>
       <div className="field">
         <label>Title</label>
-        <input value={form.title} onChange={(e) => set("title", e.target.value)} required />
+        <input
+          value={form.title}
+          onChange={(e) => {
+            const title = e.target.value;
+            setDirty(true);
+            setForm((f) => ({
+              ...f,
+              title,
+              ...(slugTouched ? {} : { slug: slugify(title) }),
+            }));
+          }}
+          required
+        />
       </div>
       <div className="field">
         <label>Slug (url)</label>
-        <input value={form.slug} onChange={(e) => set("slug", e.target.value)} required />
+        <input
+          value={form.slug}
+          onChange={(e) => {
+            setSlugTouched(true);
+            set("slug", e.target.value);
+          }}
+          required
+        />
       </div>
       <div className="field">
         <label>Catalogue number</label>
@@ -361,11 +434,12 @@ export default function PieceEditor({
           checked={form.featured}
           onChange={(e) => set("featured", e.target.checked)}
         />
-        Feature on the homepage
+        Starred
       </label>
+      <p className="admin-hint">Starred pieces lead the home page hero.</p>
       {form.featured ? (
         <div className="field">
-          <label>Homepage position (lower shows first)</label>
+          <label>Star order (lower shows first)</label>
           <input
             inputMode="numeric"
             value={form.featured_position}
@@ -402,10 +476,15 @@ export default function PieceEditor({
         rows={imgRows}
         onChange={setImgRows}
         onNote={setUploadNote}
+        defaultOpen={sectionsOpen}
       />
 
-      <fieldset className="admin-fieldset">
-        <legend className="mono">Provenance rings</legend>
+      <details className="admin-details" open={sectionsOpen}>
+        <summary className="admin-summary mono">
+          <span className="admin-plus" aria-hidden="true" />
+          Provenance rings, {provRows.length}
+        </summary>
+        <div className="admin-details-body">
         {provRows.map((r, i) => (
           <div key={r.id ?? `new-${i}`} className="admin-subrow">
             <input
@@ -444,17 +523,23 @@ export default function PieceEditor({
         >
           Add provenance
         </button>
-      </fieldset>
+        </div>
+      </details>
 
       <BandsEditor
         slug={form.slug.trim()}
         rows={bandRows}
         onChange={setBandRows}
         onNote={setUploadNote}
+        defaultOpen={sectionsOpen}
       />
 
-      <fieldset className="admin-fieldset">
-        <legend className="mono">Specification rows</legend>
+      <details className="admin-details" open={sectionsOpen}>
+        <summary className="admin-summary mono">
+          <span className="admin-plus" aria-hidden="true" />
+          Specification rows, {specRows.length}
+        </summary>
+        <div className="admin-details-body">
         <p className="admin-hint">
           Rows sharing a grouping sit under one subheading, for example
           Dimensions with Width, Depth and Height.
@@ -513,10 +598,15 @@ export default function PieceEditor({
         >
           Add row
         </button>
-      </fieldset>
+        </div>
+      </details>
 
-      <fieldset className="admin-fieldset">
-        <legend className="mono">What comes with the piece</legend>
+      <details className="admin-details" open={sectionsOpen}>
+        <summary className="admin-summary mono">
+          <span className="admin-plus" aria-hidden="true" />
+          What comes with the piece, {inclRows.length}
+        </summary>
+        <div className="admin-details-body">
         <p className="admin-hint">
           Leave empty to use the standard four items from the site copy.
         </p>
@@ -558,10 +648,15 @@ export default function PieceEditor({
         >
           Add item
         </button>
-      </fieldset>
+        </div>
+      </details>
 
-      <fieldset className="admin-fieldset">
-        <legend className="mono">Questions for this piece</legend>
+      <details className="admin-details" open={sectionsOpen}>
+        <summary className="admin-summary mono">
+          <span className="admin-plus" aria-hidden="true" />
+          Questions for this piece, {faqRows.length}
+        </summary>
+        <div className="admin-details-body">
         <p className="admin-hint">
           Shown before the site-wide questions on this piece&#39;s page.
         </p>
@@ -636,21 +731,36 @@ export default function PieceEditor({
         >
           Add question
         </button>
-      </fieldset>
+        </div>
+      </details>
 
-      <button className="enquire" type="submit" disabled={busy}>
-        {busy ? "Saving" : piece ? "Save changes" : "Create piece"}
-      </button>
-      {uploadNote ? (
-        <p className="form-note mono" data-tone="error" role="status">
-          {uploadNote}
-        </p>
-      ) : null}
-      {error ? (
-        <p className="form-note mono" data-tone="error" role="status">
-          {error}
-        </p>
-      ) : null}
+      <div className="admin-actions">
+        <button className="enquire" type="submit" disabled={busy}>
+          {busy ? "Saving" : piece ? "Save changes" : "Create piece"}
+        </button>
+        <button
+          className="enquire"
+          type="button"
+          onClick={() => (onCancel ?? onDone)()}
+        >
+          Cancel
+        </button>
+        {dirty ? (
+          <span className="mono admin-unsaved" role="status">
+            Unsaved changes
+          </span>
+        ) : null}
+        {uploadNote ? (
+          <p className="form-note mono" data-tone="error" role="status">
+            {uploadNote}
+          </p>
+        ) : null}
+        {error ? (
+          <p className="form-note mono" data-tone="error" role="status">
+            {error}
+          </p>
+        ) : null}
+      </div>
     </form>
   );
 }

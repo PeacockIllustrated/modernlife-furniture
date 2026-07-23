@@ -6,7 +6,7 @@ import type { ImageDraft } from "@/components/admin/types";
 import type { ImageKind } from "@/lib/supabase/types";
 
 /**
- * The images fieldset of the piece editor: a thumbnail preview, the path
+ * The images section of the piece editor: a thumbnail preview, the path
  * (filled by upload or typed by hand), alt text, the kind, and reorder
  * controls. Row order becomes position on save, so the first row is the
  * piece page's main photograph.
@@ -17,6 +17,7 @@ export default function ImagesEditor({
   rows,
   onChange,
   onNote,
+  defaultOpen,
 }: {
   slug: string;
   rows: ImageDraft[];
@@ -24,13 +25,18 @@ export default function ImagesEditor({
   // current rows rather than reverting edits made while it was in flight.
   onChange: (update: (rows: ImageDraft[]) => ImageDraft[]) => void;
   onNote: (note: string) => void;
+  defaultOpen: boolean;
 }) {
   const update = (i: number, patch: Partial<ImageDraft>) =>
     onChange((rs) => rs.map((r, j) => (j === i ? { ...r, ...patch } : r)));
 
   return (
-    <fieldset className="admin-fieldset">
-      <legend className="mono">Images</legend>
+    <details className="admin-details" open={defaultOpen}>
+      <summary className="admin-summary mono">
+        <span className="admin-plus" aria-hidden="true" />
+        Images, {rows.length}
+      </summary>
+      <div className="admin-details-body">
       <p className="admin-hint">
         The first image is the main photograph. Upload fills the path for you.
       </p>
@@ -107,6 +113,7 @@ export default function ImagesEditor({
       >
         Add image
       </button>
-    </fieldset>
+      </div>
+    </details>
   );
 }

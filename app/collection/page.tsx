@@ -9,15 +9,15 @@ import RevealObserver from "@/components/scroll/RevealObserver";
 export const metadata: Metadata = {
   title: "The collection",
   description:
-    "Chairs, shelving and storage, cabinets and sideboards, and tables. Vintage designer furniture, checked, documented and delivered nationwide.",
+    "Vintage designer chairs, era by era: Bauhaus and modernist, Danish modern, space age, and Italian and sculptural. Checked, documented and delivered nationwide.",
 };
 
 export const revalidate = 60;
 
 /**
- * The collection index: each category shown as a preview row, chairs first,
- * its study beside the name. Every row routes to the category's pieces, so
- * the page is a shop index rather than a tour.
+ * The collection index: each era shown as a preview row, its study beside
+ * the name. Every row routes to the era's pieces, so the page is a shop
+ * index rather than a tour.
  */
 export default async function CollectionIndex() {
   const categories = await getCategories();
@@ -35,10 +35,10 @@ export default async function CollectionIndex() {
         <span className="mono eyebrow">Browse</span>
         <h1>The collection</h1>
         <p>
-          Chairs lead, with shelving and storage, cabinets and sideboards, and
-          tables alongside. Every piece is one of one and the collection
-          changes weekly; if you are after something in particular, tell us
-          and we will find it.
+          Chairs, era by era: Bauhaus and modernist, Danish modern, space age,
+          and Italian and sculptural. Every piece is one of one and the
+          collection changes weekly; if you are after something in particular,
+          tell us and we will find it.
         </p>
       </div>
 
@@ -66,7 +66,7 @@ export default async function CollectionIndex() {
                 <h2>{name}</h2>
                 <span className="hint">{hint}</span>
                 <span className="cat-row-view">
-                  View {name.toLowerCase()}
+                  View {name}
                 </span>
               </div>
             </Link>

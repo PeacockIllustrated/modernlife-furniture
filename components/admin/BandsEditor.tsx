@@ -6,7 +6,7 @@ import type { BandDraft } from "@/components/admin/types";
 import type { FeatureLayout } from "@/lib/supabase/types";
 
 /**
- * The story bands fieldset of the piece editor, one block per band in page
+ * The story bands section of the piece editor, one block per band in page
  * order. Each band carries its eyebrow, title, body, layout and an optional
  * photograph; a band without a photograph falls back to the category's
  * generative panel on the piece page.
@@ -17,6 +17,7 @@ export default function BandsEditor({
   rows,
   onChange,
   onNote,
+  defaultOpen,
 }: {
   slug: string;
   rows: BandDraft[];
@@ -24,13 +25,18 @@ export default function BandsEditor({
   // current rows rather than reverting edits made while it was in flight.
   onChange: (update: (rows: BandDraft[]) => BandDraft[]) => void;
   onNote: (note: string) => void;
+  defaultOpen: boolean;
 }) {
   const update = (i: number, patch: Partial<BandDraft>) =>
     onChange((rs) => rs.map((r, j) => (j === i ? { ...r, ...patch } : r)));
 
   return (
-    <fieldset className="admin-fieldset">
-      <legend className="mono">Story bands</legend>
+    <details className="admin-details" open={defaultOpen}>
+      <summary className="admin-summary mono">
+        <span className="admin-plus" aria-hidden="true" />
+        Story bands, {rows.length}
+      </summary>
+      <div className="admin-details-body">
       <p className="admin-hint">
         Wrap one word of a title in asterisks for italics, for example
         Restored on the *bench*. A band without an image shows the room&#39;s
@@ -145,6 +151,7 @@ export default function BandsEditor({
       >
         Add band
       </button>
-    </fieldset>
+      </div>
+    </details>
   );
 }

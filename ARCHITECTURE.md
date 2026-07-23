@@ -3,18 +3,18 @@
 ## Routes (App Router)
 ```
 /                                  landing (the five-room gallery, from concept-v5)
-/collection                        all categories index
-/collection/chairs                 category page
-/collection/shelving-and-storage   category page
-/collection/cabinets-and-sideboards category page
-/collection/tables                 category page
+/collection                        all eras index
+/collection/bauhaus-and-modernist  era page
+/collection/danish-modern          era page
+/collection/space-age              era page
+/collection/italian-and-sculptural era page
 /piece/[slug]                      individual piece (specimen page)
 /restoration                       restoration service page
 /sell                              "we buy" page
 /enquire                           contact (also mailto fallbacks everywhere)
 /admin                             owner dashboard (Supabase Auth, magic link)
 ```
-Category slugs are fixed and match the landing CTAs already present in the concept. Do not rename them.
+Era slugs are fixed and match the landing CTAs. Do not rename them.
 
 ## Component map
 ```

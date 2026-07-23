@@ -2223,70 +2223,229 @@ button.enquire {
   opacity: 0.7;
 }
 
-/* ---------- Photographic hero, once the owner uploads an image ---------- */
-/* Full bleed photograph with an opaque basalt panel anchored bottom left.
-   No gradients and no scrims; the panel is solid so the type never fights
-   the picture. Until a hero image is set the Tide hero renders instead. */
-.photo-hero {
+/* ---------- Hero composition: headline panel plus the starred rail ---------- */
+/* One hero for both data states. The headline block sits in a soft panel,
+   the Tide canvas quietly behind it until a hero photograph exists; the
+   owner's starred pieces run beside it as a rail, stacking under on phones.
+   The lead starred piece is large over its photograph or generative study,
+   the two behind it slim rows, so the rail reads as one composition. When
+   the owner uploads a hero image it becomes the backdrop for the whole band
+   and the headline panel turns opaque paper, no gradients and no scrims, so
+   the type never fights the picture. */
+.hero-store {
   position: relative;
-  min-height: 86vh;
-  background: var(--basalt);
-  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: stretch;
+  padding: 1.4rem var(--edge-pad) 2.4rem;
 }
-.photo-hero-img {
+/* No starred pieces yet: the headline panel holds the band alone. */
+.hero-store-solo {
+  grid-template-columns: minmax(0, 1fr);
+}
+.hero-store-solo .hero-lede {
+  min-height: min(34rem, 72svh);
+}
+/* Photo state: full-bleed backdrop behind panel and rail, basalt while the
+   photograph streams in. */
+.hero-store-photo {
+  background: var(--basalt);
+}
+.hero-backdrop {
   object-fit: cover;
+  z-index: 0;
 }
-.photo-hero-panel {
-  position: absolute;
-  left: 0;
-  bottom: 0;
+
+/* ----- The headline panel ----- */
+.hero-lede {
+  position: relative;
   z-index: 2;
-  max-width: min(44rem, 92vw);
-  background: var(--basalt);
-  color: var(--bone);
-  border-top: var(--hair-bone);
-  border-right: var(--hair-bone);
-  border-radius: 0 var(--radius-m) 0 0; /* anchored bottom left, one soft corner */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   overflow: hidden;
-  padding: 2.4rem 2.8rem 2.6rem var(--edge-pad);
+  background: var(--panel);
+  border: var(--hair);
+  border-radius: var(--radius-m);
+  padding: clamp(1.6rem, 3.4vw, 3.2rem);
+  min-height: 24rem;
 }
-.photo-hero-panel h1 {
+.hero-store-photo .hero-lede {
+  background: var(--paper);
+}
+.hero-tide {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.hero-tide canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: pan-y; /* pointer-reactive field, never trap scroll */
+}
+.hero-lede-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 34rem;
+}
+.hero-lede h1 {
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: clamp(2.6rem, 6vw, 5.4rem);
-  line-height: 1;
+  font-size: clamp(2.3rem, 4.6vw, 4.4rem);
+  line-height: 1.02;
   letter-spacing: -0.02em;
-  margin-bottom: 1.1rem;
+  margin-bottom: 1rem;
+  max-width: 14ch;
 }
-.photo-hero-panel h1 em {
+.hero-lede h1 em {
   font-style: italic;
+  font-weight: 400;
 }
-.photo-hero-panel p {
-  max-width: 36ch;
+.hero-lede p {
+  max-width: 38ch;
   opacity: 0.88;
 }
-/* The shop buttons re-grounded for the basalt panel. */
-.photo-hero-panel .btn {
-  border-color: var(--bone);
+
+/* ----- The starred rail ----- */
+.hero-rail {
+  position: relative;
+  z-index: 2;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
-.photo-hero-panel .btn-solid {
-  background: var(--bone);
-  color: var(--basalt);
+.hero-rail li {
+  display: flex;
 }
-.photo-hero-panel .btn-solid:hover {
-  background: var(--amber);
-  border-color: var(--amber);
-  color: var(--basalt);
+/* The lead row absorbs any spare rail height, so the two columns of the
+   band always land level without stretching the slim rows. */
+.hero-rail li:first-child {
+  flex: 1 1 auto;
 }
-.photo-hero-panel .btn-line {
+.star-card {
+  flex: 1 1 auto;
+  display: flex;
+  min-height: 44px;
+  text-decoration: none;
+  color: inherit;
+  background: var(--paper);
+  border: var(--hair);
+  border-radius: var(--radius-m);
+  overflow: hidden;
+}
+.star-card-lead {
+  flex-direction: column;
+}
+.star-figure {
+  position: relative;
+  flex: 0 0 auto;
+  background: var(--panel);
+}
+.star-figure[data-ground="dark"] {
+  background: var(--basalt);
   color: var(--bone);
 }
-.photo-hero-panel .btn-line:hover {
-  background: var(--bone);
-  color: var(--basalt);
+.star-figure canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: pan-y;
 }
-.photo-hero-panel a:focus-visible {
-  outline-color: var(--bone);
+.star-photo {
+  object-fit: cover;
+}
+.star-card-lead .star-figure {
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 17rem;
+  border-bottom: var(--hair);
+}
+.star-card:not(.star-card-lead) .star-figure {
+  width: 8.5rem;
+  border-right: var(--hair);
+}
+.star-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 1rem 1.3rem 1.1rem;
+}
+.star-eyebrow {
+  opacity: 0.6;
+}
+.star-card h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.25rem, 1.7vw, 1.55rem);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+}
+.star-card-lead h2 {
+  font-weight: 300;
+  font-size: clamp(1.5rem, 2.3vw, 2rem);
+}
+.star-card:hover h2 {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.star-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 1.3rem;
+  margin-top: 0.15rem;
+}
+
+/* Tablet and under: the rail stacks beneath the headline panel; the lead
+   figure trades its grown height for a fixed ratio, and the spacing
+   tightens, so headline and lead card share the first phone viewport. */
+@media (max-width: 860px) {
+  .hero-store {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.9rem;
+    padding: 0.9rem var(--edge-pad) 1.8rem;
+  }
+  .hero-lede {
+    min-height: 0;
+    padding: 1.6rem 1.2rem 1.8rem;
+  }
+  .hero-lede h1 {
+    font-size: clamp(2.1rem, 7.7vw, 3.2rem);
+  }
+  .hero-rail li:first-child {
+    flex: 0 0 auto;
+  }
+  .star-card-lead .star-figure {
+    flex: 0 0 auto;
+    min-height: 0;
+    aspect-ratio: 16 / 9;
+  }
+}
+
+/* Phones: tighter card interiors, a narrower thumb on the slim rows. */
+@media (max-width: 480px) {
+  .star-card:not(.star-card-lead) .star-figure {
+    width: 6.6rem;
+  }
+  .star-body {
+    padding: 0.85rem 1rem 0.95rem;
+  }
+  .star-card-lead .star-body {
+    padding: 1rem 1.2rem 1.1rem;
+  }
+  .hero-lede p {
+    font-size: 0.95rem;
+    max-width: 34ch;
+  }
 }
 
 /* ---------- Featured trio, the highlighted pieces as labelled exhibits ---------- */
@@ -2795,5 +2954,232 @@ button.enquire {
   .admin-split {
     grid-template-columns: 1fr;
     gap: 0;
+  }
+}
+
+/* ---------- Tab counts ---------- */
+.admin-tab-count {
+  margin-left: 0.45rem;
+  opacity: 0.7;
+}
+
+/* ---------- Pieces list: search, filter, row furniture ---------- */
+.admin-filter {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1.4rem;
+}
+.admin-filter input,
+.admin-filter select {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: inherit;
+  background: transparent;
+  border: var(--hair);
+  border-radius: var(--radius-s);
+  padding: 0.5rem 0.8rem;
+  min-height: 44px; /* comfortable tap target on touch */
+}
+.admin-filter input {
+  flex: 1 1 16rem;
+}
+.admin-filter select {
+  flex: 0 1 auto;
+  cursor: pointer;
+}
+.admin-filter input:focus-visible,
+.admin-filter select:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* A list row with a thumbnail centres rather than baselines. */
+.admin-piece-row.admin-has-thumb {
+  align-items: center;
+}
+.admin-piece-main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* The status dot follows the sitewide sea, rose and amber convention;
+   draft stays ink, like the rest of the meta line. */
+.admin-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.admin-status-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  background: var(--ink);
+}
+.admin-status[data-status="available"] .admin-status-dot {
+  background: var(--sea);
+}
+.admin-status[data-status="reserved"] .admin-status-dot,
+.admin-status[data-status="sold"] .admin-status-dot {
+  background: var(--rose);
+}
+.admin-status[data-status="restoration"] .admin-status-dot {
+  background: var(--amber);
+}
+
+.admin-view-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px; /* comfortable tap target on touch */
+  padding: 0 0.2rem;
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.7;
+}
+.admin-view-link:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+.admin-view-link:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  opacity: 1;
+}
+
+/* ---------- Inline delete confirmation ---------- */
+.admin-confirm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+.admin-confirm-note {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--rose);
+}
+.admin-confirm .enquire {
+  margin-top: 0;
+}
+
+/* ---------- Sticky editor actions ---------- */
+/* The bar hugs the bottom of the viewport while the long form scrolls, so
+   saving never means scrolling to the end. Panel ground, a top hairline and
+   the one floating shadow, per the sticky enquiry bar. */
+.admin-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin: 1.6rem -1.6rem -1.6rem;
+  padding: 0.8rem 1.6rem;
+  background: var(--panel);
+  border-top: var(--hair);
+  box-shadow: var(--shadow-float);
+}
+.admin-actions .enquire {
+  margin-top: 0;
+}
+.admin-actions .form-note {
+  margin-top: 0;
+  flex: 1 1 100%;
+}
+.admin-unsaved {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  opacity: 0.65;
+}
+
+/* ---------- Collapsible child sections ---------- */
+.admin-details {
+  border: var(--hair);
+  margin: 1.4rem 0;
+}
+.admin-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 44px; /* comfortable tap target on touch */
+  padding: 0.6rem 1.2rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  list-style: none;
+  opacity: 0.85;
+}
+.admin-summary::-webkit-details-marker {
+  display: none;
+}
+.admin-summary:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: -2px;
+}
+/* The line device from the questions list: open lays the upright bar down,
+   so the plus reads as a minus. No chevrons. */
+.admin-plus {
+  position: relative;
+  flex: 0 0 auto;
+  width: 12px;
+  height: 12px;
+}
+.admin-plus::before,
+.admin-plus::after {
+  content: "";
+  position: absolute;
+  background: currentColor;
+  opacity: 0.7;
+  transition: transform 0.25s ease;
+}
+.admin-plus::before {
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+}
+.admin-plus::after {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+}
+.admin-details[open] > .admin-summary .admin-plus::after {
+  transform: rotate(90deg);
+}
+.admin-details-body {
+  padding: 0.4rem 1.2rem 1.4rem;
+}
+.admin-details-body > .enquire {
+  margin-top: 0.8rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-plus::before,
+  .admin-plus::after {
+    transition: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .admin-filter {
+    flex-wrap: wrap;
+  }
+  .admin-filter input {
+    flex: 1 1 100%;
+  }
+  .admin-piece-row.admin-has-thumb {
+    flex-wrap: wrap;
+  }
+  .admin-piece-main {
+    flex: 1 1 12rem;
+  }
+  .admin-confirm {
+    justify-content: flex-start;
+  }
+  .admin-actions .enquire {
+    flex: 1 1 auto;
+    text-align: center;
   }
 }

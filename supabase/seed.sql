@@ -5,35 +5,35 @@
 -- site-wide questions, collector words and settings seed on first run only and
 -- reruns leave the owner's rows alone.
 
--- ---- Categories: the four collection categories ----
+-- ---- Categories: the four chair eras ----
 insert into modern_categories (slug, name, position, story, hint, facts, placeholder)
 values
   (
-    'chairs', 'Chairs', 1,
-    'The heart of the collection and the best place to start. Chairs by the schools that decided what sitting should look like, from the Bauhaus cantilever to the space-age pod. Every one is one of one, checked, honestly photographed and ready to sit on.',
-    'New chairs are listed most weeks',
-    '[{"term":"In collection","detail":"Two dozen pieces, changing weekly"},{"term":"Periods","detail":"1925 to 1975"},{"term":"Schools","detail":"Bauhaus, Danish modern, space age"}]'::jsonb,
+    'bauhaus-and-modernist', 'Bauhaus and modernist', 1,
+    'Tubular steel, cantilevers and the machine age, the chairs that decided what modern sitting would look like. Most are lighter than they appear and give slightly as you sit, which is the point of the cantilever. Every one is checked, honestly photographed and ready for daily use.',
+    'The earliest chairs we sell, and usually the lightest',
+    '[{"term":"Periods","detail":"1925 to 1945"},{"term":"Materials","detail":"Tubular steel, cane, leather, bent plywood"},{"term":"What to expect","detail":"Cantilevers, chrome frames, woven seats"}]'::jsonb,
     true
   ),
   (
-    'shelving-and-storage', 'Shelving and storage', 2,
-    'Wall units, modular systems and room dividers, storage that hangs on the wall instead of standing on the floor. Each system is sold complete, with its measurements listed, and can be arranged to suit the wall it is going to.',
-    'Systems are sold complete and hung for you on delivery',
-    '[{"term":"In collection","detail":"Wall units, systems, room dividers"},{"term":"Periods","detail":"1950 to 1980"},{"term":"Materials","detail":"Teak, rosewood, ash, blackened steel"}]'::jsonb,
+    'danish-modern', 'Danish modern', 2,
+    'Sculpted teak and rosewood, upholstery in wool, joinery you will not find under later furniture. These chairs are shaped to the body and finished on every side, so they sit as well in the middle of a room as against a wall. The easiest era to live with, and the most collected.',
+    'The quickest era to sell; the list hears about new pieces first',
+    '[{"term":"Periods","detail":"1945 to 1970"},{"term":"Materials","detail":"Teak, rosewood, oak, cord and wool"},{"term":"What to expect","detail":"Sculpted frames, wool upholstery, fine joinery"}]'::jsonb,
     true
   ),
   (
-    'cabinets-and-sideboards', 'Cabinets and sideboards', 3,
-    'Credenzas, cocktail cabinets and bureaus in rosewood, teak and lacquer. Casework carries the most surface of anything we sell, so every piece is photographed close and its condition described plainly.',
-    'Interiors are photographed as carefully as the outside',
-    '[{"term":"In collection","detail":"Credenzas, cocktail cabinets, bureaus"},{"term":"Periods","detail":"1930 to 1975"},{"term":"Materials","detail":"Rosewood, teak, lacquer, brass"}]'::jsonb,
+    'space-age', 'Space age', 3,
+    'Fibreglass, plastics and pod forms from the years when the future felt close. These are the boldest shapes we sell; a single piece will change the character of a room. Each one is checked, honestly photographed and ready for daily use.',
+    'Most shells lift off their bases for delivery',
+    '[{"term":"Periods","detail":"1960 to 1975"},{"term":"Materials","detail":"Fibreglass, moulded plastic, steel, wool"},{"term":"What to expect","detail":"Pods, pedestals and chairs that swivel"}]'::jsonb,
     true
   ),
   (
-    'tables', 'Tables', 4,
-    'Dining, coffee and side tables from Denmark, Italy and Britain. Every table is solid, level and ready for daily use, with dimensions listed so you can check the fit before you enquire.',
-    'Heights and clearances are listed on every table',
-    '[{"term":"In collection","detail":"Dining, coffee, side and nesting"},{"term":"Periods","detail":"1930 to 1975"},{"term":"Origins","detail":"Denmark, Italy, Britain"}]'::jsonb,
+    'italian-and-sculptural', 'Italian and sculptural', 4,
+    'Expressive frames and confident shapes, chairs made by workshops that treated seating as sculpture. Walnut carved rather than machined, upholstery cut close to the frame, silhouettes that hold a room on their own. Made to be looked at, and sat in daily.',
+    'Best placed where they can be seen in the round',
+    '[{"term":"Periods","detail":"1950 to 1975"},{"term":"Materials","detail":"Walnut, lacquer, brass, velvet and wool"},{"term":"What to expect","detail":"Carved frames, close upholstery, no bad angle"}]'::jsonb,
     true
   )
 on conflict (slug) do update set
@@ -44,22 +44,24 @@ on conflict (slug) do update set
   facts = excluded.facts,
   placeholder = excluded.placeholder;
 
--- ---- Pieces: six placeholders. Attribution stays a hedge until confirmed. ----
+-- ---- Pieces: four placeholder chairs, one per era. Attribution stays a
+-- hedge until confirmed. ----
 insert into modern_pieces (
   slug, category_id, title, attribution, period_label, year_from, year_to,
-  origin, materials, status, price_on_request, story, restoration_notes, placeholder,
+  origin, materials, status, price_on_request, price_pence, story,
+  restoration_notes, placeholder,
   featured, featured_position, provenance_verified, catalogue_number
 )
 values
   (
     'fibreglass-ball-chair',
-    (select id from modern_categories where slug = 'chairs'),
+    (select id from modern_categories where slug = 'space-age'),
     'Fibreglass ball chair',
     'Attributed, space age',
     'Space age', 1966, 1972,
     'Finland',
     array['fibreglass', 'wool', 'steel'],
-    'available', true,
+    'available', true, null,
     'A hollow fibreglass shell on a turned steel pedestal, one of the defining chair shapes of the space age. It swivels through a full circle, seats one in real comfort, and quiets the room the moment you sit back. Refinished and reupholstered; solid and ready for daily use.',
     'Refinished shell, new upholstery over new foam, stand re-enamelled; solid and ready for daily use.',
     true,
@@ -67,73 +69,45 @@ values
   ),
   (
     'cantilever-side-chair',
-    (select id from modern_categories where slug = 'chairs'),
+    (select id from modern_categories where slug = 'bauhaus-and-modernist'),
     'Cantilever side chair',
     'School of the Bauhaus',
     'Interwar modern', 1928, 1934,
     'Germany',
     array['tubular steel', 'cane'],
-    'reserved', true,
+    'reserved', true, null,
     'Chromed tubular steel sprung into a single cantilever, the seat and back woven in cane. It is lighter than it looks, gives slightly as you sit, and works as well at a desk as at a dining table. Re-chromed and re-caned; ready for daily use.',
     'Frame re-chromed, seat and back re-caned, floor glides replaced.',
     true,
     false, null, false, 'MLF 002'
   ),
   (
-    'teak-wall-unit',
-    (select id from modern_categories where slug = 'shelving-and-storage'),
-    'Teak wall unit',
-    'School of Danish modern',
-    'Danish modern', 1958, 1968,
+    'sculpted-teak-armchair',
+    (select id from modern_categories where slug = 'danish-modern'),
+    'Sculpted teak armchair',
+    'Attributed to a Danish workshop',
+    'Danish modern', 1955, 1965,
     'Denmark',
-    array['teak', 'brass'],
-    'available', true,
-    'A modular teak wall system, shelves, cabinets and a drop-front desk hung on a pair of uprights. It gives a full wall of storage without standing furniture on the floor, and it hangs to suit your wall rather than the one it came from. French polished, with one shelf replaced in matched teak.',
-    'French polished, brass fittings cleaned and adjusted, one shelf replaced in matched teak.',
+    array['teak', 'wool'],
+    'available', false, 145000,
+    'An armchair in sculpted teak, the frame shaped to the body and finished on every side. The seat and back are upholstered in wool over new foam, and the arms fall exactly where your hands do. Cleaned and re-oiled; solid and ready for daily use.',
+    'Frame cleaned and re-oiled, seat and back reupholstered in wool over new foam, joints checked and sound.',
     true,
-    true, 2, false, 'MLF 003'
+    true, 2, false, 'MLF 008'
   ),
   (
-    'rosewood-sideboard',
-    (select id from modern_categories where slug = 'cabinets-and-sideboards'),
-    'Rosewood sideboard',
-    'In the manner of Danish modern',
-    'Danish modern', 1960, 1970,
-    'Denmark',
-    array['rosewood', 'oak', 'lacquer'],
-    'sold', true,
-    'A long credenza in book-matched rosewood, sliding doors over a clean oak interior. Two metres of storage on a shallow footprint, the sort of piece that anchors a dining room. Re-lacquered, with the doors running freely; solid and true.',
-    'Re-lacquered, door runners re-cut, one foot rebuilt; solid and true.',
-    true,
-    false, null, true, 'MLF 004'
-  ),
-  (
-    'sculptural-coffee-table',
-    (select id from modern_categories where slug = 'tables'),
-    'Sculptural coffee table',
+    'sculptural-walnut-armchair',
+    (select id from modern_categories where slug = 'italian-and-sculptural'),
+    'Sculptural walnut armchair',
     'Maker unconfirmed',
-    'Mid-century', 1955, 1965,
+    'Mid-century', 1958, 1968,
     'Italy',
-    array['walnut', 'glass'],
-    'available', true,
-    'A low table with a shaped walnut frame carrying a floating glass top, the sort of piece a seating area is arranged around. The walnut is shaped rather than machined and reads well from every side. Frame re-polished, one old repair stable; the glass is new, cut to the original template.',
-    'Frame re-polished, one split in a leg glued and pinned, new glass cut to the original template.',
+    array['walnut', 'velvet'],
+    'available', true, null,
+    'An armchair with a carved walnut frame that reads well from every side, the sort of chair that holds a corner of a room on its own. The walnut is shaped rather than machined, and the seat is upholstered close to the line of the frame. Re-polished and reupholstered; solid and ready for daily use.',
+    'Frame re-polished, seat reupholstered in velvet over new foam, joints checked and sound.',
     true,
-    true, 3, false, 'MLF 005'
-  ),
-  (
-    'nesting-tables',
-    (select id from modern_categories where slug = 'tables'),
-    'Nesting tables',
-    'School of Danish modern',
-    'Danish modern', 1962, 1972,
-    'Denmark',
-    array['teak'],
-    'restoration', true,
-    'A graduated set of three in teak, each sliding under the last, three tables in the footprint of one. Being prepared for sale now; it will be listed with photographs and a full condition report when ready.',
-    'Being prepared for sale: tops levelled, joints re-glued, finish to follow.',
-    true,
-    false, null, false, 'MLF 006'
+    true, 3, false, 'MLF 009'
   )
 on conflict (slug) do update set
   category_id = excluded.category_id,
@@ -145,6 +119,8 @@ on conflict (slug) do update set
   origin = excluded.origin,
   materials = excluded.materials,
   status = excluded.status,
+  price_on_request = excluded.price_on_request,
+  price_pence = excluded.price_pence,
   story = excluded.story,
   restoration_notes = excluded.restoration_notes,
   placeholder = excluded.placeholder,
@@ -172,15 +148,15 @@ values
     3, 'Ready', 'Available now, delivered nationwide'
   );
 
--- ---- Store layer: specification rows for all six pieces ----
+-- ---- Store layer: specification rows for all four pieces ----
 -- Delete-then-insert scoped to the seeded slugs, so reruns refresh these
 -- placeholders without touching pieces the owner adds later. Dimensions are
 -- invented and await the tape measure.
 
 delete from modern_piece_specs where piece_id in (
   select id from modern_pieces where slug in (
-    'fibreglass-ball-chair', 'cantilever-side-chair', 'teak-wall-unit',
-    'rosewood-sideboard', 'sculptural-coffee-table', 'nesting-tables'
+    'fibreglass-ball-chair', 'cantilever-side-chair',
+    'sculpted-teak-armchair', 'sculptural-walnut-armchair'
   )
 );
 
@@ -202,37 +178,26 @@ join (
     ('cantilever-side-chair', 4, 'Materials', 'Frame', 'Tubular steel, re-chromed'),
     ('cantilever-side-chair', 5, 'Materials', 'Seat and back', 'Cane, rewoven by hand'),
     ('cantilever-side-chair', 6, 'Condition', 'Overall', 'Re-chromed and re-caned, the spring in the cantilever intact'),
-    ('teak-wall-unit', 1, 'Dimensions', 'Width', '240 cm'),
-    ('teak-wall-unit', 2, 'Dimensions', 'Depth', '40 cm'),
-    ('teak-wall-unit', 3, 'Dimensions', 'Height', '190 cm'),
-    ('teak-wall-unit', 4, 'Materials', 'Carcass', 'Teak, French polished'),
-    ('teak-wall-unit', 5, 'Materials', 'Fittings', 'Brass, cleaned and adjusted'),
-    ('teak-wall-unit', 6, 'Condition', 'Overall', 'French polished, one shelf replaced in matched teak'),
-    ('rosewood-sideboard', 1, 'Dimensions', 'Width', '200 cm'),
-    ('rosewood-sideboard', 2, 'Dimensions', 'Depth', '45 cm'),
-    ('rosewood-sideboard', 3, 'Dimensions', 'Height', '78 cm'),
-    ('rosewood-sideboard', 4, 'Materials', 'Carcass', 'Book-matched rosewood'),
-    ('rosewood-sideboard', 5, 'Materials', 'Interior', 'Oak, cleaned and waxed'),
-    ('rosewood-sideboard', 6, 'Condition', 'Overall', 'Re-lacquered, doors running freely, carcass sound'),
-    ('sculptural-coffee-table', 1, 'Dimensions', 'Width', '130 cm'),
-    ('sculptural-coffee-table', 2, 'Dimensions', 'Depth', '70 cm'),
-    ('sculptural-coffee-table', 3, 'Dimensions', 'Height', '38 cm'),
-    ('sculptural-coffee-table', 4, 'Materials', 'Frame', 'Walnut, re-polished'),
-    ('sculptural-coffee-table', 5, 'Materials', 'Top', 'New glass, cut to the original template'),
-    ('sculptural-coffee-table', 6, 'Condition', 'Overall', 'Re-polished, one old split repaired, pinned and stable'),
-    ('nesting-tables', 1, 'Dimensions', 'Width', '56 cm, the largest of the three'),
-    ('nesting-tables', 2, 'Dimensions', 'Depth', '38 cm'),
-    ('nesting-tables', 3, 'Dimensions', 'Height', '52 cm'),
-    ('nesting-tables', 4, 'Materials', 'Throughout', 'Teak'),
-    ('nesting-tables', 5, 'Condition', 'Overall', 'Being prepared for sale, tops being levelled')
+    ('sculpted-teak-armchair', 1, 'Dimensions', 'Width', '68 cm'),
+    ('sculpted-teak-armchair', 2, 'Dimensions', 'Depth', '74 cm'),
+    ('sculpted-teak-armchair', 3, 'Dimensions', 'Height', '79 cm'),
+    ('sculpted-teak-armchair', 4, 'Materials', 'Frame', 'Teak, cleaned and re-oiled'),
+    ('sculpted-teak-armchair', 5, 'Materials', 'Upholstery', 'Wool over new foam'),
+    ('sculpted-teak-armchair', 6, 'Condition', 'Overall', 'Re-oiled and reupholstered, joints sound, ready for daily use'),
+    ('sculptural-walnut-armchair', 1, 'Dimensions', 'Width', '72 cm'),
+    ('sculptural-walnut-armchair', 2, 'Dimensions', 'Depth', '70 cm'),
+    ('sculptural-walnut-armchair', 3, 'Dimensions', 'Height', '81 cm'),
+    ('sculptural-walnut-armchair', 4, 'Materials', 'Frame', 'Walnut, re-polished'),
+    ('sculptural-walnut-armchair', 5, 'Materials', 'Upholstery', 'Velvet over new foam'),
+    ('sculptural-walnut-armchair', 6, 'Condition', 'Overall', 'Re-polished and reupholstered, joints sound, ready for daily use')
 ) as s (slug, position, grouping, term, detail)
   on s.slug = p.slug;
 
 -- ---- What comes with the piece: the same four items for every piece ----
 delete from modern_piece_included where piece_id in (
   select id from modern_pieces where slug in (
-    'fibreglass-ball-chair', 'cantilever-side-chair', 'teak-wall-unit',
-    'rosewood-sideboard', 'sculptural-coffee-table', 'nesting-tables'
+    'fibreglass-ball-chair', 'cantilever-side-chair',
+    'sculpted-teak-armchair', 'sculptural-walnut-armchair'
   )
 );
 
@@ -247,8 +212,8 @@ cross join (
     (4, 'Delivery', 'Blanket wrapped, carried in and placed in the room you choose.')
 ) as i (position, label, note)
 where p.slug in (
-  'fibreglass-ball-chair', 'cantilever-side-chair', 'teak-wall-unit',
-  'rosewood-sideboard', 'sculptural-coffee-table', 'nesting-tables'
+  'fibreglass-ball-chair', 'cantilever-side-chair',
+  'sculpted-teak-armchair', 'sculptural-walnut-armchair'
 );
 
 -- ---- Story bands for the three featured pieces ----
@@ -256,7 +221,7 @@ where p.slug in (
 -- generative visual until photography arrives.
 delete from modern_piece_features where piece_id in (
   select id from modern_pieces where slug in (
-    'fibreglass-ball-chair', 'teak-wall-unit', 'sculptural-coffee-table'
+    'fibreglass-ball-chair', 'sculpted-teak-armchair', 'sculptural-walnut-armchair'
   )
 );
 
@@ -281,29 +246,14 @@ join (
       'right'
     ),
     (
-      'teak-wall-unit', 1, 'The system', 'Five parts, one *wall*',
-      'Two uprights carry everything. Shelves and cabinets hang where you decide, so the unit fits the wall you have rather than the wall it came from. It packs into five parts for delivery and we hang it for you.',
+      'sculpted-teak-armchair', 1, 'The frame', 'Teak shaped to the *body*',
+      'The frame is cut and shaped rather than bent, with the grain following each curve. Re-oiled to a soft sheen and finished on every side, it sits as well in the middle of a room as against a wall.',
       'right'
     ),
     (
-      'teak-wall-unit', 2, 'The desk', 'A desk that *closes* flush',
-      'The drop front folds flat to write on and shuts flush when you are done. The brass stays have been cleaned and adjusted, so the fall is smooth and steady in the hand.',
-      'left'
-    ),
-    (
-      'teak-wall-unit', 3, 'The timber', 'Matched *teak* throughout',
-      'One shelf has been replaced in teak matched for age and figure; you will need to look for it to find it. The rest of the timber is original, French polished to an even sheen.',
+      'sculptural-walnut-armchair', 1, 'The frame', 'Walnut carved to be *seen*',
+      'The frame is carved rather than machined, and the re-polished walnut carries the light along every curve. There is no back of the chair; it is finished to be looked at from all sides.',
       'right'
-    ),
-    (
-      'sculptural-coffee-table', 1, 'The frame', 'Walnut shaped by *hand*',
-      'The frame curves in ways a machine would not bother with, and after re-polishing the grain reads clearly along every edge. An old split in one leg has been glued and pinned; it is stable and does not move.',
-      'right'
-    ),
-    (
-      'sculptural-coffee-table', 2, 'The top', 'Glass cut to the original *template*',
-      'The original glass did not survive, so the top is new, cut to the maker''s template and sitting exactly where the first one sat. A further replacement could be cut from the same template if ever needed.',
-      'left'
     )
 ) as f (slug, position, eyebrow, title, body, layout)
   on f.slug = p.slug;
@@ -311,7 +261,7 @@ join (
 -- ---- Questions: one per featured piece, then the six site-wide ones ----
 delete from modern_faqs where piece_id in (
   select id from modern_pieces where slug in (
-    'fibreglass-ball-chair', 'teak-wall-unit', 'sculptural-coffee-table'
+    'fibreglass-ball-chair', 'sculpted-teak-armchair', 'sculptural-walnut-armchair'
   )
 );
 
@@ -325,12 +275,12 @@ join (
       'Usually. The shell lifts off its pedestal for the journey, and we confirm your doorway and stair measurements before delivery is booked.'
     ),
     (
-      'teak-wall-unit', 1, 'Can the unit be arranged differently',
-      'Yes. The shelves, cabinets and desk hang wherever the uprights allow, so the unit can be set out to suit your wall. We hang it for you on delivery.'
+      'sculpted-teak-armchair', 1, 'How should the teak be cared for',
+      'Lightly. Keep it out of direct sun, wipe with a barely damp cloth and oil once a year. Care notes written for the chair''s own materials come with it.'
     ),
     (
-      'sculptural-coffee-table', 1, 'Is the glass original',
-      'No. The glass is new, cut to the shape the maker drew. The frame, which is the point of the piece, is original throughout.'
+      'sculptural-walnut-armchair', 1, 'Is the upholstery original',
+      'No. The seat has been reupholstered in velvet over new foam, cut close to the original line. The frame, which is the point of the chair, is original throughout.'
     )
 ) as q (slug, position, question, answer)
   on q.slug = p.slug;
@@ -383,12 +333,12 @@ from (
     (
       2,
       'They talked me out of the piece I wanted and into the piece the room needed. Right on both counts.',
-      'A first time buyer', 'Sideboard, County Durham'
+      'A first time buyer', 'Cantilever chair, County Durham'
     ),
     (
       3,
       'Solid, clean and honestly described. The condition report matched the piece down to the small marks it listed.',
-      'A returning collector', 'Nesting tables, York'
+      'A returning collector', 'Teak armchair, York'
     )
 ) as w (position, quote, name, context)
 where not exists (select 1 from modern_testimonials where piece_id is null);

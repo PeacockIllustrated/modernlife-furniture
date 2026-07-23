@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import DeleteConfirm from "@/components/admin/DeleteConfirm";
 import type { AdminFaq } from "@/components/admin/types";
 
 /**
@@ -81,13 +82,11 @@ export default function QuestionsPanel({
                   >
                     {editing === q.id ? "Close" : "Edit"}
                   </button>
-                  <button
-                    className="enquire"
-                    type="button"
-                    onClick={() => remove(q.id)}
-                  >
-                    Remove
-                  </button>
+                  <DeleteConfirm
+                    label="Remove"
+                    message="Delete this question? This cannot be undone."
+                    onConfirm={() => remove(q.id)}
+                  />
                 </div>
               </div>
               {editing === q.id ? (

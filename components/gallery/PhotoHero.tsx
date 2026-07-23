@@ -1,23 +1,37 @@
 import Image from "next/image";
-import Link from "next/link";
-import { hero } from "@/content/landing";
 import { canOptimiseImage } from "@/lib/format";
-import { emphasise } from "@/components/typography/Em";
+import { HeroLede, StarredRail } from "@/components/gallery/Hero";
 import type { StoreSettings } from "@/content/store";
+import type { Piece, PieceImage } from "@/lib/collection";
 
 /**
  * The photographic hero, shown once the owner has uploaded a hero image
- * through the site panel. A full-bleed photograph with a solid basalt panel
- * anchored bottom left, softly rounded on its free corner, carrying the
- * headline, the standing subline and the two shop calls to action. No
- * gradients and no scrims; the panel is opaque so the type never fights the
- * photograph. Until an image exists the page renders the Tide hero instead.
+ * through the site panel. The photograph becomes the backdrop for the whole
+ * composition; the headline block sits in a soft paper panel so the type
+ * never fights the picture, no gradients and no scrims, and the starred rail
+ * keeps its own paper cards for the same reason. Until an image exists the
+ * page renders the Tide hero instead.
  */
-export default function PhotoHero({ settings }: { settings: StoreSettings }) {
+export default function PhotoHero({
+  settings,
+  pieces,
+  images,
+}: {
+  settings: StoreSettings;
+  pieces: Piece[];
+  images: Record<string, PieceImage | null>;
+}) {
   return (
-    <section className="photo-hero" aria-label="Modern Life Furniture">
+    <section
+      className={
+        pieces.length > 0
+          ? "hero-store hero-store-photo"
+          : "hero-store hero-store-photo hero-store-solo"
+      }
+      aria-label="Modern Life Furniture"
+    >
       <Image
-        className="photo-hero-img"
+        className="hero-backdrop"
         src={settings.heroImage}
         alt={settings.heroAlt}
         fill
@@ -25,18 +39,8 @@ export default function PhotoHero({ settings }: { settings: StoreSettings }) {
         sizes="100vw"
         unoptimized={!canOptimiseImage(settings.heroImage)}
       />
-      <div className="photo-hero-panel">
-        <h1>{emphasise(settings.heroHeadline)}</h1>
-        <p>{hero.sub}</p>
-        <div className="hero-cta">
-          <Link className="btn btn-solid" href="/collection/chairs">
-            See the chairs
-          </Link>
-          <Link className="btn btn-line" href="/collection">
-            Browse the collection
-          </Link>
-        </div>
-      </div>
+      <HeroLede settings={settings} />
+      <StarredRail pieces={pieces} images={images} />
     </section>
   );
 }
