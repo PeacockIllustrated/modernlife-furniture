@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabaseUrl } from "@/lib/supabase/env";
+import { supabaseUrl, envValuesInUse } from "@/lib/supabase/env";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -18,7 +18,14 @@ export async function GET() {
   } catch {
     // Malformed URL; the empty host in the payload says it all.
   }
-  const keysFromEnvironment = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL);
+  // Present says the variables exist; usable says they are printable ASCII a
+  // request header will accept. Present but not usable is the masked-paste
+  // trap, and the site then runs on the baked public defaults.
+  const environmentKeysPresent = Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  );
+  const keySource = envValuesInUse ? "environment" : "baked defaults";
 
   try {
     const { createPublicClient } = await import("@/lib/supabase/public");
@@ -31,7 +38,8 @@ export async function GET() {
       return NextResponse.json({
         ok: false,
         host,
-        keysFromEnvironment,
+        environmentKeysPresent,
+        keySource,
         database: "error",
         detail: error.message,
       });
@@ -39,7 +47,8 @@ export async function GET() {
     return NextResponse.json({
       ok: true,
       host,
-      keysFromEnvironment,
+      environmentKeysPresent,
+      keySource,
       database: "ok",
       pieces: count ?? 0,
     });
@@ -47,7 +56,8 @@ export async function GET() {
     return NextResponse.json({
       ok: false,
       host,
-      keysFromEnvironment,
+      environmentKeysPresent,
+      keySource,
       database: "unreachable",
     });
   }

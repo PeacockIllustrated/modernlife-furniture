@@ -1,7 +1,7 @@
 import "server-only";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "./types";
-import { supabaseUrl } from "./env";
+import { supabaseUrl, isUsableKey } from "./env";
 
 /**
  * Service-role Supabase client for the owner dashboard's server routes. It
@@ -12,7 +12,13 @@ import { supabaseUrl } from "./env";
  *   SUPABASE_SERVICE_ROLE_KEY  the project's service role key (server only)
  */
 
-const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
+// A key pasted from a masked field arrives as bullet characters and would
+// poison every request header, so an unusable value counts as absent and the
+// dashboard shows its setup guidance instead of opaque failures.
+const RAW_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SERVICE_ROLE_KEY = isUsableKey(RAW_SERVICE_ROLE_KEY)
+  ? RAW_SERVICE_ROLE_KEY
+  : "";
 
 /** Whether the dashboard's server writes can run. */
 export const adminDbConfigured = Boolean(supabaseUrl && SERVICE_ROLE_KEY);
