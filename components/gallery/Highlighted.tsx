@@ -36,8 +36,8 @@ export default async function Highlighted() {
         <span className="mono eyebrow">Highlighted</span>
         <h2 id="highlight-title">This month on the floor</h2>
         <p>
-          A handful of pieces we have picked out, restored and ready to rehome.
-          The full collection sits below, room by room.
+          A handful of pieces we have picked out, checked over and ready to
+          go. The full collection sits below, category by category.
         </p>
       </div>
 

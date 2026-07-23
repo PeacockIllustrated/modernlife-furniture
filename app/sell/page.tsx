@@ -1,31 +1,22 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import ServiceBand from "@/components/service/ServiceBand";
 import EnquiryForm from "@/components/forms/EnquiryForm";
 
 export const metadata: Metadata = {
-  title: "Sell a piece",
+  title: "Sell your chair to us",
   description:
-    "If you have a piece the artists made, we buy. Chairs, casework, tables and shelving from the last century, restored and rehomed.",
+    "We buy chairs and other pieces by the designers of the last century. Send photographs and we reply with a view, and an offer if it suits.",
 };
 
 // The chrome around this page reads the owner-editable store settings, so
 // refresh on the same cadence as the rest of the site.
 export const revalidate = 60;
 
-const looks = [
-  {
-    name: "What we look for",
-    note: "Chairs, casework, tables and shelving from the last century, by the schools and workshops that shaped modern furniture. Condition matters less than you might think.",
-  },
-  {
-    name: "How it works",
-    note: "Send a few photographs and whatever you know of the history. We will tell you what we can about it, and make an offer if it is a piece for us.",
-  },
-  {
-    name: "What happens next",
-    note: "We collect across the North East and arrange a courier nationwide. The piece comes to the bench, and on to its next home with the story intact.",
-  },
+/* What we look for, three plain lines rather than a sales pitch. */
+const lookFor = [
+  "Designer attribution, even unconfirmed; tell us what you know and we will research the rest.",
+  "Honest condition; wear is expected in pieces this age, so describe it plainly and we will price accordingly.",
+  "Original parts and finishes, which matter more to us than a recent repair.",
 ];
 
 export default function SellPage() {
@@ -34,36 +25,44 @@ export default function SellPage() {
       <nav className="breadcrumb mono" aria-label="Breadcrumb">
         <Link href="/">Home</Link>
         <span aria-hidden="true">/</span>
-        <span>Sell a piece</span>
+        <span>Sell to us</span>
       </nav>
-
-      <ServiceBand
-        visual="rings"
-        label="Rings of grain and ownership"
-        dark
-      />
 
       <div className="page-head">
         <span className="mono eyebrow">We buy</span>
-        <h1>Sell a piece</h1>
+        <h1>Sell your chair to us</h1>
         <p>
-          If you have a piece the artists made, we buy. The best pieces rarely
-          reach the open market, and a good one deserves the bench and a next
-          home rather than a skip.
+          We buy chairs, and other pieces, by the designers of the last
+          century. Send a few photographs and whatever you know of the
+          history; we reply with a view, and an offer if it is a piece for
+          us.
         </p>
       </div>
 
-      <div className="service-list">
-        {looks.map((l) => (
-          <div key={l.name}>
-            <h3>{l.name}</h3>
-            <p>{l.note}</p>
-          </div>
-        ))}
-      </div>
+      <section aria-label="What we look for">
+        <span
+          className="mono eyebrow"
+          style={{ display: "block", opacity: 0.6 }}
+        >
+          What we look for
+        </span>
+        <ul className="sell-points">
+          {lookFor.map((line, i) => (
+            <li key={line}>
+              <span className="mono" aria-hidden="true">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <p>{line}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       <section aria-label="Tell us about your piece">
-        <span className="mono eyebrow" style={{ display: "block", marginBottom: "1rem", opacity: 0.6 }}>
+        <span
+          className="mono eyebrow"
+          style={{ display: "block", marginBottom: "1rem", opacity: 0.6 }}
+        >
           Tell us about your piece
         </span>
         <EnquiryForm defaultKind="selling" />

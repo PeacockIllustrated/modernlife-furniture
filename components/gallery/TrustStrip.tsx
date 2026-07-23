@@ -1,18 +1,18 @@
 /**
  * Four numbered assurances after the highlighted range, the store's promises
- * set in the specimen register: mono counters, prose lines, hairline
- * divisions. The copy states what the gallery does; it does not sell.
+ * set plainly: mono counters, prose lines, hairline divisions. Each line is a
+ * fact a buyer cares about, nothing invented and nothing theatrical.
  */
 const ASSURANCES = [
-  "Every piece restored on our bench, not sold as found.",
+  "Every piece checked and photographed honestly.",
   "Provenance researched and written down.",
   "Delivered nationwide, placed in the room.",
-  "Fourteen day returns, no unsure collectors.",
+  "Fourteen day returns.",
 ];
 
 export default function TrustStrip() {
   return (
-    <section className="trust-strip reveal" aria-label="How the gallery works">
+    <section className="trust-strip reveal" aria-label="How buying works">
       {ASSURANCES.map((line, i) => (
         <div className="trust-item" key={line}>
           <span className="trust-no mono" aria-hidden="true">

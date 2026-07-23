@@ -37,7 +37,7 @@ export interface Room {
 }
 
 export const manifesto =
-  "We do not make furniture. The designers of the last century already did. We find good pieces, describe them honestly, and sell them one at a time.";
+  "We do not make furniture. The designers of the last century already did. We find good pieces, describe them *honestly*, and sell them one at a time.";
 
 export const hero = {
   sub: "One-of-one chairs and pieces by the designers of the last century, photographed honestly, described plainly and delivered nationwide.",
@@ -49,7 +49,7 @@ export const closing = {
   body: "The collection changes often. Tell us what you are after and we will let you know when the right piece comes in. And if you have a good piece to sell, we buy.",
   cta: {
     label: "Ask about a piece",
-    href: "mailto:studio@modernlifefurniture.co.uk?subject=Find me a piece",
+    href: "/enquire",
   },
 };
 

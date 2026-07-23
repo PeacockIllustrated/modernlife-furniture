@@ -5,14 +5,14 @@ import RoomVisual from "@/components/canvas/RoomVisual";
 import Plinth from "@/components/gallery/Plinth";
 
 /**
- * The workshop band: a full-bleed basalt split, the bench on one side and a
- * short account of the practice on the other. The owner's workshop
- * photograph fills the media panel once uploaded; until then the Joint
- * drawing works the mortise at full intensity, so the band demonstrates the
- * bench rather than describing an absent picture. The invitation leads to
- * the selling page.
+ * The buying-confidence band: a full-bleed basalt split, the media panel on
+ * one side and the plain facts of buying from us on the other. The owner's
+ * photograph fills the media panel once uploaded; until then the provenance
+ * rings stand in as a quiet placeholder, the drawing that matches the
+ * band's promise of history written down, so the band never renders empty.
+ * The invitation routes to the chairs, the front of the collection.
  */
-export default function WorkshopBand({
+export default function BuyingBand({
   image,
   alt,
 }: {
@@ -20,11 +20,11 @@ export default function WorkshopBand({
   alt: string;
 }) {
   return (
-    <section className="workshop" aria-labelledby="workshop-title">
-      <div className="workshop-figure reveal">
+    <section className="buying" aria-labelledby="buying-title">
+      <div className="buying-figure reveal">
         {image ? (
           <Image
-            className="workshop-photo"
+            className="buying-photo"
             src={image}
             alt={alt}
             fill
@@ -34,25 +34,30 @@ export default function WorkshopBand({
         ) : (
           <>
             <RoomVisual
-              visual="bench"
-              label="The bench, a mortise and tenon drawing itself together"
+              visual="rings"
+              label="Rings of grain and ownership, standing in for photography"
               scrollBound={false}
             />
             <Plinth />
           </>
         )}
       </div>
-      <div className="workshop-body reveal">
-        <span className="mono eyebrow">The bench</span>
-        <h2 id="workshop-title">Restored on our bench, not sold as found</h2>
+      <div className="buying-body reveal">
+        <span className="mono eyebrow">Buying</span>
+        <h2 id="buying-title">
+          Checked, documented, <em>delivered</em>
+        </h2>
         <p>
-          Every piece here has been through our hands. We find them in attics
-          and auction rooms, take the finish back to the wood where the years
-          ask for it, and write down everything we do. What leaves the bench
-          is honest, steady and ready for its next forty years.
+          Every piece is sold with a written condition report, and everything
+          we know of its history is set down in the provenance file that
+          travels with it.
         </p>
-        <Link className="enquire" href="/sell">
-          Bring us a piece
+        <p>
+          We deliver nationwide and place the piece in the room. If it does
+          not sit right once it is home, you have fourteen days to return it.
+        </p>
+        <Link className="enquire" href="/collection/chairs">
+          See the chairs
         </Link>
       </div>
     </section>

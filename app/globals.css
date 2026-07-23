@@ -1,23 +1,28 @@
 @import "tailwindcss";
 
 /* ============================================================
-   Modern Life Furniture, design system
-   Ported from reference/concept-v5.html. Tokens are CSS
-   variables (see DESIGN.md); Tailwind carries layout only.
+   Modern Life Furniture, design system v2
+   Clean commercial store. Tokens are CSS variables (see
+   DESIGN.md); Tailwind carries layout only.
    ============================================================ */
 
 :root {
-  --stone: #e4e2db; /* gallery ground, light rooms   */
-  --stone-deep: #d8d6ce; /* closing section ground        */
-  --ink: #1e211e; /* line work, text on light      */
-  --basalt: #151c18; /* dark rooms                    */
-  --bone: #ddd9cc; /* line work, text on dark       */
-  --amber: #c97b3d; /* accent 1, ownership, cane     */
-  --rose: #b4685e; /* accent 2                      */
-  --sea: #5e7a6b; /* accent 3                      */
-  --hair-colour: rgba(30, 33, 30, 0.28);
+  --paper: #f5f3ef; /* page ground                   */
+  --panel: #eae7e1; /* panel tone, tonal blocks      */
+  --stone: var(--paper); /* legacy alias, page ground     */
+  --stone-deep: var(--panel); /* legacy alias, panel tone      */
+  --ink: #1e211e; /* text on light                 */
+  --basalt: #151c18; /* dark bands and footer         */
+  --bone: #ddd9cc; /* text on dark                  */
+  --amber: #c97b3d; /* brand accent, prepared status */
+  --rose: #b4685e; /* status, reserved and sold     */
+  --sea: #5e7a6b; /* status, available             */
+  --hair-colour: rgba(30, 33, 30, 0.16);
   --hair: 1px solid var(--hair-colour); /* hairline rules */
   --hair-bone: 1px solid rgba(221, 217, 204, 0.28); /* hairline on dark */
+  --radius-s: 6px; /* inputs and small elements     */
+  --radius-m: 12px; /* cards and figures             */
+  --shadow-float: 0 8px 24px rgba(30, 33, 30, 0.12); /* floating elements only */
   --canvas-edge: clamp(0.75rem, 2vw, 1.5rem); /* breathing room around visuals */
 
   /* Page container: content is capped at --shell and centred, with a comfortable
@@ -31,14 +36,6 @@
   --font-display: var(--font-fraunces), Georgia, serif;
   --font-body: var(--font-archivo), system-ui, sans-serif;
   --font-mono: var(--font-spline-mono), ui-monospace, monospace;
-}
-
-/* Square corners and no shadows, everywhere, forever */
-*,
-*::before,
-*::after {
-  border-radius: 0 !important;
-  box-shadow: none !important;
 }
 
 * {
@@ -97,6 +94,9 @@ button:focus-visible,
 }
 
 /* ---------- Header ---------- */
+/* A plain fixed bar on the paper ground with a bottom hairline. The old
+   difference blend suited the alternating museum rooms; on the light store
+   ground a quiet opaque bar reads cleaner and never fights the photography. */
 .site-header {
   position: fixed;
   inset: 0 0 auto 0;
@@ -105,8 +105,11 @@ button:focus-visible,
   justify-content: space-between;
   align-items: center;
   padding: 1.1rem var(--edge-pad);
-  mix-blend-mode: difference;
-  color: #e4e2db;
+  background: rgba(245, 243, 239, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: var(--hair);
+  color: var(--ink);
 }
 .site-header .mono {
   opacity: 0.85;
@@ -311,7 +314,8 @@ dd {
   font-size: 0.74rem;
   letter-spacing: 0.1em;
   border: 1px solid currentColor;
-  padding: 0.75rem 1.3rem;
+  border-radius: 999px;
+  padding: 0.75rem 1.6rem;
   transition:
     background 0.25s ease,
     color 0.25s ease;
@@ -364,7 +368,8 @@ dd {
   letter-spacing: 0.12em;
   text-decoration: none;
   border: 1px solid var(--ink);
-  padding: 1rem 2rem;
+  border-radius: 999px;
+  padding: 1rem 2.2rem;
   transition:
     background 0.25s ease,
     color 0.25s ease;
@@ -380,10 +385,11 @@ dd {
   font-family: var(--font-mono);
   font-size: 0.74rem;
   letter-spacing: 0.1em;
-  padding: 0.9rem 1.6rem;
+  padding: 0.9rem 1.9rem;
   min-height: 44px;
   text-decoration: none;
   border: 1px solid var(--ink);
+  border-radius: 999px;
   transition:
     background 0.25s ease,
     color 0.25s ease,
@@ -479,6 +485,7 @@ dd {
 .promo-figure {
   position: relative;
   overflow: hidden;
+  border-radius: var(--radius-m) var(--radius-m) 0 0;
   background: color-mix(in srgb, var(--accent) 16%, var(--stone-deep));
   border-bottom: 3px solid var(--accent);
 }
@@ -533,6 +540,8 @@ dd {
 }
 .promo-card {
   border: var(--hair);
+  border-radius: var(--radius-m);
+  overflow: hidden;
   background: var(--stone-deep);
   transition: transform 0.25s ease;
 }
@@ -566,7 +575,8 @@ dd {
   text-decoration: none;
   color: inherit;
   border: 1px solid currentColor;
-  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  padding: 0.85rem 1.8rem;
   transition:
     background 0.25s ease,
     color 0.25s ease;
@@ -778,6 +788,7 @@ dd {
   position: relative;
   min-height: 60vh;
   border: var(--hair);
+  border-radius: var(--radius-m);
   overflow: hidden;
 }
 .piece-figure canvas {
@@ -866,6 +877,7 @@ dd {
 /* ---------- Acquire block, price, status and interest ---------- */
 .acquire {
   border: var(--hair);
+  border-radius: var(--radius-m);
   background: var(--stone-deep);
   padding: 1.7rem 1.9rem;
   max-width: 46rem;
@@ -950,7 +962,8 @@ dd {
   font-size: 0.74rem;
   letter-spacing: 0.1em;
   border: 1px solid currentColor;
-  padding: 0.75rem 1.3rem;
+  border-radius: 999px;
+  padding: 0.75rem 1.6rem;
   transition:
     background 0.25s ease,
     color 0.25s ease;
@@ -979,6 +992,7 @@ dd {
   color: inherit;
   background: transparent;
   border: var(--hair);
+  border-radius: var(--radius-s);
   padding: 0.75rem 0.9rem;
 }
 .interest-row input:focus-visible {
@@ -1067,6 +1081,7 @@ dd {
 }
 .service-list > div {
   border: var(--hair);
+  border-radius: var(--radius-m);
   background: var(--stone-deep);
   padding: 1.6rem 1.7rem;
 }
@@ -1105,6 +1120,7 @@ dd {
   color: inherit;
   background: transparent;
   border: var(--hair);
+  border-radius: var(--radius-s);
   padding: 0.8rem 0.9rem;
 }
 .field textarea {
@@ -1145,6 +1161,7 @@ button.enquire {
 /* A framed, tonal block, for a dl or a facts group. */
 .block {
   border: var(--hair);
+  border-radius: var(--radius-m);
   background: var(--stone-deep);
   padding: 1.7rem 1.9rem;
 }
@@ -1227,6 +1244,7 @@ button.enquire {
   min-height: 32vh;
   overflow: hidden;
   border: var(--hair);
+  border-radius: var(--radius-m);
 }
 .cat-row.dark .cat-row-figure {
   background: var(--basalt);
@@ -1282,6 +1300,7 @@ button.enquire {
 }
 .enquire-panel {
   border: var(--hair);
+  border-radius: var(--radius-m);
   background: var(--stone-deep);
   padding: 2rem 2.1rem;
 }
@@ -1289,6 +1308,7 @@ button.enquire {
   position: relative;
   min-height: 100%;
   border: var(--hair);
+  border-radius: var(--radius-m);
   background: var(--basalt);
   overflow: hidden;
 }
@@ -1986,11 +2006,11 @@ button.enquire {
    Store layer, chrome and home (owned by the chrome agent)
    ============================================================ */
 
-/* ---------- Announcement, the store notice above the header ---------- */
-/* The strip sits in normal flow and scrolls away; the fixed header overlaps
-   it at rest and reads in bone through the difference blend. The top padding
-   holds the announcement's own line below the header's row so the two never
-   collide, at any width. */
+/* ---------- Announcement, the store notice under the header ---------- */
+/* The strip sits in normal flow and scrolls away while the opaque fixed
+   header stays. Its top padding is hidden behind the header bar, so the
+   announcement's own line reads just below the header at rest and never
+   collides with it, at any width. */
 .announcement {
   background: var(--basalt);
   color: var(--bone);
@@ -2097,7 +2117,8 @@ button.enquire {
   color: inherit;
   background: transparent;
   border: var(--hair);
-  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius-m);
+  padding: 0.75rem 1.1rem;
   min-height: 44px;
 }
 .news-row input:focus-visible {
@@ -2178,6 +2199,8 @@ button.enquire {
   color: var(--bone);
   border-top: var(--hair-bone);
   border-right: var(--hair-bone);
+  border-radius: 0 var(--radius-m) 0 0; /* anchored bottom left, one soft corner */
+  overflow: hidden;
   padding: 2.4rem 2.8rem 2.6rem var(--edge-pad);
 }
 .photo-hero-panel h1 {
@@ -2240,6 +2263,7 @@ button.enquire {
   width: 100%;
   aspect-ratio: 4 / 5;
   border: var(--hair);
+  border-radius: var(--radius-m);
   overflow: hidden;
 }
 .featured-figure[data-ground="dark"] {
@@ -2248,7 +2272,7 @@ button.enquire {
 }
 .featured-figure canvas,
 .room-tile-figure canvas,
-.workshop-figure canvas {
+.buying-figure canvas {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -2324,7 +2348,8 @@ button.enquire {
   font-size: 0.72rem;
   letter-spacing: 0.1em;
   border: 1px solid currentColor;
-  padding: 0.7rem 1.2rem;
+  border-radius: 999px;
+  padding: 0.7rem 1.5rem;
   transition:
     background 0.25s ease,
     color 0.25s ease;
@@ -2374,6 +2399,7 @@ button.enquire {
   height: 30vh;
   min-height: 200px;
   border: var(--hair);
+  border-radius: var(--radius-m);
   overflow: hidden;
 }
 .room-tile-figure[data-ground="dark"] {
@@ -2405,40 +2431,39 @@ button.enquire {
   padding-bottom: 3px;
 }
 
-/* ---------- Workshop band, the bench and the practice ---------- */
+/* ---------- Buying band, the buying-confidence facts ---------- */
 /* Full bleed by normal flow: home sections span the viewport and pad their
    own content, so unlike .feature inside .page no negative margin is
-   needed here. The media panel keeps the Joint drawing at full intensity
-   until the owner's workshop photograph lands. */
-.workshop {
+   needed here. The media panel keeps the bench drawing as a quiet
+   placeholder until the owner's photograph lands. */
+.buying {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   background: var(--basalt);
   color: var(--bone);
   border-top: var(--hair);
 }
-.workshop-figure {
+.buying-figure {
   position: relative;
   min-height: 56vh;
   overflow: hidden;
   border-right: var(--hair-bone);
-  /* The Joint drawing grounds itself on stone, so the plinth over it reads
-     in ink, not the band's bone. */
-  color: var(--ink);
+  /* The placeholder rings draw bone on basalt, so the plinth over them
+     inherits the band's bone and sits seamlessly on the dark ground. */
 }
-.workshop-photo {
+.buying-photo {
   object-fit: cover;
 }
-.workshop-body {
+.buying-body {
   align-self: center;
   padding: 4.5rem var(--edge-pad) 4.5rem 3.2rem;
 }
-.workshop-body .eyebrow {
+.buying-body .eyebrow {
   display: block;
   opacity: 0.7;
   margin-bottom: 1.2rem;
 }
-.workshop-body h2 {
+.buying-body h2 {
   font-family: var(--font-display);
   font-weight: 300;
   font-size: clamp(1.9rem, 3.2vw, 2.9rem);
@@ -2447,16 +2472,42 @@ button.enquire {
   margin-bottom: 1.2rem;
   max-width: 18ch;
 }
-.workshop-body p {
+.buying-body h2 em {
+  font-style: italic;
+  font-weight: 400;
+}
+.buying-body p {
   opacity: 0.85;
   max-width: 44ch;
 }
-.workshop .enquire:hover {
+.buying-body p + p {
+  margin-top: 0.8rem;
+}
+.buying .enquire:hover {
   background: var(--bone);
   color: var(--basalt);
 }
-.workshop a:focus-visible {
+.buying a:focus-visible {
   outline-color: var(--bone);
+}
+
+/* ---------- Sell page: what we look for, three plain lines ---------- */
+.sell-points {
+  list-style: none;
+  max-width: 56rem;
+  margin: 2.5rem 0 3.5rem;
+  border-bottom: var(--hair);
+}
+.sell-points li {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr);
+  gap: 1.4rem;
+  align-items: baseline;
+  padding: 1.05rem 0;
+  border-top: var(--hair);
+}
+.sell-points .mono {
+  opacity: 0.55;
 }
 
 /* The one stack override for the chrome and home store layer. */
@@ -2480,6 +2531,7 @@ button.enquire {
     max-width: none;
     right: 0;
     border-right: none;
+    border-radius: var(--radius-m) var(--radius-m) 0 0;
     padding: 2rem var(--edge-pad) 2.2rem;
   }
   .featured-row {
@@ -2489,15 +2541,15 @@ button.enquire {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     row-gap: 2.4rem;
   }
-  .workshop {
+  .buying {
     grid-template-columns: 1fr;
   }
-  .workshop-figure {
+  .buying-figure {
     min-height: 46vh;
     border-right: none;
     border-bottom: var(--hair-bone);
   }
-  .workshop-body {
+  .buying-body {
     padding: 3rem var(--edge-pad) 3.6rem;
   }
 }

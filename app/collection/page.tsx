@@ -9,14 +9,15 @@ import RevealObserver from "@/components/scroll/RevealObserver";
 export const metadata: Metadata = {
   title: "The collection",
   description:
-    "Chairs, shelving and storage, cabinets and sideboards, and tables. Vintage designer furniture, bought, restored and rehomed.",
+    "Chairs, shelving and storage, cabinets and sideboards, and tables. Vintage designer furniture, checked, documented and delivered nationwide.",
 };
 
 export const revalidate = 60;
 
 /**
- * The collection index: each category shown as a generative preview row, its
- * own material study beside the name, in the landing's light and dark rhythm.
+ * The collection index: each category shown as a preview row, chairs first,
+ * its study beside the name. Every row routes to the category's pieces, so
+ * the page is a shop index rather than a tour.
  */
 export default async function CollectionIndex() {
   const categories = await getCategories();
@@ -31,12 +32,13 @@ export default async function CollectionIndex() {
       </nav>
 
       <div className="page-head">
-        <span className="mono eyebrow">Four rooms</span>
+        <span className="mono eyebrow">Browse</span>
         <h1>The collection</h1>
         <p>
-          Each category is a room in the gallery. The collection changes weekly
-          and the best pieces rarely reach the website; if you are after
-          something in particular, tell us and we will find it.
+          Chairs lead, with shelving and storage, cabinets and sideboards, and
+          tables alongside. Every piece is one of one and the collection
+          changes weekly; if you are after something in particular, tell us
+          and we will find it.
         </p>
       </div>
 

@@ -8,8 +8,8 @@ export default function NotFound() {
         <h1>This piece has moved on</h1>
         <p>
           The page you are after is not here. It may have been rehomed, or the
-          address may have a letter out of place. The collection is through the
-          door below.
+          address may have a letter out of place. The collection carries
+          everything currently for sale.
         </p>
       </div>
       <Link className="enquire" href="/collection">

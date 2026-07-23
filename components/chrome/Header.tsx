@@ -1,8 +1,9 @@
 import Link from "next/link";
 
 /**
- * Fixed header with mix-blend-mode difference, so the mark inverts as it
- * passes over the light and dark rooms.
+ * Fixed header, a plain bar on the paper ground with a bottom hairline.
+ * Chairs lead the nav, per the conversion rules; the enquiry route closes it
+ * so the next action is always one tap from anywhere.
  */
 export default function Header() {
   return (
@@ -11,6 +12,7 @@ export default function Header() {
         Modern Life Furniture
       </Link>
       <nav className="mono" aria-label="Primary">
+        <Link href="/collection/chairs">Chairs</Link>
         <Link href="/collection">Collection</Link>
         <Link href="/sell">Sell to us</Link>
         <Link href="/enquire">Enquire</Link>

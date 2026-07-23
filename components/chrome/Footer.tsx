@@ -7,7 +7,7 @@ import { rooms } from "@/content/landing";
  * The store footer: the acquisitions list first, the site's map in three mono
  * columns, then the quiet legal line. Hairline separations only, per
  * DESIGN.md. The newsletter lead is owner-editable through the store
- * settings; the category links come from the same static rooms the landing
+ * settings; the category links come from the same static rooms the home page
  * uses, so the two never drift apart.
  */
 export default async function Footer() {
@@ -31,11 +31,11 @@ export default async function Footer() {
           ))}
         </nav>
 
-        <nav className="footer-col" aria-label="The gallery">
-          <span className="footer-col-h">The gallery</span>
+        <nav className="footer-col" aria-label="The store">
+          <span className="footer-col-h">The store</span>
+          <Link href="/collection">All pieces</Link>
           <Link href="/sell">Sell to us</Link>
           <Link href="/enquire">Enquire</Link>
-          <Link href="/collection">Collection</Link>
         </nav>
 
         <div className="footer-col">
@@ -49,8 +49,8 @@ export default async function Footer() {
 
       <div className="footer-legal mono">
         <span>Modern Life Furniture</span>
-        <span>Bought, restored, rehomed</span>
-        <span>Established in the last century&rsquo;s afterglow, MMXXVI</span>
+        <span>Vintage designer furniture, chairs above all</span>
+        <span>MMXXVI</span>
       </div>
     </footer>
   );

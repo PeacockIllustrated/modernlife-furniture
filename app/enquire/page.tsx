@@ -23,7 +23,7 @@ export default function EnquirePage() {
       </nav>
 
       <div className="page-head">
-        <span className="mono eyebrow">We curate and explain</span>
+        <span className="mono eyebrow">Get in touch</span>
         <h1>Enquire</h1>
         <p>
           The collection changes weekly and the best pieces rarely reach the
