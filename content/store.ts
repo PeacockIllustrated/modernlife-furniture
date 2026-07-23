@@ -36,15 +36,15 @@ export const storeSettings: StoreSettings = {
   announcement:
     "Viewings by appointment in North East England, delivery nationwide",
   deliveryProse:
-    "We deliver nationwide with a specialist furniture courier, blanket wrapped and placed in the room you choose. Within North East England we bring pieces ourselves, usually inside the week, and collection from the workshop is always welcome.",
+    "We deliver nationwide with a specialist furniture courier, blanket wrapped, carried in and placed in the room you choose. Within North East England we deliver ourselves, usually inside the week, and collection is welcome by arrangement.",
   returnsProse:
-    "If a piece arrives and does not sit right in the room, tell us within fourteen days. We will collect it and return what you paid. We would rather have a chair back than a collector unsure.",
+    "If a piece arrives and does not suit the room, tell us within fourteen days. We will arrange collection and refund what you paid. All we ask is that the piece comes back in the condition it arrived.",
   careProse:
-    "Old timber likes a steady room. Keep pieces out of direct sun and away from radiators, wipe with a barely damp cloth, and feed the finish once a year with a hard wax. Every piece leaves us with care notes written for its own materials.",
+    "Vintage furniture is straightforward to live with. Keep pieces out of direct sun and away from radiators, wipe with a barely damp cloth, and wax timber once a year. Every piece comes with care notes written for its own materials.",
   viewingProse:
-    "The collection is kept at our workshop in North East England. Viewings are by appointment, most days including weekends. Bring the room's measurements and we will put the kettle on.",
+    "The collection is kept in North East England and viewings are by appointment, most days including weekends. Bring the room's measurements and take your time with the piece.",
   newsletterLead:
-    "New pieces are offered to the list before they reach the website. One note a month at most, and only when something worth writing about comes off the bench.",
+    "New pieces are offered to the list before they reach the website. One note a month at most, and only when there is something worth showing you.",
   heroImage: "",
   heroAlt: "",
   heroHeadline: "Live with a piece of *history*",
@@ -56,41 +56,41 @@ export const globalFaqs: StaticFaq[] = [
   {
     question: "How does buying work",
     answer:
-      "Every piece is one of one, so there is no basket. Send an enquiry or register interest and we will reply the same day where we can, usually with more photographs. When you are ready, we take payment by bank transfer and arrange delivery.",
+      "Every piece is one of one, so there is no basket. Send an enquiry and we will reply the same day where we can, usually with more photographs and the condition report. When you are ready, payment is by bank transfer and we arrange delivery.",
   },
   {
     question: "Can you hold a piece",
     answer:
-      "We will hold a piece for forty eight hours while you measure the room. Beyond that we take a small refundable deposit and mark the piece reserved until you decide.",
+      "Yes, for forty eight hours while you measure the room. Beyond that we take a small refundable deposit and mark the piece reserved until you decide.",
   },
   {
     question: "How is delivery arranged",
     answer:
-      "Nationwide by specialist furniture courier, blanket wrapped and placed in the room you choose. Within North East England we deliver ourselves, usually inside the week.",
+      "Nationwide by specialist furniture courier, blanket wrapped, carried in and placed in the room you choose. Within North East England we deliver ourselves, usually inside the week.",
   },
   {
     question: "Can we see a piece first",
     answer:
-      "Yes, viewings are by appointment at the workshop, most days including weekends. Bring the room's measurements.",
+      "Yes. Viewings are by appointment in North East England, most days including weekends. Bring the room's measurements.",
   },
   {
-    question: "What does restored mean here",
+    question: "What condition are the pieces in",
     answer:
-      "Honest and reversible where possible. We keep original surfaces when they can be kept, replace like with like when they cannot, and write down everything we do. The work is listed on each piece's page.",
+      "Ready for daily use unless the listing says otherwise. Every piece is checked before it is listed, photographed honestly with any wear shown, and sold with a written condition report. Anything repaired or replaced is stated plainly on the piece's page.",
   },
   {
     question: "Do you buy furniture",
     answer:
-      "We do. If you have a piece by the furniture artists of the last century, send photographs through the selling page and we will come back with a view and, if it suits the collection, an offer.",
+      "We do. If you have a piece by one of the designers of the last century, or think you might, send photographs through the selling page and we will come back with a view and, where it suits the collection, an offer.",
   },
 ];
 
 export const globalWords: StaticWord[] = [
   {
     quote:
-      "The chair arrived better than the photographs, and the photographs were the reason I rang. The file that came with it reads like a biography.",
+      "The chair arrived exactly as described, and better than the photographs, which were the reason I rang. The paperwork that came with it answered every question I had.",
     name: "A collector",
-    context: "Ball chair, rehomed to Edinburgh",
+    context: "Ball chair, delivered to Edinburgh",
   },
   {
     quote:
@@ -100,7 +100,7 @@ export const globalWords: StaticWord[] = [
   },
   {
     quote:
-      "You can feel the bench work in it. Nothing wobbles, nothing shines that should not.",
+      "Solid, clean and honestly described. The condition report matched the piece down to the small marks it listed.",
     name: "A returning collector",
     context: "Nesting tables, York",
   },
@@ -110,15 +110,15 @@ export const globalWords: StaticWord[] = [
 export const defaultIncluded: { label: string; note: string }[] = [
   {
     label: "The provenance file",
-    note: "Everything we know about the piece's life so far, written down and passed on with it.",
+    note: "What is known of the piece's history, written down and passed on with it.",
   },
   {
     label: "A condition report",
-    note: "Photographed and noted before and after restoration, so you know exactly what was done.",
+    note: "The piece photographed and described plainly, including anything repaired or replaced.",
   },
   {
     label: "Care notes",
-    note: "How to keep the finish well, one page, written for the piece's own materials.",
+    note: "One page on keeping the piece well, written for its own materials.",
   },
   {
     label: "Delivery",
