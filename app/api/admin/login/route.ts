@@ -51,6 +51,8 @@ export async function POST(req: Request) {
     );
   }
   if (!verifyCredentials(username, password)) {
+    // Pause on failure so automated guessing stays slow even if the in-memory limiter resets.
+    await new Promise((resolve) => setTimeout(resolve, 800));
     return NextResponse.json(
       { error: "Those details were not recognised." },
       { status: 401 },

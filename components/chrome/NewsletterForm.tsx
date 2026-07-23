@@ -13,14 +13,21 @@ export default function NewsletterForm() {
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">(
     "idle",
   );
+  const [note, setNote] = useState("");
+  const fallbackNote = "We could not note that just now, email us instead.";
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (status === "sending") return;
     const form = e.currentTarget;
     const email = String(new FormData(form).get("email") ?? "").trim();
-    if (!email) return;
+    if (!email) {
+      setStatus("error");
+      setNote("Add your email address first.");
+      return;
+    }
     setStatus("sending");
+    setNote("");
     try {
       const res = await fetch("/api/subscribe", {
         method: "POST",
@@ -31,10 +38,18 @@ export default function NewsletterForm() {
         setStatus("ok");
         form.reset();
       } else {
+        // The server refuses in one human sentence; show it when it has one.
+        const json = await res.json().catch(() => ({}));
         setStatus("error");
+        setNote(
+          typeof json.error === "string" && json.error
+            ? json.error
+            : fallbackNote,
+        );
       }
     } catch {
       setStatus("error");
+      setNote(fallbackNote);
     }
   }
 
@@ -70,7 +85,7 @@ export default function NewsletterForm() {
         {status === "ok"
           ? "You are on the list."
           : status === "error"
-            ? "We could not note that just now, email us instead."
+            ? note || fallbackNote
             : ""}
       </p>
     </form>

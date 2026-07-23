@@ -133,6 +133,14 @@ export default function PieceEditor({
 
   async function save(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    // A priced piece needs a real figure; letters must not save as zero.
+    if (!form.price_on_request) {
+      const pounds = Number(form.price.trim().replace(/[^0-9.]/g, ""));
+      if (!form.price.trim() || !Number.isFinite(pounds) || pounds <= 0) {
+        setError("The price needs to be a number in pounds.");
+        return;
+      }
+    }
     setBusy(true);
     setError("");
     try {

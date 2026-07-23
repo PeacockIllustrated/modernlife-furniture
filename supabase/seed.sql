@@ -1,7 +1,9 @@
 -- Seed data. Copy verbatim from CONTENT.md and concept-v5. Every fact here is
 -- a plausible placeholder awaiting the owner, so categories and pieces are
--- flagged placeholder = true and attribution is only ever a hedge. Idempotent:
--- safe to run repeatedly.
+-- flagged placeholder = true and attribution is only ever a hedge. Safe to run
+-- repeatedly: reruns refresh the seeded pieces and their children, while the
+-- site-wide questions, collector words and settings seed on first run only and
+-- reruns leave the owner's rows alone.
 
 -- ---- Categories: the five gallery rooms ----
 insert into modern_categories (slug, name, position, story, hint, facts, placeholder)
@@ -333,65 +335,67 @@ join (
 ) as q (slug, position, question, answer)
   on q.slug = p.slug;
 
--- Site-wide questions are placeholders too; reruns replace them wholesale,
--- the same bargain as the categories above.
-delete from modern_faqs where piece_id is null;
-
+-- Site-wide questions seed only on first run: once any site-wide row exists,
+-- the owner's set is theirs and reruns leave it alone.
 insert into modern_faqs (piece_id, position, question, answer, published)
-values
-  (
-    null, 1, 'How does buying work',
-    'Every piece is one of one, so there is no basket. Send an enquiry or register interest and we will reply the same day where we can, usually with more photographs. When you are ready, we take payment by bank transfer and arrange delivery.',
-    true
-  ),
-  (
-    null, 2, 'Can you hold a piece',
-    'We will hold a piece for forty eight hours while you measure the room. Beyond that we take a small refundable deposit and mark the piece reserved until you decide.',
-    true
-  ),
-  (
-    null, 3, 'How is delivery arranged',
-    'Nationwide by specialist furniture courier, blanket wrapped and placed in the room you choose. Within North East England we deliver ourselves, usually inside the week.',
-    true
-  ),
-  (
-    null, 4, 'Can we see a piece first',
-    'Yes, viewings are by appointment at the workshop, most days including weekends. Bring the room''s measurements.',
-    true
-  ),
-  (
-    null, 5, 'What does restored mean here',
-    'Honest and reversible where possible. We keep original surfaces when they can be kept, replace like with like when they cannot, and write down everything we do. The work is listed on each piece''s page.',
-    true
-  ),
-  (
-    null, 6, 'Do you buy furniture',
-    'We do. If you have a piece by the furniture artists of the last century, send photographs through the selling page and we will come back with a view and, if it suits the collection, an offer.',
-    true
-  );
+select null, q.position, q.question, q.answer, true
+from (
+  values
+    (
+      1, 'How does buying work',
+      'Every piece is one of one, so there is no basket. Send an enquiry or register interest and we will reply the same day where we can, usually with more photographs. When you are ready, we take payment by bank transfer and arrange delivery.'
+    ),
+    (
+      2, 'Can you hold a piece',
+      'We will hold a piece for forty eight hours while you measure the room. Beyond that we take a small refundable deposit and mark the piece reserved until you decide.'
+    ),
+    (
+      3, 'How is delivery arranged',
+      'Nationwide by specialist furniture courier, blanket wrapped and placed in the room you choose. Within North East England we deliver ourselves, usually inside the week.'
+    ),
+    (
+      4, 'Can we see a piece first',
+      'Yes, viewings are by appointment at the workshop, most days including weekends. Bring the room''s measurements.'
+    ),
+    (
+      5, 'What does restored mean here',
+      'Honest and reversible where possible. We keep original surfaces when they can be kept, replace like with like when they cannot, and write down everything we do. The work is listed on each piece''s page.'
+    ),
+    (
+      6, 'Do you buy furniture',
+      'We do. If you have a piece by the furniture artists of the last century, send photographs through the selling page and we will come back with a view and, if it suits the collection, an offer.'
+    )
+) as q (position, question, answer)
+where not exists (select 1 from modern_faqs where piece_id is null);
 
 -- ---- Collector words, site-wide, staff-curated placeholders ----
-delete from modern_testimonials where piece_id is null;
-
+-- Seeded only on first run, the same bargain as the questions above: reruns
+-- leave the owner's rows alone.
 insert into modern_testimonials (piece_id, position, quote, name, context, published)
-values
-  (
-    null, 1,
-    'The chair arrived better than the photographs, and the photographs were the reason I rang. The file that came with it reads like a biography.',
-    'A collector', 'Ball chair, rehomed to Edinburgh', true
-  ),
-  (
-    null, 2,
-    'They talked me out of the piece I wanted and into the piece the room needed. Right on both counts.',
-    'A first time buyer', 'Sideboard, County Durham', true
-  ),
-  (
-    null, 3,
-    'You can feel the bench work in it. Nothing wobbles, nothing shines that should not.',
-    'A returning collector', 'Nesting tables, York', true
-  );
+select null, w.position, w.quote, w.name, w.context, true
+from (
+  values
+    (
+      1,
+      'The chair arrived better than the photographs, and the photographs were the reason I rang. The file that came with it reads like a biography.',
+      'A collector', 'Ball chair, rehomed to Edinburgh'
+    ),
+    (
+      2,
+      'They talked me out of the piece I wanted and into the piece the room needed. Right on both counts.',
+      'A first time buyer', 'Sideboard, County Durham'
+    ),
+    (
+      3,
+      'You can feel the bench work in it. Nothing wobbles, nothing shines that should not.',
+      'A returning collector', 'Nesting tables, York'
+    )
+) as w (position, quote, name, context)
+where not exists (select 1 from modern_testimonials where piece_id is null);
 
 -- ---- Settings: the store prose, mirrored by content/store.ts ----
+-- First run writes the row; once it exists it is the owner's copy, so
+-- reruns never overwrite it.
 insert into modern_settings (key, value)
 values (
   'store',
@@ -404,4 +408,4 @@ values (
     'newsletterLead', 'New pieces are offered to the list before they reach the website. One note a month at most, and only when something worth writing about comes off the bench.'
   )
 )
-on conflict (key) do update set value = excluded.value;
+on conflict (key) do nothing;

@@ -516,7 +516,6 @@ dd {
   padding: 0.3rem 0.7rem;
   font-size: 0.62rem;
   letter-spacing: 0.14em;
-  text-transform: uppercase;
   margin-bottom: 1.4rem;
 }
 .promo-attr {
@@ -914,7 +913,6 @@ dd {
 .seal .mono {
   font-size: 0.66rem;
   letter-spacing: 0.12em;
-  text-transform: uppercase;
 }
 .seal-mark {
   position: relative;
@@ -951,7 +949,6 @@ dd {
   display: block;
   font-size: 0.66rem;
   letter-spacing: 0.12em;
-  text-transform: uppercase;
   opacity: 0.6;
   margin-bottom: 0.4rem;
 }
@@ -1604,9 +1601,8 @@ button.enquire {
   opacity: 0.7;
 }
 .buy-panel {
-  border: var(--hair);
-  background: var(--stone-deep);
-  padding: 1.5rem 1.6rem 1.6rem;
+  border-top: var(--hair);
+  padding-top: 1.5rem;
   margin-top: 0.4rem;
 }
 .buy-panel .acquire-note {
@@ -1636,15 +1632,10 @@ button.enquire {
   gap: 0.4rem;
   opacity: 0.65;
 }
-.buy-trust span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-/* Desktop: the buy box rides alongside the gallery, clearing the fixed
-   header. Below the stack breakpoint it simply flows. */
+/* Desktop: the gallery pins while the longer detail column scrolls past,
+   clearing the fixed header. Below the stack breakpoint it simply flows. */
 @media (min-width: 861px) {
-  .buy-box {
+  .piece-gallery {
     position: sticky;
     top: 6rem;
     align-self: start;
@@ -1992,6 +1983,12 @@ button.enquire {
 }
 @media (min-width: 861px) {
   .sticky-bar {
+    display: none;
+  }
+}
+/* Narrow phones: the price gives way so the title keeps the room. */
+@media (max-width: 480px) {
+  .sticky-bar-price {
     display: none;
   }
 }

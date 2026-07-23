@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import type { ReactNode } from "react";
 import type { PieceImage } from "@/lib/collection";
+import { canOptimiseImage } from "@/lib/format";
 
 /**
  * The specimen gallery: the category's generative study as the ground, the
@@ -57,6 +58,7 @@ export default function PieceGallery({
             fill
             sizes="(max-width: 860px) 100vw, 58vw"
             priority={active === heroIndex}
+            unoptimized={!canOptimiseImage(current.path)}
           />
         ) : (
           <span className="no-photo mono">Photography to follow</span>
@@ -83,7 +85,13 @@ export default function PieceGallery({
                 onClick={() => setActive(i)}
               >
                 <span className="gallery-thumb-img" aria-hidden="true">
-                  <Image src={image.path} alt="" fill sizes="88px" />
+                  <Image
+                    src={image.path}
+                    alt=""
+                    fill
+                    sizes="88px"
+                    unoptimized={!canOptimiseImage(image.path)}
+                  />
                 </span>
                 {caption ? (
                   <span className="gallery-kind mono">{caption}</span>

@@ -358,7 +358,15 @@ export const getPieceBySlug = cache(
               layout: f.layout,
             })),
             specs: byPosition(row.modern_piece_specs),
-            included: byPosition(row.modern_piece_included),
+            // A piece with no items of its own comes with the house four,
+            // matching the static path; the included toggle still hides them.
+            included:
+              row.modern_piece_included.length > 0
+                ? byPosition(row.modern_piece_included)
+                : defaultIncluded.map((item, i) => ({
+                    position: i + 1,
+                    ...item,
+                  })),
             // The published filter is applied here rather than in the join;
             // the embedded rows are small and the query stays one select.
             faqs: byPosition(row.modern_faqs.filter((f) => f.published)).map(

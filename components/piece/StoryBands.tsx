@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { PieceFeature } from "@/lib/collection";
+import { canOptimiseImage } from "@/lib/format";
 import type { RoomVisual as RoomVisualKind } from "@/content/landing";
 import RoomVisual from "@/components/canvas/RoomVisual";
 import Plinth from "@/components/gallery/Plinth";
@@ -42,6 +43,7 @@ export default function StoryBands({
                 alt={feature.imageAlt || feature.title.replaceAll("*", "")}
                 fill
                 sizes="(max-width: 860px) 100vw, 50vw"
+                unoptimized={!canOptimiseImage(feature.imagePath)}
               />
             ) : (
               <>

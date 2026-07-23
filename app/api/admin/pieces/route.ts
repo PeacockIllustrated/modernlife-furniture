@@ -111,13 +111,38 @@ export async function POST(req: Request) {
     );
   }
 
+  // Only the editable columns are copied through; a crafted payload cannot
+  // smuggle extra modern_pieces columns such as id or created_at.
+  const piece = {
+    slug: body.piece.slug,
+    category_id: body.piece.category_id,
+    title: body.piece.title,
+    attribution: body.piece.attribution,
+    period_label: body.piece.period_label,
+    catalogue_number: body.piece.catalogue_number,
+    year_from: body.piece.year_from,
+    year_to: body.piece.year_to,
+    origin: body.piece.origin,
+    materials: body.piece.materials,
+    status: body.piece.status,
+    price_on_request: body.piece.price_on_request,
+    price_pence: body.piece.price_pence,
+    placeholder: body.piece.placeholder,
+    featured: body.piece.featured,
+    featured_position: body.piece.featured_position,
+    provenance_verified: body.piece.provenance_verified,
+    story: body.piece.story,
+    restoration_notes: body.piece.restoration_notes,
+    section_toggles: body.piece.section_toggles,
+  };
+
   const db = createAdminClient();
   let pieceId = body.id;
 
   if (pieceId) {
     const { error } = await db
       .from("modern_pieces")
-      .update(body.piece as never)
+      .update(piece as never)
       .eq("id", pieceId);
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 502 });
@@ -125,7 +150,7 @@ export async function POST(req: Request) {
   } else {
     const { data, error } = await db
       .from("modern_pieces")
-      .insert(body.piece as never)
+      .insert(piece as never)
       .select("id")
       .single();
     if (error) {

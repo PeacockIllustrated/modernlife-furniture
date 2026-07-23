@@ -92,8 +92,6 @@ export default async function PiecePage({
   const faqs = [...piece.faqs, ...siteFaqs];
   const words = [...piece.words, ...siteWords].slice(0, 3);
   const price = priceLabel(piece.priceOnRequest, piece.pricePence);
-  // The first clause of the delivery prose makes a one line trust note.
-  const deliveryLine = settings.deliveryProse.split(",")[0];
 
   return (
     <main className="page">
@@ -189,8 +187,10 @@ export default async function PiecePage({
               </a>
             </div>
 
+            {/* Deliberate static copy; the owner-editable delivery prose
+                reads in full under Care and delivery below. */}
             <div className="buy-trust mono">
-              <span>{deliveryLine}</span>
+              <span>Delivered nationwide, placed in the room</span>
               <span>Fourteen day returns</span>
             </div>
           </div>

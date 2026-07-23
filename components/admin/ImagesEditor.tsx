@@ -20,11 +20,13 @@ export default function ImagesEditor({
 }: {
   slug: string;
   rows: ImageDraft[];
-  onChange: (rows: ImageDraft[]) => void;
+  // A functional updater, so an upload finishing late computes from the
+  // current rows rather than reverting edits made while it was in flight.
+  onChange: (update: (rows: ImageDraft[]) => ImageDraft[]) => void;
   onNote: (note: string) => void;
 }) {
   const update = (i: number, patch: Partial<ImageDraft>) =>
-    onChange(rows.map((r, j) => (j === i ? { ...r, ...patch } : r)));
+    onChange((rs) => rs.map((r, j) => (j === i ? { ...r, ...patch } : r)));
 
   return (
     <fieldset className="admin-fieldset">
@@ -74,7 +76,7 @@ export default function ImagesEditor({
               type="button"
               className="enquire"
               disabled={i === 0}
-              onClick={() => onChange(move(rows, i, i - 1))}
+              onClick={() => onChange((rs) => move(rs, i, i - 1))}
             >
               Up
             </button>
@@ -82,14 +84,14 @@ export default function ImagesEditor({
               type="button"
               className="enquire"
               disabled={i === rows.length - 1}
-              onClick={() => onChange(move(rows, i, i + 1))}
+              onClick={() => onChange((rs) => move(rs, i, i + 1))}
             >
               Down
             </button>
             <button
               type="button"
               className="enquire"
-              onClick={() => onChange(rows.filter((_, j) => j !== i))}
+              onClick={() => onChange((rs) => rs.filter((_, j) => j !== i))}
             >
               Remove
             </button>
@@ -100,7 +102,7 @@ export default function ImagesEditor({
         type="button"
         className="enquire"
         onClick={() =>
-          onChange([...rows, { path: "", alt: "", kind: "detail" }])
+          onChange((rs) => [...rs, { path: "", alt: "", kind: "detail" }])
         }
       >
         Add image

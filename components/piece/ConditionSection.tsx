@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { PieceImage } from "@/lib/collection";
+import { canOptimiseImage } from "@/lib/format";
 
 /**
  * Condition and restoration: the bench notes in prose, and where photography
@@ -38,6 +39,7 @@ export default function ConditionSection({
                   }
                   fill
                   sizes="(max-width: 860px) 100vw, 45vw"
+                  unoptimized={!canOptimiseImage(image.path)}
                 />
               </div>
               <figcaption className="mono condition-caption">

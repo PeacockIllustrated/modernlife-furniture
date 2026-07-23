@@ -35,7 +35,7 @@ export default async function Home() {
       <TrustStrip />
 
       <section className="shop-by" aria-labelledby="shop-by-title">
-        <span className="mono eyebrow">Shop by category</span>
+        <span className="mono eyebrow">The collection, room by room</span>
         <h2 id="shop-by-title">Four rooms of the collection</h2>
         <p>
           Chairs, shelving and storage, cabinets and sideboards, and tables.
