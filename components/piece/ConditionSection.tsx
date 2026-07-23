@@ -3,10 +3,10 @@ import type { PieceImage } from "@/lib/collection";
 import { canOptimiseImage } from "@/lib/format";
 
 /**
- * Condition and restoration: the bench notes in prose, and where photography
- * of the piece as found and as restored both exists, the pair side by side so
- * the work can be read rather than taken on trust. With neither notes nor a
- * pair the section says nothing at all.
+ * Condition: the condition report in prose, and where before and after
+ * photography both exists, the pair side by side so the buyer can read the
+ * state of the piece for themselves. With neither notes nor a pair the
+ * section says nothing at all.
  */
 export default function ConditionSection({
   notes,
@@ -23,7 +23,7 @@ export default function ConditionSection({
   return (
     <section className="section-rule reveal" aria-labelledby="condition-title">
       <h2 id="condition-title" className="store-head">
-        Condition and restoration
+        Condition
       </h2>
       {notes ? <p className="condition-notes">{notes}</p> : null}
       {pair ? (
@@ -35,7 +35,9 @@ export default function ConditionSection({
                   src={image.path}
                   alt={
                     image.alt ||
-                    (i === 0 ? "The piece as found" : "The piece restored")
+                    (i === 0
+                      ? "The piece before preparation"
+                      : "The piece after preparation")
                   }
                   fill
                   sizes="(max-width: 860px) 100vw, 45vw"
@@ -43,7 +45,7 @@ export default function ConditionSection({
                 />
               </div>
               <figcaption className="mono condition-caption">
-                {i === 0 ? "As found" : "Restored"}
+                {i === 0 ? "Before" : "After"}
               </figcaption>
             </figure>
           ))}

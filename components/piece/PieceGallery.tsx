@@ -16,8 +16,8 @@ import { canOptimiseImage } from "@/lib/format";
  */
 
 const KIND_CAPTIONS: Partial<Record<PieceImage["kind"], string>> = {
-  as_found: "As found",
-  restored: "Restored",
+  as_found: "Before",
+  restored: "After",
 };
 
 export default function PieceGallery({

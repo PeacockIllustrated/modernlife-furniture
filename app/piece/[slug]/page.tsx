@@ -8,6 +8,7 @@ import {
   getGlobalWords,
   getRelatedPieces,
   getStoreSettings,
+  type PieceDetail,
 } from "@/lib/collection";
 import { rooms } from "@/content/landing";
 import { staticPieces } from "@/content/pieces";
@@ -56,11 +57,57 @@ export async function generateMetadata({
   };
 }
 
+const BASE_URL = "https://modernlifefurniture.co.uk";
+
 /**
- * The piece page: a museum specimen record grown into the store's counter.
- * The fixed template runs gallery and buy box, story bands, the specimen
- * record, what comes with the piece, condition, provenance, care, questions,
- * collector words, neighbouring exhibits and the enquiry form. Every
+ * The Product JSON-LD for a piece, built conditionally so the serialised
+ * object never carries an undefined field. Price appears only when a figure
+ * is set; availability only where schema.org has an honest term for our
+ * status: available maps to InStock, sold to OutOfStock, and reserved or
+ * being-prepared pieces omit the field rather than claim either.
+ */
+function productJsonLd(piece: PieceDetail): Record<string, unknown> {
+  const url = `${BASE_URL}/piece/${piece.slug}`;
+  const offer: Record<string, unknown> = {
+    "@type": "Offer",
+    priceCurrency: "GBP",
+    url,
+    itemCondition: "https://schema.org/UsedCondition",
+  };
+  if (piece.pricePence != null) {
+    offer.price = (piece.pricePence / 100).toFixed(2);
+  }
+  if (piece.status === "available") {
+    offer.availability = "https://schema.org/InStock";
+  } else if (piece.status === "sold") {
+    offer.availability = "https://schema.org/OutOfStock";
+  }
+  const product: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: piece.title,
+    description: piece.story,
+    brand: { "@type": "Brand", name: "Modern Life Furniture" },
+    url,
+    offers: offer,
+  };
+  if (piece.images.length > 0) {
+    product.image = piece.images.map((image) =>
+      image.path.startsWith("/") ? `${BASE_URL}${image.path}` : image.path,
+    );
+  }
+  if (piece.catalogueNumber) {
+    product.sku = piece.catalogueNumber;
+  }
+  return product;
+}
+
+/**
+ * The piece page: the landing unit for social traffic. The buy column leads,
+ * so the first phone screen carries the photograph, the title, attribution,
+ * price, availability and the enquiry actions; the story, the record,
+ * condition, provenance, care, questions, collector words, related pieces and
+ * the enquiry form follow for the buyer who wants the depth. Every
  * database-driven section hides itself when its toggle is off or it has
  * nothing to say, so the page reads complete at any depth of data.
  */
@@ -95,6 +142,12 @@ export default async function PiecePage({
 
   return (
     <main className="page">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(productJsonLd(piece)),
+        }}
+      />
       <nav className="breadcrumb mono" aria-label="Breadcrumb">
         <Link href="/">Home</Link>
         <span aria-hidden="true">/</span>
@@ -113,17 +166,11 @@ export default async function PiecePage({
         </PieceGallery>
 
         <div className="piece-body buy-box">
-          <div className="mono buy-eyebrow">
-            {piece.catalogueNumber ? (
+          {piece.catalogueNumber ? (
+            <div className="mono buy-eyebrow">
               <span className="buy-cat">{piece.catalogueNumber}</span>
-            ) : (
-              <span aria-hidden="true" />
-            )}
-            <span className="acquire-status" data-status={piece.status}>
-              <span className="acquire-dot" aria-hidden="true" />
-              <span className="mono">{statusLabel(piece.status)}</span>
-            </span>
-          </div>
+            </div>
+          ) : null}
           <span className="mono attribution">{piece.attribution}</span>
           <h1>{piece.title}</h1>
           {piece.provenanceVerified ? (
@@ -135,10 +182,55 @@ export default async function PiecePage({
               <span className="mono">Provenance verified</span>
             </span>
           ) : null}
+
+          {/* The buy panel follows the title directly so the first phone
+              screen carries price, availability and the enquiry action; the
+              story and the condensed record read on below it. */}
+          <div className="buy-panel">
+            <div className="acquire-head">
+              <div className="acquire-price">
+                <span className="mono acquire-label">Price</span>
+                <span className="acquire-figure">{price}</span>
+              </div>
+              <span className="acquire-status" data-status={piece.status}>
+                <span className="acquire-dot" aria-hidden="true" />
+                <span className="mono">{statusLabel(piece.status)}</span>
+              </span>
+            </div>
+
+            <div className="buy-ctas">
+              <a className="enquire" href="#enquire">
+                Send an enquiry
+              </a>
+              <a className="enquire" href="#enquire">
+                Arrange a viewing
+              </a>
+            </div>
+
+            <InterestButton pieceSlug={piece.slug} />
+
+            <p className="acquire-note">
+              {piece.status === "sold"
+                ? "This piece has been rehomed. Tell us what you are after and we will find its like, or register interest to hear when a similar piece arrives."
+                : piece.status === "reserved"
+                  ? "This piece is reserved. Register interest and we will let you know if it becomes available again."
+                  : piece.status === "restoration"
+                    ? "This piece is being prepared for sale. Register interest and we will tell you the moment it is listed with photographs and its condition report."
+                    : "To arrange a viewing, ask a question or begin an acquisition, send us a note below. For higher value pieces we handle the sale personally rather than through a checkout."}
+            </p>
+
+            {/* Deliberate static copy; the owner-editable delivery prose
+                reads in full under Care and delivery below. */}
+            <div className="buy-trust mono">
+              <span>Delivered nationwide, placed in the room</span>
+              <span>Fourteen day returns</span>
+            </div>
+          </div>
+
           {piece.placeholder ? (
             <span
               className="mono"
-              style={{ opacity: 0.55, display: "block", marginBottom: "1.4rem" }}
+              style={{ opacity: 0.55, display: "block", marginTop: "1.8rem" }}
             >
               Placeholder listing, details to be confirmed
             </span>
@@ -157,43 +249,6 @@ export default async function PiecePage({
             <dt>Materials</dt>
             <dd>{piece.materials.join(", ")}</dd>
           </dl>
-
-          <div className="buy-panel">
-            <div className="acquire-head">
-              <div className="acquire-price">
-                <span className="mono acquire-label">Price</span>
-                <span className="acquire-figure">{price}</span>
-              </div>
-            </div>
-
-            <p className="acquire-note">
-              {piece.status === "sold"
-                ? "This piece has been rehomed. Tell us what you are after and we will find its like, or register interest to hear when a similar piece arrives."
-                : piece.status === "reserved"
-                  ? "This piece is reserved. Register interest and we will let you know if it becomes available again."
-                  : piece.status === "restoration"
-                    ? "This piece is in restoration. Register interest to be told the moment it is ready, or send a note to ask about it."
-                    : "To arrange a viewing, ask a question or begin an acquisition, send us a note below. For higher value pieces we handle the sale personally rather than through a checkout."}
-            </p>
-
-            <InterestButton pieceSlug={piece.slug} />
-
-            <div className="buy-ctas">
-              <a className="enquire" href="#enquire">
-                Send an enquiry
-              </a>
-              <a className="enquire" href="#enquire">
-                Arrange a viewing
-              </a>
-            </div>
-
-            {/* Deliberate static copy; the owner-editable delivery prose
-                reads in full under Care and delivery below. */}
-            <div className="buy-trust mono">
-              <span>Delivered nationwide, placed in the room</span>
-              <span>Fourteen day returns</span>
-            </div>
-          </div>
         </div>
       </div>
 

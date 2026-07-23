@@ -10,7 +10,7 @@ export function statusLabel(status: PieceStatus): string {
     case "sold":
       return "Sold";
     case "restoration":
-      return "In restoration";
+      return "Being prepared";
     case "draft":
       return "Draft";
   }

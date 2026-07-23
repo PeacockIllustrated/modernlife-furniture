@@ -1518,6 +1518,7 @@ button.enquire {
   padding: 0;
   background: transparent;
   border: none;
+  border-radius: var(--radius-m);
   color: inherit;
   font: inherit;
   text-align: left;
@@ -1529,6 +1530,7 @@ button.enquire {
   aspect-ratio: 1 / 1;
   overflow: hidden;
   border: var(--hair);
+  border-radius: var(--radius-m);
   background: var(--stone-deep);
 }
 .gallery-thumb-img img {
@@ -1544,6 +1546,9 @@ button.enquire {
 }
 
 /* ---------- Buy box: the label grown into the store's counter ---------- */
+/* The buy panel sits directly under the title, so price, availability and
+   the enquiry actions land in the first phone screen; the story and the
+   condensed record follow beneath the panel's closing hairline. */
 .buy-eyebrow {
   display: flex;
   justify-content: space-between;
@@ -1556,11 +1561,19 @@ button.enquire {
 }
 .buy-panel {
   border-top: var(--hair);
-  padding-top: 1.5rem;
+  border-bottom: var(--hair);
+  padding: 1.5rem 0;
   margin-top: 0.4rem;
 }
 .buy-panel .acquire-note {
-  margin: 1.2rem 0 1.4rem;
+  margin: 1.2rem 0 0;
+}
+.buy-panel .interest,
+.buy-panel .interest-done {
+  margin-top: 1rem;
+}
+.buy-box .buy-panel ~ .story {
+  margin-top: 2rem;
 }
 .buy-ctas {
   display: flex;
@@ -1626,6 +1639,7 @@ button.enquire {
   position: relative;
   min-height: 44vh;
   border: var(--hair);
+  border-radius: var(--radius-m);
   overflow: hidden;
 }
 .story-band-figure canvas {
@@ -1649,6 +1663,7 @@ button.enquire {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: var(--radius-m);
 }
 .story-band[data-layout="right"] .story-band-figure {
   order: 2;
@@ -1740,7 +1755,7 @@ button.enquire {
   max-width: 52ch;
 }
 
-/* ---------- Condition and restoration ---------- */
+/* ---------- Condition ---------- */
 .condition-notes {
   max-width: 52ch;
   opacity: 0.92;
@@ -1751,11 +1766,15 @@ button.enquire {
   gap: 1.4rem;
   margin-top: 2rem;
 }
+.condition-shot {
+  border-radius: var(--radius-m);
+}
 .condition-img {
   position: relative;
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border: var(--hair);
+  border-radius: var(--radius-m);
   background: var(--stone-deep);
 }
 .condition-img img {
@@ -1901,6 +1920,7 @@ button.enquire {
   padding: 0.55rem var(--edge-pad);
   background: var(--stone);
   border-top: var(--hair);
+  box-shadow: var(--shadow-float); /* the one floating element on this page */
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.25s ease;
@@ -1949,6 +1969,33 @@ button.enquire {
 
 /* ---------- Piece page, stacked ---------- */
 @media (max-width: 860px) {
+  /* The first phone screen is the shop window: the figure takes a landscape
+     crop and the label spacing tightens so photograph, title, attribution,
+     price, availability and the enquiry action all land before any scroll. */
+  .piece {
+    gap: 1.25rem;
+  }
+  .piece-figure {
+    aspect-ratio: 3 / 2;
+  }
+  .buy-box .buy-eyebrow {
+    margin-bottom: 0.7rem;
+  }
+  .buy-box .attribution {
+    margin-bottom: 0.7rem;
+  }
+  .buy-box .seal {
+    margin-bottom: 0.7rem;
+  }
+  .buy-panel {
+    padding-top: 1.1rem;
+  }
+  .buy-panel .acquire-head {
+    padding-bottom: 0.9rem;
+  }
+  .buy-ctas {
+    margin-top: 1.1rem;
+  }
   .story-band,
   .story-band[data-layout="right"] {
     grid-template-columns: 1fr;
