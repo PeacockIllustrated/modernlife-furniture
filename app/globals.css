@@ -462,7 +462,9 @@ dd {
   opacity: 0.85;
 }
 
-/* Accent per card, for a little colour pop */
+/* Accent per card, for a little colour pop. The promo family now serves the
+   piece page's related row only; the home page trio uses the featured
+   classes in the chrome and home layer below. */
 .promo {
   text-decoration: none;
   color: inherit;
@@ -489,51 +491,13 @@ dd {
   touch-action: pan-y;
 }
 
-/* Lead banner */
-.promo-lead {
-  display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-  border: var(--hair);
-  background: var(--stone-deep);
-  margin-bottom: 1.4rem;
-}
-.promo-lead .promo-figure {
-  min-height: 420px;
-  border-bottom: none;
-  border-right: 3px solid var(--accent);
-}
 .promo-body {
   display: flex;
   flex-direction: column;
 }
-.promo-lead .promo-body {
-  padding: 2.6rem 2.4rem;
-}
-.promo-tag {
-  align-self: flex-start;
-  color: var(--accent);
-  border: 1px solid var(--accent);
-  padding: 0.3rem 0.7rem;
-  font-size: 0.62rem;
-  letter-spacing: 0.14em;
-  margin-bottom: 1.4rem;
-}
 .promo-attr {
   opacity: 0.7;
   margin-bottom: 0.6rem;
-}
-.promo-lead h3 {
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-size: clamp(1.8rem, 3.4vw, 2.8rem);
-  line-height: 1.02;
-  letter-spacing: -0.015em;
-  margin-bottom: 1rem;
-}
-.promo-story {
-  opacity: 0.85;
-  max-width: 42ch;
-  margin-bottom: 1.6rem;
 }
 .promo-meta {
   display: flex;
@@ -559,18 +523,6 @@ dd {
 }
 .promo-status[data-status="restoration"] {
   color: var(--amber);
-}
-.promo-cta {
-  margin-top: auto;
-  align-self: flex-start;
-  font-size: 0.74rem;
-  letter-spacing: 0.1em;
-  border-bottom: 1px solid var(--accent);
-  padding-bottom: 3px;
-  color: var(--accent);
-}
-.promo-lead:hover .promo-cta {
-  border-bottom-width: 2px;
 }
 
 /* Card row */
@@ -606,11 +558,6 @@ dd {
   text-decoration: underline;
   text-underline-offset: 4px;
 }
-.promo-sub {
-  opacity: 0.6;
-  font-size: 0.68rem;
-  margin-top: 0.3rem;
-}
 .highlight-all {
   display: inline-block;
   margin-top: 2.6rem;
@@ -627,19 +574,6 @@ dd {
 .highlight-all:hover {
   background: var(--ink);
   color: var(--stone);
-}
-@media (max-width: 760px) {
-  .promo-lead {
-    grid-template-columns: 1fr;
-  }
-  .promo-lead .promo-figure {
-    min-height: 260px;
-    border-right: none;
-    border-bottom: 3px solid var(--accent);
-  }
-  .promo-lead .promo-body {
-    padding: 2rem 1.6rem;
-  }
 }
 
 .site-footer {
@@ -2221,6 +2155,310 @@ button.enquire {
   opacity: 0.7;
 }
 
+/* ---------- Photographic hero, once the owner uploads an image ---------- */
+/* Full bleed photograph with an opaque basalt panel anchored bottom left.
+   No gradients and no scrims; the panel is solid so the type never fights
+   the picture. Until a hero image is set the Tide hero renders instead. */
+.photo-hero {
+  position: relative;
+  min-height: 86vh;
+  background: var(--basalt);
+  overflow: hidden;
+}
+.photo-hero-img {
+  object-fit: cover;
+}
+.photo-hero-panel {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  max-width: min(44rem, 92vw);
+  background: var(--basalt);
+  color: var(--bone);
+  border-top: var(--hair-bone);
+  border-right: var(--hair-bone);
+  padding: 2.4rem 2.8rem 2.6rem var(--edge-pad);
+}
+.photo-hero-panel h1 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.6rem, 6vw, 5.4rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.1rem;
+}
+.photo-hero-panel h1 em {
+  font-style: italic;
+}
+.photo-hero-panel p {
+  max-width: 36ch;
+  opacity: 0.88;
+}
+/* The shop buttons re-grounded for the basalt panel. */
+.photo-hero-panel .btn {
+  border-color: var(--bone);
+}
+.photo-hero-panel .btn-solid {
+  background: var(--bone);
+  color: var(--basalt);
+}
+.photo-hero-panel .btn-solid:hover {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: var(--basalt);
+}
+.photo-hero-panel .btn-line {
+  color: var(--bone);
+}
+.photo-hero-panel .btn-line:hover {
+  background: var(--bone);
+  color: var(--basalt);
+}
+.photo-hero-panel a:focus-visible {
+  outline-color: var(--bone);
+}
+
+/* ---------- Featured trio, the highlighted pieces as labelled exhibits ---------- */
+/* Only the figure carries a frame; the text sits on the page ground. The
+   figure holds the piece's photograph once one exists, the category's
+   generative study over a plinth until then, on the room's own ground. */
+.featured-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.2rem 1.8rem;
+}
+.featured-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-decoration: none;
+  color: inherit;
+}
+.featured-figure {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border: var(--hair);
+  overflow: hidden;
+}
+.featured-figure[data-ground="dark"] {
+  background: var(--basalt);
+  color: var(--bone);
+}
+.featured-figure canvas,
+.room-tile-figure canvas,
+.workshop-figure canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: pan-y;
+}
+.featured-photo {
+  object-fit: cover;
+}
+.featured-attr {
+  margin-top: 1.2rem;
+  opacity: 0.7;
+}
+.featured-card h3 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.35rem, 2.2vw, 1.8rem);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  margin-top: 0.45rem;
+}
+.featured-card:hover h3 {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.featured-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1.4rem;
+  margin-top: 0.6rem;
+}
+.featured-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+.featured-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  background: var(--ink);
+}
+.featured-status[data-status="available"] {
+  color: var(--sea);
+}
+.featured-status[data-status="available"] .featured-dot {
+  background: var(--sea);
+}
+.featured-status[data-status="reserved"],
+.featured-status[data-status="sold"] {
+  color: var(--rose);
+}
+.featured-status[data-status="reserved"] .featured-dot,
+.featured-status[data-status="sold"] .featured-dot {
+  background: var(--rose);
+}
+.featured-status[data-status="restoration"] {
+  color: var(--amber);
+}
+.featured-status[data-status="restoration"] .featured-dot {
+  background: var(--amber);
+}
+.featured-price {
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+.featured-cta {
+  margin-top: 1.5rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  border: 1px solid currentColor;
+  padding: 0.7rem 1.2rem;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease;
+}
+.featured-card:hover .featured-cta {
+  background: var(--ink);
+  color: var(--stone);
+}
+
+/* ---------- Rooms row, the collection compressed to four tiles ---------- */
+.rooms {
+  border-top: var(--hair);
+  padding: 9vh var(--edge-pad) 10vh;
+}
+.rooms-head {
+  margin-bottom: 2.4rem;
+}
+.rooms-head .eyebrow {
+  display: block;
+  opacity: 0.6;
+  margin-bottom: 1rem;
+}
+.rooms-head h2 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2rem, 4.4vw, 3.2rem);
+  letter-spacing: -0.015em;
+  line-height: 1.04;
+}
+.rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.6rem;
+}
+.room-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-decoration: none;
+  color: inherit;
+}
+/* The tile keeps its room's ground: chairs and cabinets on stone, shelving
+   and tables on basalt, alternating down the row as the full rooms did. */
+.room-tile-figure {
+  position: relative;
+  width: 100%;
+  height: 30vh;
+  min-height: 200px;
+  border: var(--hair);
+  overflow: hidden;
+}
+.room-tile-figure[data-ground="dark"] {
+  background: var(--basalt);
+  color: var(--bone);
+}
+.room-tile h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.25rem, 1.8vw, 1.6rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin-top: 1rem;
+}
+.room-tile:hover h3 {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.room-tile-count {
+  margin-top: 0.4rem;
+  font-size: 0.68rem;
+  opacity: 0.6;
+}
+.room-tile-view {
+  margin-top: 0.9rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 3px;
+}
+
+/* ---------- Workshop band, the bench and the practice ---------- */
+/* Full bleed by normal flow: home sections span the viewport and pad their
+   own content, so unlike .feature inside .page no negative margin is
+   needed here. The media panel keeps the Joint drawing at full intensity
+   until the owner's workshop photograph lands. */
+.workshop {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  background: var(--basalt);
+  color: var(--bone);
+  border-top: var(--hair);
+}
+.workshop-figure {
+  position: relative;
+  min-height: 56vh;
+  overflow: hidden;
+  border-right: var(--hair-bone);
+  /* The Joint drawing grounds itself on stone, so the plinth over it reads
+     in ink, not the band's bone. */
+  color: var(--ink);
+}
+.workshop-photo {
+  object-fit: cover;
+}
+.workshop-body {
+  align-self: center;
+  padding: 4.5rem var(--edge-pad) 4.5rem 3.2rem;
+}
+.workshop-body .eyebrow {
+  display: block;
+  opacity: 0.7;
+  margin-bottom: 1.2rem;
+}
+.workshop-body h2 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.9rem, 3.2vw, 2.9rem);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  margin-bottom: 1.2rem;
+  max-width: 18ch;
+}
+.workshop-body p {
+  opacity: 0.85;
+  max-width: 44ch;
+}
+.workshop .enquire:hover {
+  background: var(--bone);
+  color: var(--basalt);
+}
+.workshop a:focus-visible {
+  outline-color: var(--bone);
+}
+
 /* The one stack override for the chrome and home store layer. */
 @media (max-width: 860px) {
   .trust-strip {
@@ -2237,6 +2475,40 @@ button.enquire {
   .footer-cols {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     row-gap: 2.4rem;
+  }
+  .photo-hero-panel {
+    max-width: none;
+    right: 0;
+    border-right: none;
+    padding: 2rem var(--edge-pad) 2.2rem;
+  }
+  .featured-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .rooms-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 2.4rem;
+  }
+  .workshop {
+    grid-template-columns: 1fr;
+  }
+  .workshop-figure {
+    min-height: 46vh;
+    border-right: none;
+    border-bottom: var(--hair-bone);
+  }
+  .workshop-body {
+    padding: 3rem var(--edge-pad) 3.6rem;
+  }
+}
+
+/* Phones: the trio and the tiles run single file. */
+@media (max-width: 480px) {
+  .featured-row {
+    grid-template-columns: 1fr;
+  }
+  .rooms-grid {
+    grid-template-columns: 1fr;
   }
 }
 

@@ -457,6 +457,52 @@ export const getFeaturedPieces = cache(async (): Promise<Piece[]> => {
 });
 
 /**
+ * The lead photograph for each of a handful of pieces, keyed by slug, for the
+ * featured cards on the home page. One query across modern_piece_images; a
+ * hero-kind image wins, otherwise the lowest position stands in. The static
+ * catalogue carries no photography, so the static path answers empty and the
+ * cards keep their generative figures.
+ */
+export const getPieceHeroImages = cache(
+  async (slugs: string[]): Promise<Record<string, PieceImage | null>> => {
+    if (!isSupabaseConfigured || slugs.length === 0) return {};
+    try {
+      const { createPublicClient } = await import("./supabase/public");
+      const supabase = createPublicClient();
+      const { data, error } = await supabase
+        .from("modern_piece_images")
+        .select("path,alt,position,kind, modern_pieces!inner(slug)")
+        .in("modern_pieces.slug", slugs)
+        .order("position");
+      if (!error && data) {
+        const rows = data as unknown as Array<
+          PieceImage & { modern_pieces: { slug: string } }
+        >;
+        const bySlug: Record<string, PieceImage | null> = {};
+        for (const row of rows) {
+          const slug = row.modern_pieces.slug;
+          const current = bySlug[slug];
+          // Rows arrive position-ordered, so the first hero seen is the
+          // lowest-position hero and the first row is the overall fallback.
+          if (!current || (row.kind === "hero" && current.kind !== "hero")) {
+            bySlug[slug] = {
+              path: row.path,
+              alt: row.alt,
+              position: row.position,
+              kind: row.kind,
+            };
+          }
+        }
+        return bySlug;
+      }
+    } catch {
+      // configured but unreachable
+    }
+    return {};
+  },
+);
+
+/**
  * Site-wide questions, shown on every piece page after any piece-specific
  * ones. Static fallback only when no database is configured; a configured
  * database is authoritative, so an empty table stays empty.

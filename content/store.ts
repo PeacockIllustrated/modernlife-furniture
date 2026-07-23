@@ -12,6 +12,13 @@ export interface StoreSettings {
   careProse: string;
   viewingProse: string;
   newsletterLead: string;
+  // The home page image slots. Empty paths mean no photography yet, and the
+  // page falls back to the generative visuals so nothing ever looks missing.
+  heroImage: string;
+  heroAlt: string;
+  heroHeadline: string;
+  workshopImage: string;
+  workshopAlt: string;
 }
 
 export interface StaticFaq {
@@ -38,6 +45,11 @@ export const storeSettings: StoreSettings = {
     "The collection is kept at our workshop in North East England. Viewings are by appointment, most days including weekends. Bring the room's measurements and we will put the kettle on.",
   newsletterLead:
     "New pieces are offered to the list before they reach the website. One note a month at most, and only when something worth writing about comes off the bench.",
+  heroImage: "",
+  heroAlt: "",
+  heroHeadline: "Live with a piece of *history*",
+  workshopImage: "",
+  workshopAlt: "",
 };
 
 export const globalFaqs: StaticFaq[] = [

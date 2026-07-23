@@ -7,7 +7,9 @@ export const runtime = "nodejs";
 /**
  * The store settings object, one jsonb row keyed 'store' in modern_settings.
  * The site shallow-merges it over the static defaults in content/store.ts,
- * so only the six known keys are stored and anything else is dropped. Gated.
+ * so only the known keys are stored and anything else is dropped. The list
+ * must match StoreSettings exactly; a key missing here would be stripped on
+ * every save. Gated.
  */
 
 const KEYS = [
@@ -17,6 +19,11 @@ const KEYS = [
   "careProse",
   "viewingProse",
   "newsletterLead",
+  "heroImage",
+  "heroAlt",
+  "heroHeadline",
+  "workshopImage",
+  "workshopAlt",
 ] as const;
 
 export async function POST(req: Request) {
