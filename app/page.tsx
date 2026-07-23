@@ -1,6 +1,8 @@
 import Hero from "@/components/gallery/Hero";
 import Highlighted from "@/components/gallery/Highlighted";
+import TrustStrip from "@/components/gallery/TrustStrip";
 import Manifesto from "@/components/gallery/Manifesto";
+import Words from "@/components/gallery/Words";
 import Room from "@/components/gallery/Room";
 import Closing from "@/components/gallery/Closing";
 import Tide from "@/components/canvas/Tide";
@@ -29,6 +31,8 @@ export default async function Home() {
       </Hero>
 
       <Highlighted />
+
+      <TrustStrip />
 
       <section className="shop-by" aria-labelledby="shop-by-title">
         <span className="mono eyebrow">Shop by category</span>
@@ -63,6 +67,8 @@ export default async function Home() {
       })}
 
       <Manifesto />
+
+      <Words />
 
       <Closing />
 

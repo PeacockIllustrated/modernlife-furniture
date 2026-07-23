@@ -11,6 +11,9 @@ export type PieceStatus =
   | "restoration";
 export type ImageKind = "hero" | "detail" | "as_found" | "restored";
 export type EnquiryKind = "piece" | "restoration" | "sourcing" | "selling";
+// Story band layout; a check constraint in SQL rather than an enum, since the
+// three values are a presentation choice, not a domain concept.
+export type FeatureLayout = "left" | "right" | "full";
 
 export interface CategoryFact {
   term: string;
@@ -58,6 +61,8 @@ interface PieceRow {
   featured: boolean;
   featured_position: number | null;
   provenance_verified: boolean;
+  catalogue_number: string;
+  section_toggles: Record<string, boolean>;
   created_at: string;
 }
 interface PieceInsert {
@@ -79,6 +84,8 @@ interface PieceInsert {
   featured?: boolean;
   featured_position?: number | null;
   provenance_verified?: boolean;
+  catalogue_number?: string;
+  section_toggles?: Record<string, boolean>;
 }
 
 interface PieceImageRow {
@@ -139,6 +146,112 @@ interface InterestInsert {
   email?: string | null;
 }
 
+interface PieceFeatureRow {
+  id: string;
+  piece_id: string;
+  position: number;
+  eyebrow: string;
+  title: string;
+  body: string;
+  image_path: string;
+  image_alt: string;
+  layout: FeatureLayout;
+}
+interface PieceFeatureInsert {
+  piece_id: string;
+  position?: number;
+  eyebrow?: string;
+  title: string;
+  body?: string;
+  image_path?: string;
+  image_alt?: string;
+  layout?: FeatureLayout;
+}
+
+interface PieceSpecRow {
+  id: string;
+  piece_id: string;
+  position: number;
+  grouping: string;
+  term: string;
+  detail: string;
+}
+interface PieceSpecInsert {
+  piece_id: string;
+  position?: number;
+  grouping?: string;
+  term: string;
+  detail?: string;
+}
+
+interface PieceIncludedRow {
+  id: string;
+  piece_id: string;
+  position: number;
+  label: string;
+  note: string;
+}
+interface PieceIncludedInsert {
+  piece_id: string;
+  position?: number;
+  label: string;
+  note?: string;
+}
+
+// A null piece_id marks a site-wide question shown on every piece page.
+interface FaqRow {
+  id: string;
+  piece_id: string | null;
+  position: number;
+  question: string;
+  answer: string;
+  published: boolean;
+}
+interface FaqInsert {
+  piece_id?: string | null;
+  position?: number;
+  question: string;
+  answer: string;
+  published?: boolean;
+}
+
+// A null piece_id marks site-wide collector words.
+interface TestimonialRow {
+  id: string;
+  piece_id: string | null;
+  position: number;
+  quote: string;
+  name: string;
+  context: string;
+  published: boolean;
+}
+interface TestimonialInsert {
+  piece_id?: string | null;
+  position?: number;
+  quote: string;
+  name?: string;
+  context?: string;
+  published?: boolean;
+}
+
+interface SettingRow {
+  key: string;
+  value: Record<string, unknown>;
+}
+interface SettingInsert {
+  key: string;
+  value?: Record<string, unknown>;
+}
+
+interface SubscriberRow {
+  id: string;
+  email: string;
+  created_at: string;
+}
+interface SubscriberInsert {
+  email: string;
+}
+
 export interface Database {
   __InternalSupabase: {
     PostgrestVersion: "12";
@@ -179,6 +292,48 @@ export interface Database {
         Row: InterestRow;
         Insert: InterestInsert;
         Update: Partial<InterestInsert>;
+        Relationships: [];
+      };
+      modern_piece_features: {
+        Row: PieceFeatureRow;
+        Insert: PieceFeatureInsert;
+        Update: Partial<PieceFeatureInsert>;
+        Relationships: [];
+      };
+      modern_piece_specs: {
+        Row: PieceSpecRow;
+        Insert: PieceSpecInsert;
+        Update: Partial<PieceSpecInsert>;
+        Relationships: [];
+      };
+      modern_piece_included: {
+        Row: PieceIncludedRow;
+        Insert: PieceIncludedInsert;
+        Update: Partial<PieceIncludedInsert>;
+        Relationships: [];
+      };
+      modern_faqs: {
+        Row: FaqRow;
+        Insert: FaqInsert;
+        Update: Partial<FaqInsert>;
+        Relationships: [];
+      };
+      modern_testimonials: {
+        Row: TestimonialRow;
+        Insert: TestimonialInsert;
+        Update: Partial<TestimonialInsert>;
+        Relationships: [];
+      };
+      modern_settings: {
+        Row: SettingRow;
+        Insert: SettingInsert;
+        Update: Partial<SettingInsert>;
+        Relationships: [];
+      };
+      modern_subscribers: {
+        Row: SubscriberRow;
+        Insert: SubscriberInsert;
+        Update: Partial<SubscriberInsert>;
         Relationships: [];
       };
     };

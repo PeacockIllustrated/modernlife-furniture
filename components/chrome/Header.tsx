@@ -12,6 +12,7 @@ export default function Header() {
       </Link>
       <nav className="mono" aria-label="Primary">
         <Link href="/collection">Collection</Link>
+        <Link href="/sell">Sell to us</Link>
         <Link href="/enquire">Enquire</Link>
       </nav>
     </header>

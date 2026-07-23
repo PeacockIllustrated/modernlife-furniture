@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { fraunces, archivo, splineMono } from "./fonts";
 import LenisProvider from "@/components/scroll/LenisProvider";
+import Announcement from "@/components/chrome/Announcement";
 import Header from "@/components/chrome/Header";
 import Footer from "@/components/chrome/Footer";
 import "./globals.css";
@@ -54,6 +55,9 @@ export default function RootLayout({
           <style>{`.reveal{opacity:1 !important;transform:none !important}`}</style>
         </noscript>
         <LenisProvider>
+          {/* In normal flow above the fixed header, so it scrolls away and
+              the header takes over the top of the viewport. */}
+          <Announcement />
           <Header />
           {children}
           <Footer />

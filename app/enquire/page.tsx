@@ -9,6 +9,10 @@ export const metadata: Metadata = {
     "Tell us what you are after and we will find it. And if you have a piece the artists made, we buy.",
 };
 
+// The chrome around this page reads the owner-editable store settings, so
+// refresh on the same cadence as the rest of the site.
+export const revalidate = 60;
+
 export default function EnquirePage() {
   return (
     <main className="page">

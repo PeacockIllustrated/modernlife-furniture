@@ -1,11 +1,28 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getPieceBySlug, getCategoryBySlug } from "@/lib/collection";
+import {
+  getPieceBySlug,
+  getCategoryBySlug,
+  getGlobalFaqs,
+  getGlobalWords,
+  getRelatedPieces,
+  getStoreSettings,
+} from "@/lib/collection";
 import { rooms } from "@/content/landing";
 import { staticPieces } from "@/content/pieces";
 import { statusLabel, priceLabel, periodRange } from "@/lib/format";
-import PieceFigure from "@/components/piece/PieceFigure";
+import RoomVisual from "@/components/canvas/RoomVisual";
+import PieceGallery from "@/components/piece/PieceGallery";
+import PieceStickyBar from "@/components/piece/PieceStickyBar";
+import StoryBands from "@/components/piece/StoryBands";
+import SpecRecord from "@/components/piece/SpecRecord";
+import IncludedList from "@/components/piece/IncludedList";
+import ConditionSection from "@/components/piece/ConditionSection";
+import CareDelivery from "@/components/piece/CareDelivery";
+import FaqAccordion from "@/components/piece/FaqAccordion";
+import CollectorWords from "@/components/piece/CollectorWords";
+import RelatedPieces from "@/components/piece/RelatedPieces";
 import ProvenanceDiagram from "@/components/piece/ProvenanceDiagram";
 import EnquiryForm from "@/components/forms/EnquiryForm";
 import InterestButton from "@/components/piece/InterestButton";
@@ -39,6 +56,14 @@ export async function generateMetadata({
   };
 }
 
+/**
+ * The piece page: a museum specimen record grown into the store's counter.
+ * The fixed template runs gallery and buy box, story bands, the specimen
+ * record, what comes with the piece, condition, provenance, care, questions,
+ * collector words, neighbouring exhibits and the enquiry form. Every
+ * database-driven section hides itself when its toggle is off or it has
+ * nothing to say, so the page reads complete at any depth of data.
+ */
 export default async function PiecePage({
   params,
 }: {
@@ -48,10 +73,27 @@ export default async function PiecePage({
   const piece = await getPieceBySlug(slug);
   if (!piece) notFound();
 
+  const [category, settings, siteFaqs, siteWords, related] = await Promise.all([
+    getCategoryBySlug(piece.categorySlug),
+    getStoreSettings(),
+    getGlobalFaqs(),
+    getGlobalWords(),
+    getRelatedPieces(piece.categorySlug, piece.slug),
+  ]);
+
   const room = rooms.find((r) => r.slug === piece.categorySlug);
-  const category = await getCategoryBySlug(piece.categorySlug);
   const visual = room?.visual ?? "rings";
   const canvasLabel = room?.canvasLabel ?? piece.title;
+
+  // The fixed template: a key absent from sectionToggles means enabled, and a
+  // section with nothing to say hides itself regardless.
+  const on = (key: string) => piece.sectionToggles[key] !== false;
+
+  const faqs = [...piece.faqs, ...siteFaqs];
+  const words = [...piece.words, ...siteWords].slice(0, 3);
+  const price = priceLabel(piece.priceOnRequest, piece.pricePence);
+  // The first clause of the delivery prose makes a one line trust note.
+  const deliveryLine = settings.deliveryProse.split(",")[0];
 
   return (
     <main className="page">
@@ -68,9 +110,22 @@ export default async function PiecePage({
       </nav>
 
       <div className="piece">
-        <PieceFigure visual={visual} label={canvasLabel} images={piece.images} />
+        <PieceGallery images={piece.images} label={canvasLabel}>
+          <RoomVisual visual={visual} label={canvasLabel} scrollBound={false} />
+        </PieceGallery>
 
-        <div className="piece-body">
+        <div className="piece-body buy-box">
+          <div className="mono buy-eyebrow">
+            {piece.catalogueNumber ? (
+              <span className="buy-cat">{piece.catalogueNumber}</span>
+            ) : (
+              <span aria-hidden="true" />
+            )}
+            <span className="acquire-status" data-status={piece.status}>
+              <span className="acquire-dot" aria-hidden="true" />
+              <span className="mono">{statusLabel(piece.status)}</span>
+            </span>
+          </div>
           <span className="mono attribution">{piece.attribution}</span>
           <h1>{piece.title}</h1>
           {piece.provenanceVerified ? (
@@ -83,44 +138,91 @@ export default async function PiecePage({
             </span>
           ) : null}
           {piece.placeholder ? (
-            <span className="mono" style={{ opacity: 0.55, display: "block", marginBottom: "1.4rem" }}>
+            <span
+              className="mono"
+              style={{ opacity: 0.55, display: "block", marginBottom: "1.4rem" }}
+            >
               Placeholder listing, details to be confirmed
             </span>
           ) : null}
           <p className="story">{piece.story}</p>
 
-          <div className="block">
-            <span className="mono block-eyebrow">Specimen record</span>
-            <dl>
-              <dt>Attribution</dt>
-              <dd>{piece.attribution}</dd>
-              <dt>Period</dt>
-              <dd>
-                {periodRange(piece.periodLabel, piece.yearFrom, piece.yearTo)}
-              </dd>
-              <dt>Origin</dt>
-              <dd>{piece.origin}</dd>
-              <dt>Materials</dt>
-              <dd>{piece.materials.join(", ")}</dd>
-              <dt>Status</dt>
-              <dd>{statusLabel(piece.status)}</dd>
-              <dt>Price</dt>
-              <dd>{priceLabel(piece.priceOnRequest, piece.pricePence)}</dd>
-            </dl>
-          </div>
+          <dl>
+            <dt>Attribution</dt>
+            <dd>{piece.attribution}</dd>
+            <dt>Period</dt>
+            <dd>
+              {periodRange(piece.periodLabel, piece.yearFrom, piece.yearTo)}
+            </dd>
+            <dt>Origin</dt>
+            <dd>{piece.origin}</dd>
+            <dt>Materials</dt>
+            <dd>{piece.materials.join(", ")}</dd>
+          </dl>
 
-          {piece.restorationNotes ? (
-            <div className="block" style={{ marginTop: "1.4rem" }}>
-              <span className="mono block-eyebrow">Restoration</span>
-              <p>{piece.restorationNotes}</p>
+          <div className="buy-panel">
+            <div className="acquire-head">
+              <div className="acquire-price">
+                <span className="mono acquire-label">Price</span>
+                <span className="acquire-figure">{price}</span>
+              </div>
             </div>
-          ) : null}
+
+            <p className="acquire-note">
+              {piece.status === "sold"
+                ? "This piece has been rehomed. Tell us what you are after and we will find its like, or register interest to hear when a similar piece arrives."
+                : piece.status === "reserved"
+                  ? "This piece is reserved. Register interest and we will let you know if it becomes available again."
+                  : piece.status === "restoration"
+                    ? "This piece is in restoration. Register interest to be told the moment it is ready, or send a note to ask about it."
+                    : "To arrange a viewing, ask a question or begin an acquisition, send us a note below. For higher value pieces we handle the sale personally rather than through a checkout."}
+            </p>
+
+            <InterestButton pieceSlug={piece.slug} />
+
+            <div className="buy-ctas">
+              <a className="enquire" href="#enquire">
+                Send an enquiry
+              </a>
+              <a className="enquire" href="#enquire">
+                Arrange a viewing
+              </a>
+            </div>
+
+            <div className="buy-trust mono">
+              <span>{deliveryLine}</span>
+              <span>Fourteen day returns</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {piece.provenance.length > 0 ? (
-        <section className="section-rule reveal" aria-label="Provenance">
-          <span className="mono eyebrow">Provenance</span>
+      <PieceStickyBar title={piece.title} price={price} />
+
+      {on("features") ? (
+        <StoryBands
+          features={piece.features}
+          visual={visual}
+          canvasLabel={canvasLabel}
+        />
+      ) : null}
+
+      {on("record") ? <SpecRecord piece={piece} specs={piece.specs} /> : null}
+
+      {on("included") ? <IncludedList items={piece.included} /> : null}
+
+      {on("condition") ? (
+        <ConditionSection notes={piece.restorationNotes} images={piece.images} />
+      ) : null}
+
+      {on("provenance") && piece.provenance.length > 0 ? (
+        <section
+          className="section-rule reveal"
+          aria-labelledby="provenance-title"
+        >
+          <h2 id="provenance-title" className="store-head">
+            Provenance
+          </h2>
           <ProvenanceDiagram
             provenance={piece.provenance}
             label={`Provenance rings for the ${piece.title}`}
@@ -128,36 +230,22 @@ export default async function PiecePage({
         </section>
       ) : null}
 
-      <section className="section-rule" aria-label="Acquire this piece">
-        <span className="mono eyebrow">Acquire</span>
+      {on("care") ? <CareDelivery settings={settings} /> : null}
 
-        <div className="acquire">
-          <div className="acquire-head">
-            <div className="acquire-price">
-              <span className="mono acquire-label">Price</span>
-              <span className="acquire-figure">
-                {priceLabel(piece.priceOnRequest, piece.pricePence)}
-              </span>
-            </div>
-            <div className="acquire-status" data-status={piece.status}>
-              <span className="acquire-dot" aria-hidden="true" />
-              <span className="mono">{statusLabel(piece.status)}</span>
-            </div>
-          </div>
+      {on("faq") ? <FaqAccordion faqs={faqs} /> : null}
 
-          <p className="acquire-note">
-            {piece.status === "sold"
-              ? "This piece has been rehomed. Tell us what you are after and we will find its like, or register interest to hear when a similar piece arrives."
-              : piece.status === "reserved"
-                ? "This piece is reserved. Register interest and we will let you know if it becomes available again."
-                : piece.status === "restoration"
-                  ? "This piece is in restoration. Register interest to be told the moment it is ready, or send a note to ask about it."
-                  : "To arrange a viewing, ask a question or begin an acquisition, send us a note below. For higher value pieces we handle the sale personally rather than through a checkout."}
-          </p>
+      {on("words") ? <CollectorWords words={words} /> : null}
 
-          <InterestButton pieceSlug={piece.slug} />
-        </div>
+      {on("related") ? <RelatedPieces pieces={related} /> : null}
 
+      <section
+        id="enquire"
+        className="section-rule"
+        aria-labelledby="acquire-title"
+      >
+        <h2 id="acquire-title" className="store-head">
+          Acquire
+        </h2>
         <div className="acquire-form">
           <span className="mono block-eyebrow">Send an enquiry</span>
           <EnquiryForm

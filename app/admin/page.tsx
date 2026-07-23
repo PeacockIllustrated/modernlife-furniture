@@ -46,7 +46,10 @@ export default async function AdminPage() {
       <div className="page-head">
         <span className="mono eyebrow">Owner dashboard</span>
         <h1>The collection</h1>
-        <p>Manage pieces, provenance, images and enquiries.</p>
+        <p>
+        Manage the collection, the collector words and questions, the site
+        copy, and everyone who has written in.
+      </p>
       </div>
       <AdminDashboard />
     </main>

@@ -1540,3 +1540,892 @@ button.enquire {
     aspect-ratio: 4 / 5;
   }
 }
+
+/* ============================================================
+   Store layer, piece page (owned by the piece agent)
+   ============================================================ */
+
+/* ---------- Gallery: main figure plus thumbnail rail ---------- */
+/* The figure itself reuses .piece-figure, so the canvas inset rule and the
+   mobile aspect ratio keep working untouched. */
+.piece-gallery {
+  min-width: 0;
+}
+.gallery-rail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+}
+.gallery-thumb {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 5rem;
+  min-height: 44px; /* comfortable tap target on touch */
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+.gallery-thumb-img {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border: var(--hair);
+  background: var(--stone-deep);
+}
+.gallery-thumb-img img {
+  object-fit: cover;
+}
+.gallery-thumb[aria-pressed="true"] .gallery-thumb-img {
+  border: 1px solid var(--ink);
+}
+.gallery-kind {
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  opacity: 0.65;
+}
+
+/* ---------- Buy box: the label grown into the store's counter ---------- */
+.buy-eyebrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.4rem;
+}
+.buy-cat {
+  opacity: 0.7;
+}
+.buy-panel {
+  border: var(--hair);
+  background: var(--stone-deep);
+  padding: 1.5rem 1.6rem 1.6rem;
+  margin-top: 0.4rem;
+}
+.buy-panel .acquire-note {
+  margin: 1.2rem 0 1.4rem;
+}
+.buy-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1.4rem;
+}
+.buy-ctas .enquire {
+  margin-top: 0;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.buy-ctas .enquire:hover {
+  background: var(--ink);
+  color: var(--stone);
+}
+.buy-trust {
+  margin-top: 1.3rem;
+  padding-top: 1.1rem;
+  border-top: var(--hair);
+  display: grid;
+  gap: 0.4rem;
+  opacity: 0.65;
+}
+.buy-trust span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Desktop: the buy box rides alongside the gallery, clearing the fixed
+   header. Below the stack breakpoint it simply flows. */
+@media (min-width: 861px) {
+  .buy-box {
+    position: sticky;
+    top: 6rem;
+    align-self: start;
+  }
+}
+
+/* ---------- Store sections: one quiet heading treatment ---------- */
+.store-head {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+  margin-bottom: 1.6rem;
+}
+/* Anchored arrivals from the buy box and the sticky bar land clear of the
+   fixed header. */
+#enquire {
+  scroll-margin-top: 5.5rem;
+}
+
+/* ---------- Story bands: the piece, in detail ---------- */
+.story-band {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+  gap: clamp(1.5rem, 3vw, 3rem);
+  align-items: center;
+  padding: 2.4rem 0;
+}
+.story-band + .story-band {
+  border-top: var(--hair);
+}
+.story-band-figure {
+  position: relative;
+  min-height: 44vh;
+  border: var(--hair);
+  overflow: hidden;
+}
+.story-band-figure canvas {
+  position: absolute;
+  inset: 0;
+  left: var(--canvas-edge);
+  right: var(--canvas-edge);
+  width: auto;
+  height: 100%;
+  display: block;
+  touch-action: pan-y;
+}
+.story-band-backdrop {
+  position: absolute;
+  inset: 0;
+  opacity: 0.55; /* the study stands in for photography at low intensity */
+}
+.story-band-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.story-band[data-layout="right"] .story-band-figure {
+  order: 2;
+}
+.story-band-eyebrow {
+  display: block;
+  opacity: 0.6;
+  margin-bottom: 1rem;
+}
+.story-band-text h2 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.7rem, 3.4vw, 2.7rem);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  margin-bottom: 1rem;
+}
+.story-band-text h2 em {
+  font-style: italic;
+  font-weight: 400;
+}
+.story-band-text p {
+  max-width: 44ch;
+  opacity: 0.9;
+}
+.story-band[data-layout="full"] {
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+.story-band[data-layout="full"] .story-band-figure {
+  min-height: 52vh;
+  order: 0;
+}
+.story-band[data-layout="full"] .story-band-text {
+  max-width: 60ch;
+  padding-top: 0.4rem;
+}
+
+/* ---------- Specimen record: the house dl with hairline rows ---------- */
+.record {
+  max-width: 56rem;
+}
+.record-list {
+  display: block; /* row wrappers carry the grid, not the dl itself */
+}
+.record-row {
+  display: grid;
+  grid-template-columns: minmax(9rem, 13rem) minmax(0, 1fr);
+  gap: 0.45rem 1.4rem;
+  padding: 0.65rem 0;
+  border-top: var(--hair);
+}
+.record-row dd {
+  font-size: 0.92rem;
+}
+.record-group {
+  display: block;
+  margin: 1.9rem 0 0.4rem;
+  opacity: 0.6;
+  font-weight: 400;
+}
+
+/* ---------- What comes with the piece ---------- */
+.included-list {
+  list-style: none;
+  max-width: 56rem;
+  border-bottom: var(--hair);
+}
+.included-item {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(9rem, 16rem) minmax(0, 1fr);
+  gap: 0.4rem 1.4rem;
+  align-items: baseline;
+  padding: 1.05rem 0;
+  border-top: var(--hair);
+}
+.included-no {
+  opacity: 0.55;
+}
+.included-label {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.15rem;
+  line-height: 1.25;
+}
+.included-note {
+  opacity: 0.85;
+  font-size: 0.95rem;
+  max-width: 52ch;
+}
+
+/* ---------- Condition and restoration ---------- */
+.condition-notes {
+  max-width: 52ch;
+  opacity: 0.92;
+}
+.condition-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.4rem;
+  margin-top: 2rem;
+}
+.condition-img {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: var(--hair);
+  background: var(--stone-deep);
+}
+.condition-img img {
+  object-fit: cover;
+}
+.condition-caption {
+  display: block;
+  margin-top: 0.5rem;
+  opacity: 0.65;
+}
+
+/* ---------- Care and delivery ---------- */
+.care-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.4rem 3rem;
+  max-width: 62rem;
+}
+.care-cell h3 {
+  font-weight: 400;
+  opacity: 0.6;
+  margin-bottom: 0.8rem;
+}
+.care-cell p {
+  max-width: 52ch;
+  opacity: 0.9;
+}
+.care-cell p + p {
+  margin-top: 0.8rem;
+}
+
+/* ---------- Questions: square details, a rotating hairline plus ---------- */
+.faq-list {
+  max-width: 56rem;
+  border-bottom: var(--hair);
+}
+.faq-item {
+  border-top: var(--hair);
+  interpolate-size: allow-keywords; /* lets block-size animate to auto */
+}
+.faq-item summary {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  min-height: 44px;
+  padding: 0.9rem 0;
+  cursor: pointer;
+  list-style: none;
+}
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+.faq-no {
+  flex: 0 0 2rem;
+  opacity: 0.55;
+}
+.faq-q {
+  flex: 1 1 auto;
+  font-size: 1rem;
+}
+.faq-plus {
+  position: relative;
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+}
+.faq-plus::before,
+.faq-plus::after {
+  content: "";
+  position: absolute;
+  background: currentColor;
+  opacity: 0.7;
+  transition: transform 0.25s ease;
+}
+.faq-plus::before {
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+}
+.faq-plus::after {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+}
+/* Open: the upright bar lies down and the plus reads as a minus. */
+.faq-item[open] .faq-plus::after {
+  transform: rotate(90deg);
+}
+/* The measured unfold. A browser without animatable details content simply
+   opens at once, the native behaviour. */
+.faq-item::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition:
+    block-size 0.25s ease,
+    content-visibility 0.25s ease allow-discrete;
+}
+.faq-item[open]::details-content {
+  block-size: auto;
+}
+.faq-answer {
+  padding: 0.1rem 2.6rem 1.3rem 3.2rem; /* left aligns with the question */
+  max-width: 56ch;
+  opacity: 0.9;
+}
+
+/* ---------- Collector words ---------- */
+.words-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.2rem 2.6rem;
+}
+.word {
+  border-top: var(--hair);
+  padding-top: 1.4rem;
+}
+.word-quote {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.15rem, 2vw, 1.4rem);
+  line-height: 1.35;
+  margin-bottom: 1.1rem;
+}
+.word-attr {
+  opacity: 0.65;
+}
+
+/* ---------- Sticky enquiry strip, mobile only ---------- */
+.sticky-sentinel {
+  height: 1px;
+}
+.sticky-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.55rem var(--edge-pad);
+  background: var(--stone);
+  border-top: var(--hair);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.sticky-bar[data-show="true"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+.sticky-bar-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.05rem;
+}
+.sticky-bar-price {
+  flex: 0 0 auto;
+  opacity: 0.75;
+}
+.sticky-bar .enquire {
+  margin-top: 0;
+  padding: 0.7rem 1rem;
+  flex: 0 0 auto;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.sticky-bar .enquire:hover {
+  background: var(--ink);
+  color: var(--stone);
+}
+@media (min-width: 861px) {
+  .sticky-bar {
+    display: none;
+  }
+}
+
+/* ---------- Piece page, stacked ---------- */
+@media (max-width: 860px) {
+  .story-band,
+  .story-band[data-layout="right"] {
+    grid-template-columns: 1fr;
+  }
+  .story-band[data-layout="right"] .story-band-figure {
+    order: 0;
+  }
+  .story-band-figure {
+    min-height: 40vh;
+  }
+  .record-row {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+  .included-item {
+    grid-template-columns: 2.2rem minmax(0, 1fr);
+  }
+  .included-note {
+    grid-column: 2;
+  }
+  .condition-pair {
+    grid-template-columns: 1fr;
+  }
+  .care-grid {
+    grid-template-columns: 1fr;
+  }
+  .words-grid {
+    grid-template-columns: 1fr;
+  }
+  .faq-answer {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  /* Keep the page foot readable under the fixed strip. */
+  .page:has(.sticky-bar) {
+    padding-bottom: 7rem;
+  }
+}
+
+/* Reduced motion: everything at rest, nothing lost. */
+@media (prefers-reduced-motion: reduce) {
+  .faq-plus::before,
+  .faq-plus::after {
+    transition: none;
+  }
+  .faq-item::details-content {
+    transition: none;
+  }
+  .sticky-bar {
+    transition: none;
+  }
+}
+
+/* ============================================================
+   Store layer, chrome and home (owned by the chrome agent)
+   ============================================================ */
+
+/* ---------- Announcement, the store notice above the header ---------- */
+/* The strip sits in normal flow and scrolls away; the fixed header overlaps
+   it at rest and reads in bone through the difference blend. The top padding
+   holds the announcement's own line below the header's row so the two never
+   collide, at any width. */
+.announcement {
+  background: var(--basalt);
+  color: var(--bone);
+  text-align: center;
+  font-size: 0.68rem;
+  line-height: 1.6;
+  padding: 3.5rem var(--edge-pad) 0.9rem;
+  border-bottom: var(--hair-bone);
+}
+
+/* ---------- Trust strip, four assurances after the highlighted range ---------- */
+.trust-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 2rem;
+  padding: 3rem var(--edge-pad) 3.4rem;
+  border-top: var(--hair);
+}
+.trust-item {
+  border-left: var(--hair);
+  padding-left: 1.5rem;
+}
+.trust-item:first-child {
+  border-left: none;
+  padding-left: 0;
+}
+.trust-no {
+  display: block;
+  margin-bottom: 0.7rem;
+  opacity: 0.55;
+}
+.trust-item p {
+  font-size: 0.95rem;
+  opacity: 0.88;
+  max-width: 26ch;
+}
+
+/* ---------- Collector words, the home page words band ---------- */
+.words-band {
+  border-top: var(--hair);
+  padding: 10vh var(--edge-pad) 11vh;
+}
+.words-band h2 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2rem, 4.4vw, 3.2rem);
+  letter-spacing: -0.015em;
+  line-height: 1.04;
+  margin-bottom: 2.6rem;
+}
+.words-band-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.4rem;
+}
+.words-item {
+  border-left: var(--hair);
+  padding-left: 1.6rem;
+}
+.words-item blockquote p {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.15rem, 1.9vw, 1.45rem);
+  line-height: 1.42;
+}
+.words-item figcaption {
+  margin-top: 1.1rem;
+  opacity: 0.6;
+}
+
+/* ---------- Store footer ---------- */
+.store-footer {
+  border-top: var(--hair);
+  padding: 0 var(--edge-pad);
+}
+.footer-news {
+  padding: 4.2rem 0 3.2rem;
+  max-width: 34rem;
+}
+.footer-news h2 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  margin-bottom: 0.9rem;
+}
+.footer-news > p {
+  opacity: 0.85;
+  max-width: 44ch;
+  margin-bottom: 1.6rem;
+}
+.news-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  align-items: stretch;
+}
+.news-row input {
+  flex: 1 1 14rem;
+  min-width: 0;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: inherit;
+  background: transparent;
+  border: var(--hair);
+  padding: 0.75rem 0.9rem;
+  min-height: 44px;
+}
+.news-row input:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+.news-row .enquire {
+  margin-top: 0;
+  white-space: nowrap;
+}
+.store-footer .enquire:hover {
+  background: var(--ink);
+  color: var(--stone);
+}
+.footer-cols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem;
+  padding: 2.6rem 0 3rem;
+  border-top: var(--hair);
+}
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.footer-col-h {
+  opacity: 0.55;
+  margin-bottom: 0.6rem;
+}
+/* Each link is its own 44px row, so the small mono targets stay comfortable
+   without negative-margin overlap between neighbours. */
+.footer-col a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  text-decoration: none;
+  opacity: 0.85;
+}
+.footer-col a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.footer-addr {
+  opacity: 0.6;
+  padding: 0.6rem 0;
+}
+.footer-legal {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1.4rem 0 1.6rem;
+  border-top: var(--hair);
+  opacity: 0.7;
+}
+
+/* The one stack override for the chrome and home store layer. */
+@media (max-width: 860px) {
+  .trust-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 2.4rem;
+  }
+  .trust-item:nth-child(odd) {
+    border-left: none;
+    padding-left: 0;
+  }
+  .words-band-grid {
+    grid-template-columns: 1fr;
+  }
+  .footer-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 2.4rem;
+  }
+}
+
+/* The header wraps to two rows at this width; the announcement strip carries
+   more top padding to stay clear of it, and the join button takes the full
+   row rather than squeezing beside the field. */
+@media (max-width: 600px) {
+  .announcement {
+    font-size: 0.64rem;
+    padding-top: 4.5rem;
+  }
+  .news-row .enquire {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+}
+
+/* ============================================================
+   Store layer, admin editor (owned by the admin agent)
+   ============================================================ */
+
+/* The dashboard grows tabs and the full piece template editor. Everything
+   follows the existing admin idiom: hairlines, mono labels, square fields,
+   buttons on the shared .enquire outline. */
+
+/* ---------- Tab nav ---------- */
+.admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-bottom: 1rem;
+  margin-bottom: 2.5rem;
+  border-bottom: var(--hair);
+}
+.admin-tab {
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: inherit;
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 0.6rem 0.9rem;
+  min-height: 44px; /* comfortable tap target on touch */
+  opacity: 0.6;
+  transition:
+    opacity 0.25s ease,
+    background 0.25s ease,
+    color 0.25s ease;
+}
+.admin-tab:hover {
+  opacity: 1;
+}
+.admin-tab[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--stone);
+  opacity: 1;
+}
+
+/* ---------- Editor furniture ---------- */
+.admin-count {
+  opacity: 0.6;
+  margin-bottom: 1.4rem;
+}
+.admin-hint {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  opacity: 0.55;
+  margin-bottom: 0.9rem;
+  max-width: 44ch;
+}
+.admin-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.admin-check {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  min-height: 44px; /* comfortable tap target on touch */
+  cursor: pointer;
+}
+.admin-toggles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 1.2rem;
+}
+.admin-toggles .admin-check {
+  min-height: 40px;
+}
+
+/* Subrow textareas (band bodies, answers) take the full row and match the
+   subrow input styling; explicit focus so keyboards never lose the caret. */
+.admin-subrow textarea {
+  flex: 1 1 100%;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: inherit;
+  background: transparent;
+  border: var(--hair);
+  padding: 0.5rem 0.6rem;
+  min-height: 4.5rem;
+  resize: vertical;
+}
+.admin-subrow input:focus-visible,
+.admin-subrow select:focus-visible,
+.admin-subrow textarea:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* A multi-row child entry (story band, piece question) reads as one block
+   between hairlines. */
+.admin-band {
+  padding-bottom: 1.1rem;
+  margin-bottom: 1.1rem;
+  border-bottom: var(--hair);
+}
+.admin-band:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0.2rem;
+}
+
+/* ---------- Image rows ---------- */
+.admin-thumb {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border: var(--hair);
+  background: var(--stone-deep);
+  display: block;
+}
+.admin-row-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+/* The upload control is a label over a real file input, so keyboard focus
+   lands on the input and shows on the label. */
+.admin-upload {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  min-height: 44px; /* comfortable tap target on touch */
+}
+.admin-upload input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+.admin-upload:focus-within {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* Buttons inside rows sit on the row's own rhythm, not the page-level
+   .enquire top margin. */
+.admin-subrow .enquire,
+.admin-row-actions .enquire,
+.admin-band .enquire,
+.admin-upload {
+  margin-top: 0;
+}
+.admin-fieldset > .enquire {
+  margin-top: 0.8rem;
+}
+
+@media (max-width: 860px) {
+  .admin-tabs {
+    gap: 0.35rem;
+  }
+  .admin-toggles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .admin-split {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}

@@ -1,94 +1,39 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import type {
-  PieceStatus,
-  ImageKind,
-  EnquiryKind,
-} from "@/lib/supabase/types";
+import { useCallback, useEffect, useState } from "react";
+import { emptyAdminData } from "@/components/admin/types";
+import type { AdminData } from "@/components/admin/types";
+import PiecesPanel from "@/components/admin/PiecesPanel";
+import WordsPanel from "@/components/admin/WordsPanel";
+import QuestionsPanel from "@/components/admin/QuestionsPanel";
+import SitePanel from "@/components/admin/SitePanel";
+import EnquiriesPanel from "@/components/admin/EnquiriesPanel";
+import InterestPanel from "@/components/admin/InterestPanel";
+import SubscribersPanel from "@/components/admin/SubscribersPanel";
 
 /**
- * The owner dashboard. Behind the username and password gate, it reads and
- * writes the collection through the /api/admin routes, which use the service
+ * The owner dashboard shell. Behind the username and password gate, it loads
+ * everything once through GET /api/admin/data and hands slices to the tab
+ * panels; writes go through the /api/admin routes, which use the service
  * role on the server. No Supabase session lives in the browser.
  */
 
-interface AdminCategory {
-  id: string;
-  slug: string;
-  name: string;
-}
-interface AdminPiece {
-  id: string;
-  slug: string;
-  category_id: string;
-  title: string;
-  attribution: string;
-  period_label: string;
-  year_from: number | null;
-  year_to: number | null;
-  origin: string;
-  materials: string[];
-  status: PieceStatus;
-  price_pence: number | null;
-  price_on_request: boolean;
-  story: string;
-  restoration_notes: string;
-  placeholder: boolean;
-  featured: boolean;
-  featured_position: number | null;
-  provenance_verified: boolean;
-}
-interface AdminProvenance {
-  id: string;
-  piece_id: string;
-  position: number;
-  label: string;
-  detail: string;
-}
-interface AdminImage {
-  id: string;
-  piece_id: string;
-  path: string;
-  alt: string;
-  position: number;
-  kind: ImageKind;
-}
-interface AdminEnquiry {
-  id: string;
-  piece_id: string | null;
-  name: string;
-  email: string;
-  message: string;
-  kind: EnquiryKind;
-  created_at: string;
-}
-interface AdminInterest {
-  id: string;
-  piece_id: string;
-  email: string | null;
-  created_at: string;
-}
-
-const STATUSES: PieceStatus[] = [
-  "draft",
-  "available",
-  "reserved",
-  "sold",
-  "restoration",
-];
-const IMAGE_KINDS: ImageKind[] = ["hero", "detail", "as_found", "restored"];
+const TABS = [
+  { id: "pieces", label: "Pieces" },
+  { id: "words", label: "Words" },
+  { id: "questions", label: "Questions" },
+  { id: "site", label: "Site" },
+  { id: "enquiries", label: "Enquiries" },
+  { id: "interest", label: "Interest" },
+  { id: "list", label: "List" },
+] as const;
+type TabId = (typeof TABS)[number]["id"];
 
 export default function AdminDashboard() {
-  const [categories, setCategories] = useState<AdminCategory[]>([]);
-  const [pieces, setPieces] = useState<AdminPiece[]>([]);
-  const [provenance, setProvenance] = useState<AdminProvenance[]>([]);
-  const [images, setImages] = useState<AdminImage[]>([]);
-  const [enquiries, setEnquiries] = useState<AdminEnquiry[]>([]);
-  const [interest, setInterest] = useState<AdminInterest[]>([]);
+  const [data, setData] = useState<AdminData>(emptyAdminData);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
-  const [editing, setEditing] = useState<string | "new" | null>(null);
+  const [tab, setTab] = useState<TabId>("pieces");
 
   const loadAll = useCallback(async () => {
     setLoading(true);
@@ -101,12 +46,21 @@ export default function AdminDashboard() {
       }
       if (!res.ok) throw new Error("load failed");
       const d = await res.json();
-      setCategories(d.categories ?? []);
-      setPieces(d.pieces ?? []);
-      setProvenance(d.provenance ?? []);
-      setImages(d.images ?? []);
-      setEnquiries(d.enquiries ?? []);
-      setInterest(d.interest ?? []);
+      setData({
+        categories: d.categories ?? [],
+        pieces: d.pieces ?? [],
+        provenance: d.provenance ?? [],
+        images: d.images ?? [],
+        features: d.features ?? [],
+        specs: d.specs ?? [],
+        included: d.included ?? [],
+        faqs: d.faqs ?? [],
+        testimonials: d.testimonials ?? [],
+        settings: d.settings ?? [],
+        subscribers: d.subscribers ?? [],
+        enquiries: d.enquiries ?? [],
+        interest: d.interest ?? [],
+      });
     } catch {
       setLoadError("Could not load the collection just now.");
     } finally {
@@ -123,12 +77,18 @@ export default function AdminDashboard() {
     window.location.href = "/";
   }
 
+  // Row removals update local state optimistically; a failed delete falls
+  // back to a full reload so the list never lies.
   async function deleteEnquiry(id: string) {
     const res = await fetch(`/api/admin/enquiries?id=${encodeURIComponent(id)}`, {
       method: "DELETE",
     });
-    if (res.ok) setEnquiries((e) => e.filter((x) => x.id !== id));
-    else loadAll();
+    if (res.ok) {
+      setData((d) => ({
+        ...d,
+        enquiries: d.enquiries.filter((x) => x.id !== id),
+      }));
+    } else loadAll();
   }
 
   async function clearInterest(pieceId: string) {
@@ -136,41 +96,26 @@ export default function AdminDashboard() {
       `/api/admin/interest?pieceId=${encodeURIComponent(pieceId)}`,
       { method: "DELETE" },
     );
-    if (res.ok) setInterest((r) => r.filter((x) => x.piece_id !== pieceId));
-    else loadAll();
+    if (res.ok) {
+      setData((d) => ({
+        ...d,
+        interest: d.interest.filter((x) => x.piece_id !== pieceId),
+      }));
+    } else loadAll();
   }
 
-  async function deletePiece(id: string) {
-    await fetch(`/api/admin/pieces?id=${encodeURIComponent(id)}`, {
-      method: "DELETE",
-    });
-    setEditing(null);
-    loadAll();
+  async function removeSubscriber(id: string) {
+    const res = await fetch(
+      `/api/admin/subscribers?id=${encodeURIComponent(id)}`,
+      { method: "DELETE" },
+    );
+    if (res.ok) {
+      setData((d) => ({
+        ...d,
+        subscribers: d.subscribers.filter((x) => x.id !== id),
+      }));
+    } else loadAll();
   }
-
-  // Roll interest up per piece: a count and the emails that were left, most
-  // wanted first. Pieces with no interest are omitted.
-  const interestByPiece = useMemo(() => {
-    const titles = new Map(pieces.map((p) => [p.id, p.title]));
-    const groups = new Map<
-      string,
-      { pieceId: string; title: string; count: number; emails: string[] }
-    >();
-    for (const row of interest) {
-      const existing =
-        groups.get(row.piece_id) ??
-        {
-          pieceId: row.piece_id,
-          title: titles.get(row.piece_id) ?? "Unknown piece",
-          count: 0,
-          emails: [],
-        };
-      existing.count += 1;
-      if (row.email) existing.emails.push(row.email);
-      groups.set(row.piece_id, existing);
-    }
-    return [...groups.values()].sort((a, b) => b.count - a.count);
-  }, [interest, pieces]);
 
   if (loading) {
     return (
@@ -189,504 +134,56 @@ export default function AdminDashboard() {
         </button>
       </div>
 
+      <nav className="admin-tabs" aria-label="Dashboard sections">
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            className="admin-tab"
+            aria-pressed={tab === t.id}
+            onClick={() => setTab(t.id)}
+          >
+            {t.label}
+          </button>
+        ))}
+      </nav>
+
       {loadError ? (
         <p className="form-note mono" data-tone="error" role="status">
           {loadError}
         </p>
       ) : null}
 
-      <section className="admin-section">
-        <h2 className="admin-h">Enquiries</h2>
-        {enquiries.length === 0 ? (
-          <p className="mono" style={{ opacity: 0.6 }}>
-            No enquiries yet.
-          </p>
-        ) : (
-          <ul className="admin-list">
-            {enquiries.map((en) => (
-              <li key={en.id} className="admin-enquiry">
-                <div>
-                  <span className="mono">
-                    {en.kind} · {new Date(en.created_at).toLocaleDateString("en-GB")}
-                  </span>
-                  <p>
-                    <strong>{en.name}</strong>{" "}
-                    <a href={`mailto:${en.email}`}>{en.email}</a>
-                  </p>
-                  <p style={{ opacity: 0.85 }}>{en.message}</p>
-                </div>
-                <button
-                  className="enquire"
-                  type="button"
-                  onClick={() => deleteEnquiry(en.id)}
-                >
-                  Clear
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section className="admin-section">
-        <h2 className="admin-h">Interest</h2>
-        {interestByPiece.length === 0 ? (
-          <p className="mono" style={{ opacity: 0.6 }}>
-            No one has registered interest yet.
-          </p>
-        ) : (
-          <ul className="admin-list">
-            {interestByPiece.map((g) => (
-              <li key={g.pieceId} className="admin-enquiry">
-                <div>
-                  <span className="mono">
-                    {g.count} {g.count === 1 ? "person" : "people"} interested
-                  </span>
-                  <p>
-                    <strong>{g.title}</strong>
-                  </p>
-                  {g.emails.length ? (
-                    <p style={{ opacity: 0.85 }}>
-                      {g.emails.map((em, i) => (
-                        <span key={em + i}>
-                          <a href={`mailto:${em}`}>{em}</a>
-                          {i < g.emails.length - 1 ? ", " : ""}
-                        </span>
-                      ))}
-                    </p>
-                  ) : (
-                    <p className="mono" style={{ opacity: 0.55 }}>
-                      No contact details left.
-                    </p>
-                  )}
-                </div>
-                <button
-                  className="enquire"
-                  type="button"
-                  onClick={() => clearInterest(g.pieceId)}
-                >
-                  Clear
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section className="admin-section">
-        <div className="admin-section-head">
-          <h2 className="admin-h">Pieces</h2>
-          <button
-            className="enquire"
-            type="button"
-            onClick={() => setEditing(editing === "new" ? null : "new")}
-          >
-            {editing === "new" ? "Close" : "New piece"}
-          </button>
-        </div>
-
-        {editing === "new" ? (
-          <PieceForm
-            categories={categories}
-            onDone={() => {
-              setEditing(null);
-              loadAll();
-            }}
-          />
-        ) : null}
-
-        <ul className="admin-list">
-          {pieces.map((piece) => (
-            <li key={piece.id} className="admin-piece">
-              <div className="admin-piece-row">
-                <div>
-                  <span className="mono" style={{ opacity: 0.6 }}>
-                    {piece.status}
-                    {piece.placeholder ? " · placeholder" : ""}
-                    {piece.featured ? " · featured" : ""}
-                  </span>
-                  <p>
-                    <strong>{piece.title}</strong>
-                    <span style={{ opacity: 0.6 }}> · {piece.attribution}</span>
-                  </p>
-                </div>
-                <div className="admin-piece-actions mono">
-                  <button
-                    className="enquire"
-                    type="button"
-                    onClick={() =>
-                      setEditing(editing === piece.id ? null : piece.id)
-                    }
-                  >
-                    {editing === piece.id ? "Close" : "Edit"}
-                  </button>
-                  <button
-                    className="enquire"
-                    type="button"
-                    onClick={() => deletePiece(piece.id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-              {editing === piece.id ? (
-                <PieceForm
-                  categories={categories}
-                  piece={piece}
-                  provenance={provenance.filter((r) => r.piece_id === piece.id)}
-                  images={images.filter((r) => r.piece_id === piece.id)}
-                  onDone={() => {
-                    setEditing(null);
-                    loadAll();
-                  }}
-                />
-              ) : null}
-            </li>
-          ))}
-        </ul>
-      </section>
+      {tab === "pieces" ? <PiecesPanel data={data} onReload={loadAll} /> : null}
+      {tab === "words" ? (
+        <WordsPanel
+          words={data.testimonials}
+          pieces={data.pieces}
+          onReload={loadAll}
+        />
+      ) : null}
+      {tab === "questions" ? (
+        <QuestionsPanel faqs={data.faqs} onReload={loadAll} />
+      ) : null}
+      {tab === "site" ? (
+        <SitePanel settings={data.settings} onReload={loadAll} />
+      ) : null}
+      {tab === "enquiries" ? (
+        <EnquiriesPanel enquiries={data.enquiries} onDelete={deleteEnquiry} />
+      ) : null}
+      {tab === "interest" ? (
+        <InterestPanel
+          interest={data.interest}
+          pieces={data.pieces}
+          onClear={clearInterest}
+        />
+      ) : null}
+      {tab === "list" ? (
+        <SubscribersPanel
+          subscribers={data.subscribers}
+          onRemove={removeSubscriber}
+        />
+      ) : null}
     </div>
-  );
-}
-
-function PieceForm({
-  categories,
-  piece,
-  provenance = [],
-  images = [],
-  onDone,
-}: {
-  categories: AdminCategory[];
-  piece?: AdminPiece;
-  provenance?: AdminProvenance[];
-  images?: AdminImage[];
-  onDone: () => void;
-}) {
-  const [form, setForm] = useState({
-    slug: piece?.slug ?? "",
-    category_id: piece?.category_id ?? categories[0]?.id ?? "",
-    title: piece?.title ?? "",
-    attribution: piece?.attribution ?? "",
-    period_label: piece?.period_label ?? "",
-    origin: piece?.origin ?? "",
-    materials: piece?.materials.join(", ") ?? "",
-    status: piece?.status ?? "available",
-    price: piece?.price_pence != null ? String(piece.price_pence / 100) : "",
-    price_on_request: piece?.price_on_request ?? true,
-    placeholder: piece?.placeholder ?? true,
-    featured: piece?.featured ?? false,
-    featured_position:
-      piece?.featured_position != null ? String(piece.featured_position) : "",
-    provenance_verified: piece?.provenance_verified ?? false,
-    story: piece?.story ?? "",
-    restoration_notes: piece?.restoration_notes ?? "",
-  });
-  const [rows, setRows] = useState<
-    { id?: string; label: string; detail: string }[]
-  >(provenance.map((r) => ({ id: r.id, label: r.label, detail: r.detail })));
-  const [imgRows, setImgRows] = useState<
-    { id?: string; path: string; alt: string; kind: ImageKind }[]
-  >(images.map((r) => ({ id: r.id, path: r.path, alt: r.alt, kind: r.kind })));
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
-
-  async function save(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setBusy(true);
-    setError("");
-    try {
-      const payload = {
-        id: piece?.id,
-        piece: {
-          slug: form.slug.trim(),
-          category_id: form.category_id,
-          title: form.title.trim(),
-          attribution: form.attribution.trim(),
-          period_label: form.period_label.trim(),
-          year_from: piece?.year_from ?? null,
-          year_to: piece?.year_to ?? null,
-          origin: form.origin.trim(),
-          materials: form.materials
-            .split(",")
-            .map((m) => m.trim())
-            .filter(Boolean),
-          status: form.status as PieceStatus,
-          price_on_request: form.price_on_request,
-          price_pence:
-            form.price_on_request || !form.price.trim()
-              ? null
-              : Math.round(
-                  Number(form.price.trim().replace(/[^0-9.]/g, "")) * 100,
-                ),
-          placeholder: form.placeholder,
-          featured: form.featured,
-          featured_position:
-            form.featured && form.featured_position.trim()
-              ? Math.round(Number(form.featured_position.trim()))
-              : null,
-          provenance_verified: form.provenance_verified,
-          story: form.story.trim(),
-          restoration_notes: form.restoration_notes.trim(),
-        },
-        provenance: rows.map((r) => ({ label: r.label, detail: r.detail })),
-        images: imgRows.map((r) => ({
-          path: r.path,
-          alt: r.alt,
-          kind: r.kind,
-        })),
-      };
-
-      const res = await fetch("/api/admin/pieces", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        const json = await res.json().catch(() => ({}));
-        throw new Error(json.error ?? "Could not save.");
-      }
-      onDone();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not save.");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  const set = (k: keyof typeof form, v: string | boolean) =>
-    setForm((f) => ({ ...f, [k]: v }));
-
-  return (
-    <form className="form admin-form" onSubmit={save}>
-      <div className="field">
-        <label>Title</label>
-        <input value={form.title} onChange={(e) => set("title", e.target.value)} required />
-      </div>
-      <div className="field">
-        <label>Slug (url)</label>
-        <input value={form.slug} onChange={(e) => set("slug", e.target.value)} required />
-      </div>
-      <div className="field">
-        <label>Category</label>
-        <select
-          value={form.category_id}
-          onChange={(e) => set("category_id", e.target.value)}
-        >
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="field">
-        <label>Attribution (a hedge, never a named maker as fact)</label>
-        <input
-          value={form.attribution}
-          onChange={(e) => set("attribution", e.target.value)}
-          placeholder="Attributed, space age"
-        />
-      </div>
-      <div className="field">
-        <label>Period label</label>
-        <input
-          value={form.period_label}
-          onChange={(e) => set("period_label", e.target.value)}
-        />
-      </div>
-      <div className="field">
-        <label>Origin</label>
-        <input value={form.origin} onChange={(e) => set("origin", e.target.value)} />
-      </div>
-      <div className="field">
-        <label>Materials (comma separated)</label>
-        <input
-          value={form.materials}
-          onChange={(e) => set("materials", e.target.value)}
-        />
-      </div>
-      <div className="field">
-        <label>Status</label>
-        <select value={form.status} onChange={(e) => set("status", e.target.value)}>
-          {STATUSES.map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
-      </div>
-      <label className="mono" style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
-        <input
-          type="checkbox"
-          checked={form.price_on_request}
-          onChange={(e) => set("price_on_request", e.target.checked)}
-        />
-        Price on request (hide the figure)
-      </label>
-      {!form.price_on_request ? (
-        <div className="field">
-          <label>Price (pounds)</label>
-          <input
-            inputMode="decimal"
-            value={form.price}
-            onChange={(e) => set("price", e.target.value)}
-            placeholder="2400"
-          />
-        </div>
-      ) : null}
-      <div className="field">
-        <label>Story</label>
-        <textarea value={form.story} onChange={(e) => set("story", e.target.value)} />
-      </div>
-      <div className="field">
-        <label>Restoration notes</label>
-        <textarea
-          value={form.restoration_notes}
-          onChange={(e) => set("restoration_notes", e.target.value)}
-        />
-      </div>
-      <label className="mono" style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
-        <input
-          type="checkbox"
-          checked={form.placeholder}
-          onChange={(e) => set("placeholder", e.target.checked)}
-        />
-        Placeholder listing (details unconfirmed)
-      </label>
-      <label className="mono" style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
-        <input
-          type="checkbox"
-          checked={form.provenance_verified}
-          onChange={(e) => set("provenance_verified", e.target.checked)}
-        />
-        Provenance verified (show the seal)
-      </label>
-      <label className="mono" style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
-        <input
-          type="checkbox"
-          checked={form.featured}
-          onChange={(e) => set("featured", e.target.checked)}
-        />
-        Feature on the homepage
-      </label>
-      {form.featured ? (
-        <div className="field">
-          <label>Homepage position (lower shows first)</label>
-          <input
-            inputMode="numeric"
-            value={form.featured_position}
-            onChange={(e) => set("featured_position", e.target.value)}
-            placeholder="1"
-          />
-        </div>
-      ) : null}
-
-      <fieldset className="admin-fieldset">
-        <legend className="mono">Provenance rings</legend>
-        {rows.map((r, i) => (
-          <div key={i} className="admin-subrow">
-            <input
-              placeholder="Label, e.g. Found"
-              value={r.label}
-              onChange={(e) =>
-                setRows((rs) =>
-                  rs.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)),
-                )
-              }
-            />
-            <input
-              placeholder="Detail"
-              value={r.detail}
-              onChange={(e) =>
-                setRows((rs) =>
-                  rs.map((x, j) => (j === i ? { ...x, detail: e.target.value } : x)),
-                )
-              }
-            />
-            <button
-              type="button"
-              className="enquire"
-              onClick={() => setRows((rs) => rs.filter((_, j) => j !== i))}
-            >
-              Remove
-            </button>
-          </div>
-        ))}
-        <button
-          type="button"
-          className="enquire"
-          onClick={() => setRows((rs) => [...rs, { label: "", detail: "" }])}
-        >
-          Add provenance
-        </button>
-      </fieldset>
-
-      <fieldset className="admin-fieldset">
-        <legend className="mono">Images</legend>
-        {imgRows.map((r, i) => (
-          <div key={i} className="admin-subrow">
-            <input
-              placeholder="Path or URL"
-              value={r.path}
-              onChange={(e) =>
-                setImgRows((rs) =>
-                  rs.map((x, j) => (j === i ? { ...x, path: e.target.value } : x)),
-                )
-              }
-            />
-            <input
-              placeholder="Alt text"
-              value={r.alt}
-              onChange={(e) =>
-                setImgRows((rs) =>
-                  rs.map((x, j) => (j === i ? { ...x, alt: e.target.value } : x)),
-                )
-              }
-            />
-            <select
-              value={r.kind}
-              onChange={(e) =>
-                setImgRows((rs) =>
-                  rs.map((x, j) =>
-                    j === i ? { ...x, kind: e.target.value as ImageKind } : x,
-                  ),
-                )
-              }
-            >
-              {IMAGE_KINDS.map((k) => (
-                <option key={k} value={k}>
-                  {k}
-                </option>
-              ))}
-            </select>
-            <button
-              type="button"
-              className="enquire"
-              onClick={() => setImgRows((rs) => rs.filter((_, j) => j !== i))}
-            >
-              Remove
-            </button>
-          </div>
-        ))}
-        <button
-          type="button"
-          className="enquire"
-          onClick={() =>
-            setImgRows((rs) => [...rs, { path: "", alt: "", kind: "detail" }])
-          }
-        >
-          Add image
-        </button>
-      </fieldset>
-
-      <button className="enquire" type="submit" disabled={busy}>
-        {busy ? "Saving" : piece ? "Save changes" : "Create piece"}
-      </button>
-      {error ? (
-        <p className="form-note mono" data-tone="error">
-          {error}
-        </p>
-      ) : null}
-    </form>
   );
 }

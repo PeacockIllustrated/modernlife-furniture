@@ -9,6 +9,10 @@ export const metadata: Metadata = {
     "If you have a piece the artists made, we buy. Chairs, casework, tables and shelving from the last century, restored and rehomed.",
 };
 
+// The chrome around this page reads the owner-editable store settings, so
+// refresh on the same cadence as the rest of the site.
+export const revalidate = 60;
+
 const looks = [
   {
     name: "What we look for",
