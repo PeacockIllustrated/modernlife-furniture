@@ -5,7 +5,7 @@
 -- site-wide questions, collector words and settings seed on first run only and
 -- reruns leave the owner's rows alone.
 
--- ---- Categories: the four chair eras ----
+-- ---- Categories: the four chair eras and the modern classics room ----
 insert into modern_categories (slug, name, position, story, hint, facts, placeholder)
 values
   (
@@ -34,6 +34,13 @@ values
     'Expressive frames and confident shapes, chairs made by workshops that treated seating as sculpture. Walnut carved rather than machined, upholstery cut close to the frame, silhouettes that hold a room on their own. Made to be looked at, and sat in daily.',
     'Best placed where they can be seen in the round',
     '[{"term":"Periods","detail":"1950 to 1975"},{"term":"Materials","detail":"Walnut, lacquer, brass, velvet and wool"},{"term":"What to expect","detail":"Carved frames, close upholstery, no bad angle"}]'::jsonb,
+    true
+  ),
+  (
+    'modern-classics', 'Modern classics', 5,
+    'Design classics of the last thirty years, bought once and kept. Aluminium brushed by hand, forms drawn in a single line, furniture made to outlast its owner. These pieces are not vintage yet; they are simply too good to wait for. Each one is checked, honestly photographed and ready for daily use.',
+    'The newest pieces we sell, and often the most robust',
+    '[{"term":"Periods","detail":"1995 to today"},{"term":"Materials","detail":"Brushed aluminium, leather, moulded plastics"},{"term":"What to expect","detail":"Design classics still in production, built to last decades"}]'::jsonb,
     true
   )
 on conflict (slug) do update set

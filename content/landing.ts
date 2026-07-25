@@ -56,7 +56,7 @@ export const closing = {
 export const rooms: Room[] = [
   {
     id: "s01",
-    number: "Era 01 of 04",
+    number: "Era 01 of 05",
     slug: "bauhaus-and-modernist",
     title: "Bauhaus and modernist",
     story:
@@ -78,7 +78,7 @@ export const rooms: Room[] = [
   },
   {
     id: "s02",
-    number: "Era 02 of 04",
+    number: "Era 02 of 05",
     slug: "danish-modern",
     title: "Danish modern",
     story:
@@ -96,7 +96,7 @@ export const rooms: Room[] = [
   },
   {
     id: "s03",
-    number: "Era 03 of 04",
+    number: "Era 03 of 05",
     slug: "space-age",
     title: "Space age",
     story:
@@ -114,7 +114,7 @@ export const rooms: Room[] = [
   },
   {
     id: "s04",
-    number: "Era 04 of 04",
+    number: "Era 04 of 05",
     slug: "italian-and-sculptural",
     title: "Italian and sculptural",
     story:
@@ -132,5 +132,26 @@ export const rooms: Room[] = [
     variant: "dark",
     visual: "grove",
     canvasLabel: "Italian and sculptural, lines branching like a carved frame",
+  },
+  {
+    id: "s05",
+    number: "Era 05 of 05",
+    slug: "modern-classics",
+    title: "Modern classics",
+    story:
+      "Design classics of the last thirty years, bought once and kept. Aluminium brushed by hand, forms drawn in a single line, furniture made to outlast its owner. These pieces are not vintage yet; they are simply too good to wait for. Each one is checked, honestly photographed and ready for daily use.",
+    hint: "The newest pieces we sell, and often the most robust",
+    facts: [
+      { term: "Periods", detail: "1995 to today" },
+      { term: "Materials", detail: "Brushed aluminium, leather, moulded plastics" },
+      {
+        term: "What to expect",
+        detail: "Design classics still in production, built to last decades",
+      },
+    ],
+    cta: { label: "View Modern classics", href: "/collection/modern-classics" },
+    variant: "light",
+    visual: "bench",
+    canvasLabel: "Modern classics, a machined joint drawn line by line",
   },
 ];

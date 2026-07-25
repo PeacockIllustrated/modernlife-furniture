@@ -9,7 +9,7 @@ import RevealObserver from "@/components/scroll/RevealObserver";
 export const metadata: Metadata = {
   title: "The collection",
   description:
-    "Vintage designer chairs, era by era: Bauhaus and modernist, Danish modern, space age, and Italian and sculptural. Checked, documented and delivered nationwide.",
+    "Vintage designer chairs, era by era: Bauhaus and modernist, Danish modern, space age, Italian and sculptural, and modern classics. Checked, documented and delivered nationwide.",
 };
 
 export const revalidate = 60;
@@ -36,9 +36,9 @@ export default async function CollectionIndex() {
         <h1>The collection</h1>
         <p>
           Chairs, era by era: Bauhaus and modernist, Danish modern, space age,
-          and Italian and sculptural. Every piece is one of one and the
-          collection changes weekly; if you are after something in particular,
-          tell us and we will find it.
+          Italian and sculptural, and modern classics. Every piece is one of
+          one and the collection changes weekly; if you are after something in
+          particular, tell us and we will find it.
         </p>
       </div>
 
