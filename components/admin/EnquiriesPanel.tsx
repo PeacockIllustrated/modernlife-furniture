@@ -16,11 +16,20 @@ export default function EnquiriesPanel({
   onDelete: (id: string) => void;
 }) {
   return (
-    <section className="admin-section">
-      <h2 className="admin-h">Enquiries</h2>
+    <section className="dash-panel">
+      <div className="dash-panel-head">
+        <div>
+          <h2 className="dash-h">Enquiries</h2>
+          <p className="dash-sub">
+            Buyers who have written in, newest first. Click the address to
+            reply from your own email, then clear the row when it is dealt
+            with.
+          </p>
+        </div>
+      </div>
       {enquiries.length === 0 ? (
-        <p className="mono" style={{ opacity: 0.6 }}>
-          No enquiries yet.
+        <p className="dash-clear">
+          No one has written in yet. Enquiries from every piece page land here.
         </p>
       ) : (
         <ul className="admin-list">

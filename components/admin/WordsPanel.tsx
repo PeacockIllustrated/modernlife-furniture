@@ -44,9 +44,15 @@ export default function WordsPanel({
   };
 
   return (
-    <section className="admin-section">
-      <div className="admin-section-head">
-        <h2 className="admin-h">Collector words</h2>
+    <section className="dash-panel">
+      <div className="dash-panel-head">
+        <div>
+          <h2 className="dash-h">Collector words</h2>
+          <p className="dash-sub">
+            What buyers have said, chosen by you. These carry real weight with
+            someone deciding, so only use words you were actually given.
+          </p>
+        </div>
         <button
           className="enquire"
           type="button"

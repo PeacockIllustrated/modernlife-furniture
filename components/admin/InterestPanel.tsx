@@ -43,11 +43,20 @@ export default function InterestPanel({
   }, [interest, pieces]);
 
   return (
-    <section className="admin-section">
-      <h2 className="admin-h">Interest</h2>
+    <section className="dash-panel">
+      <div className="dash-panel-head">
+        <div>
+          <h2 className="dash-h">Interest</h2>
+          <p className="dash-sub">
+            People who tapped &quot;tell me about this piece&quot;, the most
+            wanted first. A good sign of what to buy more of.
+          </p>
+        </div>
+      </div>
       {interestByPiece.length === 0 ? (
-        <p className="mono" style={{ opacity: 0.6 }}>
-          No one has registered interest yet.
+        <p className="dash-clear">
+          No one has registered interest yet. The button sits on every piece
+          page, under the price.
         </p>
       ) : (
         <ul className="admin-list">

@@ -61,9 +61,15 @@ export default function PiecesPanel({
   };
 
   return (
-    <section className="admin-section">
-      <div className="admin-section-head">
-        <h2 className="admin-h">Pieces</h2>
+    <section className="dash-panel">
+      <div className="dash-panel-head">
+        <div>
+          <h2 className="dash-h">Pieces</h2>
+          <p className="dash-sub">
+            Everything you sell. Open a piece to edit its photographs, price,
+            measurements and story, or add one that has just come in.
+          </p>
+        </div>
         <button
           className="enquire"
           type="button"
