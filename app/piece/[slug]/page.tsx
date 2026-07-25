@@ -7,6 +7,7 @@ import {
   getGlobalFaqs,
   getGlobalWords,
   getRelatedPieces,
+  getPieceHeroImages,
   getStoreSettings,
   type PieceDetail,
 } from "@/lib/collection";
@@ -127,6 +128,9 @@ export default async function PiecePage({
     getGlobalWords(),
     getRelatedPieces(piece.categorySlug, piece.slug),
   ]);
+  // The neighbours' lead photographs, so the row at the foot sells the way
+  // the shop grid does rather than falling back to drawings.
+  const relatedImages = await getPieceHeroImages(related.map((p) => p.slug));
 
   const room = rooms.find((r) => r.slug === piece.categorySlug);
   const visual = room?.visual ?? "rings";
@@ -291,7 +295,9 @@ export default async function PiecePage({
 
       {on("words") ? <CollectorWords words={words} /> : null}
 
-      {on("related") ? <RelatedPieces pieces={related} /> : null}
+      {on("related") ? (
+        <RelatedPieces pieces={related} images={relatedImages} />
+      ) : null}
 
       <section
         id="enquire"
