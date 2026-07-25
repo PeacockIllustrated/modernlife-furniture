@@ -950,6 +950,11 @@ dd {
 }
 .acquire-form {
   margin-top: 2.4rem;
+  max-width: 56rem;
+  background: var(--panel);
+  border: var(--hair);
+  border-radius: var(--radius-m);
+  padding: 1.8rem 1.9rem 2rem;
 }
 .acquire-form .block-eyebrow {
   display: block;
@@ -1614,6 +1619,8 @@ button.enquire {
 }
 
 /* ---------- Store sections: one quiet heading treatment ---------- */
+/* The short amber tick above each heading is the single brand accent doing
+   the section wayfinding, so the grounds below can vary without shouting. */
 .store-head {
   font-family: var(--font-display);
   font-weight: 300;
@@ -1621,6 +1628,15 @@ button.enquire {
   line-height: 1.06;
   letter-spacing: -0.01em;
   margin-bottom: 1.6rem;
+}
+.store-head::before {
+  content: "";
+  display: block;
+  width: 2.2rem;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--amber);
+  margin-bottom: 0.9rem;
 }
 /* Anchored arrivals from the buy box and the sticky bar land clear of the
    fixed header. */
@@ -1706,9 +1722,13 @@ button.enquire {
   padding-top: 0.4rem;
 }
 
-/* ---------- Specimen record: the house dl with hairline rows ---------- */
+/* ---------- Specimen record: the house dl on a panel card ---------- */
 .record {
   max-width: 56rem;
+  background: var(--panel);
+  border: var(--hair);
+  border-radius: var(--radius-m);
+  padding: 0.7rem 1.8rem 1.4rem;
 }
 .record-list {
   display: block; /* row wrappers carry the grid, not the dl itself */
@@ -1720,49 +1740,61 @@ button.enquire {
   padding: 0.65rem 0;
   border-top: var(--hair);
 }
+.record-list .record-row:first-child {
+  border-top: 0; /* the card edge already draws the line */
+}
 .record-row dd {
   font-size: 0.92rem;
 }
 .record-group {
   display: block;
   margin: 1.9rem 0 0.4rem;
-  opacity: 0.6;
+  color: var(--amber);
   font-weight: 400;
 }
 
-/* ---------- What comes with the piece ---------- */
+/* ---------- What comes with the piece: white cards on the paper ---------- */
 .included-list {
   list-style: none;
   max-width: 56rem;
-  border-bottom: var(--hair);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.1rem 1.4rem;
 }
 .included-item {
-  display: grid;
-  grid-template-columns: 2.6rem minmax(9rem, 16rem) minmax(0, 1fr);
-  gap: 0.4rem 1.4rem;
-  align-items: baseline;
-  padding: 1.05rem 0;
-  border-top: var(--hair);
+  background: #fff;
+  border: var(--hair);
+  border-radius: var(--radius-m);
+  padding: 1.15rem 1.35rem 1.3rem;
 }
 .included-no {
-  opacity: 0.55;
+  display: block;
+  color: var(--amber);
+  margin-bottom: 0.5rem;
 }
 .included-label {
+  display: block;
   font-family: var(--font-display);
   font-weight: 400;
   font-size: 1.15rem;
   line-height: 1.25;
+  margin-bottom: 0.35rem;
 }
 .included-note {
+  display: block;
   opacity: 0.85;
   font-size: 0.95rem;
   max-width: 52ch;
 }
 
-/* ---------- Condition ---------- */
+/* ---------- Condition: stated plainly, on its own quiet panel ---------- */
 .condition-notes {
-  max-width: 52ch;
-  opacity: 0.92;
+  max-width: 60ch;
+  background: var(--panel);
+  border: var(--hair);
+  border-left: 2px solid var(--amber);
+  border-radius: var(--radius-s);
+  padding: 1.2rem 1.5rem;
 }
 .condition-pair {
   display: grid;
@@ -1791,16 +1823,22 @@ button.enquire {
   opacity: 0.65;
 }
 
-/* ---------- Care and delivery ---------- */
+/* ---------- Care and delivery: four panel cards ---------- */
 .care-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 2.4rem 3rem;
+  gap: 1.4rem;
   max-width: 62rem;
+}
+.care-cell {
+  background: var(--panel);
+  border: var(--hair);
+  border-radius: var(--radius-m);
+  padding: 1.4rem 1.6rem 1.5rem;
 }
 .care-cell h3 {
   font-weight: 400;
-  opacity: 0.6;
+  color: var(--amber);
   margin-bottom: 0.8rem;
 }
 .care-cell p {
@@ -1811,14 +1849,20 @@ button.enquire {
   margin-top: 0.8rem;
 }
 
-/* ---------- Questions: square details, a rotating hairline plus ---------- */
+/* ---------- Questions: the accordion held in one white card ---------- */
 .faq-list {
   max-width: 56rem;
-  border-bottom: var(--hair);
+  background: #fff;
+  border: var(--hair);
+  border-radius: var(--radius-m);
+  padding: 0.25rem 1.4rem;
 }
 .faq-item {
   border-top: var(--hair);
   interpolate-size: allow-keywords; /* lets block-size animate to auto */
+}
+.faq-item:first-child {
+  border-top: 0;
 }
 .faq-item summary {
   display: flex;
@@ -1888,14 +1932,18 @@ button.enquire {
   opacity: 0.9;
 }
 
-/* ---------- Collector words ---------- */
+/* ---------- Collector words: the one basalt moment on the page ---------- */
 .words-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 2.2rem 2.6rem;
+  gap: 1.9rem 2.4rem;
+  background: var(--basalt);
+  color: var(--bone);
+  border-radius: var(--radius-m);
+  padding: 2rem 2.2rem 2.3rem;
 }
 .word {
-  border-top: var(--hair);
+  border-top: var(--hair-bone);
   padding-top: 1.4rem;
 }
 .word-quote {
@@ -2018,11 +2066,8 @@ button.enquire {
     grid-template-columns: 1fr;
     gap: 0.2rem;
   }
-  .included-item {
-    grid-template-columns: 2.2rem minmax(0, 1fr);
-  }
-  .included-note {
-    grid-column: 2;
+  .included-list {
+    grid-template-columns: 1fr;
   }
   .condition-pair {
     grid-template-columns: 1fr;
