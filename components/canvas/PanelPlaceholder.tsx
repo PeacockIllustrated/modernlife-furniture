@@ -6,7 +6,7 @@ const STUDY_NAME: Record<RoomVisual, string> = {
   grove: "Grove, the collection branching",
   strata: "Strata, veneer and lacquer",
   rings: "Rings, grain and ownership",
-  bench: "Conservator's drawing",
+  silhouette: "Silhouette, a chair in one line",
 };
 
 /**
