@@ -1,84 +1,63 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getCategories } from "@/lib/collection";
-import { rooms, closing } from "@/content/landing";
-import RoomVisual from "@/components/canvas/RoomVisual";
+import { getCategories, getPieces, getPieceHeroImages } from "@/lib/collection";
+import ShopGrid from "@/components/collection/ShopGrid";
 import FeatureBand from "@/components/gallery/FeatureBand";
 import RevealObserver from "@/components/scroll/RevealObserver";
 
 export const metadata: Metadata = {
-  title: "The collection",
+  title: "Shop",
   description:
-    "Vintage designer chairs, era by era: Bauhaus and modernist, Danish modern, space age, Italian and sculptural, and modern classics. Checked, documented and delivered nationwide.",
+    "Every piece in the collection, one of one: vintage designer chairs and modern classics, filtered by era and availability. Checked, documented and delivered nationwide.",
 };
 
 export const revalidate = 60;
 
 /**
- * The collection index: each era shown as a preview row, its study beside
- * the name. Every row routes to the era's pieces, so the page is a shop
- * index rather than a tour.
+ * The shop: one grid of everything for sale, with era, availability and
+ * search narrowing it in the browser. The eras still have pages of their
+ * own, reached from the home page and the footer, but a buyer who wants to
+ * see the lot no longer has to walk through five rooms to do it.
  */
-export default async function CollectionIndex() {
-  const categories = await getCategories();
-  const bySlug = new Map(categories.map((c) => [c.slug, c]));
+export default async function ShopPage() {
+  const [categories, pieces] = await Promise.all([
+    getCategories(),
+    getPieces(),
+  ]);
+  const images = await getPieceHeroImages(pieces.map((p) => p.slug));
 
   return (
     <main className="page">
       <nav className="breadcrumb mono" aria-label="Breadcrumb">
         <Link href="/">Home</Link>
         <span aria-hidden="true">/</span>
-        <span>Collection</span>
+        <span>Shop</span>
       </nav>
 
       <div className="page-head">
         <span className="mono eyebrow">Browse</span>
-        <h1>The collection</h1>
+        <h1>Shop the collection</h1>
         <p>
-          Chairs, era by era: Bauhaus and modernist, Danish modern, space age,
-          Italian and sculptural, and modern classics. Every piece is one of
-          one and the collection changes weekly; if you are after something in
-          particular, tell us and we will find it.
+          Every piece is one of one, checked over, photographed honestly and
+          sold with its condition report. Filter by era or availability, or
+          search for what you have in mind.
         </p>
       </div>
 
-      <div className="cat-rows">
-        {rooms.map((room) => {
-          const category = bySlug.get(room.slug);
-          const name = category?.name ?? room.title;
-          const hint = category?.hint ?? room.hint;
-          return (
-            <Link
-              key={room.id}
-              href={`/collection/${room.slug}`}
-              className={`cat-row reveal${room.variant === "dark" ? " dark" : ""}`}
-              aria-label={`${name}, ${room.number}`}
-            >
-              <div className="cat-row-figure">
-                <RoomVisual
-                  visual={room.visual}
-                  label={room.canvasLabel}
-                  scrollBound={false}
-                />
-              </div>
-              <div className="cat-row-body">
-                <span className="mono no">{room.number}</span>
-                <h2>{name}</h2>
-                <span className="hint">{hint}</span>
-                <span className="cat-row-view">
-                  View {name}
-                </span>
-              </div>
-            </Link>
-          );
-        })}
-      </div>
+      {pieces.length === 0 ? (
+        <p className="shop-empty">
+          Nothing is listed at the moment. Tell us what you are after and we
+          will let you know when the right piece arrives.
+        </p>
+      ) : (
+        <ShopGrid pieces={pieces} images={images} categories={categories} />
+      )}
 
       <FeatureBand
-        eyebrow="Ask about a piece"
-        heading="The best pieces rarely reach the website"
-        body={closing.body}
-        cta={{ label: "Tell us what you are after", href: "/enquire" }}
+        eyebrow="More chairs than reach the website"
+        heading="Looking for something in particular"
+        body="Tell us what you are after and we will find it. And if you have a piece by one of the designers of the last century, we buy."
+        cta={{ label: "Make an enquiry", href: "/enquire" }}
         visual="rings"
       />
 

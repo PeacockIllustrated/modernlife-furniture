@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCategories, getCategoryBySlug, getPieces } from "@/lib/collection";
+import {
+  getCategories,
+  getCategoryBySlug,
+  getPieces,
+  getPieceHeroImages,
+} from "@/lib/collection";
 import { rooms } from "@/content/landing";
 import CategoryBand from "@/components/collection/CategoryBand";
-import SpecimenCard from "@/components/collection/SpecimenCard";
+import PieceCard from "@/components/collection/PieceCard";
 import FeatureBand from "@/components/gallery/FeatureBand";
 import RevealObserver from "@/components/scroll/RevealObserver";
 
@@ -38,6 +43,7 @@ export default async function CategoryPage({
   // The same cached read as getCategoryBySlug, so the count costs nothing.
   const categories = await getCategories();
   const pieces = await getPieces(category);
+  const images = await getPieceHeroImages(pieces.map((p) => p.slug));
 
   return (
     <main className="page">
@@ -65,15 +71,31 @@ export default async function CategoryPage({
       </div>
 
       {pieces.length > 0 ? (
-        <div className="specimen-index">
-          {pieces.map((piece) => (
-            <SpecimenCard key={piece.slug} piece={piece} />
-          ))}
-        </div>
+        <>
+          <div className="shop-count mono" role="status">
+            <span>
+              {pieces.length} {pieces.length === 1 ? "piece" : "pieces"} in this
+              era
+            </span>
+            <Link className="shop-clear" href="/collection">
+              See every era
+            </Link>
+          </div>
+          <div className="pc-grid">
+            {pieces.map((piece, i) => (
+              <PieceCard
+                key={piece.slug}
+                piece={piece}
+                image={images[piece.slug] ?? null}
+                priority={i < 3}
+              />
+            ))}
+          </div>
+        </>
       ) : (
-        <p className="mono" style={{ opacity: 0.7 }}>
+        <p className="shop-empty">
           No pieces are listed here at the moment. The best pieces rarely reach
-          the website; tell us what you are after and we will find it.
+          the website, so tell us what you are after and we will find it.
         </p>
       )}
 

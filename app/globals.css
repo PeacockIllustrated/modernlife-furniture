@@ -468,105 +468,6 @@ dd {
   opacity: 0.85;
 }
 
-/* Accent per card, for a little colour pop. The promo family now serves the
-   piece page's related row only; the home page trio uses the featured
-   classes in the chrome and home layer below. */
-.promo {
-  text-decoration: none;
-  color: inherit;
-  --accent: var(--amber);
-}
-.promo[data-accent="sea"] {
-  --accent: var(--sea);
-}
-.promo[data-accent="rose"] {
-  --accent: var(--rose);
-}
-.promo-figure {
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--radius-m) var(--radius-m) 0 0;
-  background: color-mix(in srgb, var(--accent) 16%, var(--stone-deep));
-  border-bottom: 3px solid var(--accent);
-}
-.promo-figure canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  touch-action: pan-y;
-}
-
-.promo-body {
-  display: flex;
-  flex-direction: column;
-}
-.promo-attr {
-  opacity: 0.7;
-  margin-bottom: 0.6rem;
-}
-.promo-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem 1.4rem;
-  align-items: baseline;
-  margin-bottom: 1.6rem;
-}
-.promo-price {
-  font-size: 0.8rem;
-  letter-spacing: 0.04em;
-}
-.promo-status {
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-}
-.promo-status[data-status="available"] {
-  color: var(--sea);
-}
-.promo-status[data-status="reserved"],
-.promo-status[data-status="sold"] {
-  color: var(--rose);
-}
-.promo-status[data-status="restoration"] {
-  color: var(--amber);
-}
-
-/* Card row */
-.promo-rest {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
-  gap: 1.4rem;
-}
-.promo-card {
-  border: var(--hair);
-  border-radius: var(--radius-m);
-  overflow: hidden;
-  background: var(--stone-deep);
-  transition: transform 0.25s ease;
-}
-.promo-card:hover {
-  transform: translateY(-3px);
-}
-.promo-card .promo-figure {
-  min-height: 230px;
-}
-.promo-card .promo-body {
-  padding: 1.5rem 1.6rem 1.8rem;
-  gap: 0.4rem;
-}
-.promo-card h3 {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(1.3rem, 2.2vw, 1.7rem);
-  line-height: 1.1;
-  letter-spacing: -0.01em;
-  margin-top: 0.2rem;
-}
-.promo-card:hover h3 {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
 .highlight-all {
   display: inline-block;
   margin-top: 2.6rem;
@@ -694,68 +595,6 @@ dd {
   overflow-wrap: anywhere; /* long tokens (env var names) never overflow */
 }
 
-/* Specimen index, a catalogue ledger rather than a card grid */
-.specimen-index {
-  border-top: var(--hair);
-}
-.specimen-entry {
-  display: grid;
-  grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 3fr);
-  gap: 1.5rem;
-  align-items: baseline;
-  padding: 2rem 0.25rem;
-  border-bottom: var(--hair);
-  text-decoration: none;
-  transition: background 0.25s ease;
-}
-.specimen-entry:hover {
-  background: rgba(30, 33, 30, 0.03);
-}
-.entry-attr {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  opacity: 0.75;
-}
-.entry-attr [data-status] {
-  opacity: 0.9;
-}
-.entry-attr [data-status="sold"],
-.entry-attr [data-status="reserved"] {
-  color: var(--rose);
-  opacity: 1;
-}
-.entry-attr [data-status="available"] {
-  color: var(--sea);
-  opacity: 1;
-}
-.entry-attr [data-status="restoration"] {
-  color: var(--amber);
-  opacity: 1;
-}
-.entry-main h3 {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(1.5rem, 2.6vw, 2.2rem);
-  line-height: 1.1;
-  letter-spacing: -0.01em;
-}
-.specimen-entry:hover .entry-main h3 {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-.entry-materials {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  opacity: 0.75;
-}
-.entry-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  text-align: right;
-  opacity: 0.85;
-}
 
 /* A slim generative header band for category pages */
 .category-band {
@@ -1236,68 +1075,6 @@ button.enquire {
 }
 
 /* Collection index as generative preview rows */
-.cat-rows {
-  border-top: var(--hair);
-}
-.cat-row {
-  display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  gap: 2.5rem;
-  padding: 2.5rem 0;
-  border-bottom: var(--hair);
-  text-decoration: none;
-}
-.cat-row-figure {
-  position: relative;
-  min-height: 32vh;
-  overflow: hidden;
-  border: var(--hair);
-  border-radius: var(--radius-m);
-}
-.cat-row.dark .cat-row-figure {
-  background: var(--basalt);
-}
-.cat-row-figure canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  touch-action: pan-y;
-}
-.cat-row-body {
-  align-self: center;
-}
-.cat-row-body .no {
-  display: block;
-  margin-bottom: 1.3rem;
-  opacity: 0.6;
-}
-.cat-row-body h2 {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  line-height: 1.02;
-  letter-spacing: -0.01em;
-  margin-bottom: 1rem;
-}
-.cat-row-body .hint {
-  display: block;
-  max-width: 42ch;
-  opacity: 0.85;
-  margin-bottom: 1.6rem;
-}
-.cat-row-view {
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
-  letter-spacing: 0.1em;
-  border-bottom: 1px solid currentColor;
-  padding-bottom: 3px;
-}
-.cat-row:hover .cat-row-body h2 {
-  text-decoration: underline;
-  text-underline-offset: 5px;
-}
 
 /* Enquire page: a form held in a framed block beside a tonal rail. */
 .enquire-layout {
@@ -1337,13 +1114,6 @@ button.enquire {
 }
 
 @media (max-width: 860px) {
-  .cat-row {
-    grid-template-columns: 1fr;
-    gap: 1.4rem;
-  }
-  .cat-row-figure {
-    min-height: 40vh;
-  }
   .feature {
     padding: 4rem 1.25rem;
   }
@@ -1428,19 +1198,6 @@ button.enquire {
 }
 
 @media (max-width: 860px) {
-  .specimen-entry {
-    grid-template-columns: 1fr;
-    gap: 0.8rem;
-  }
-  .entry-meta {
-    text-align: left;
-    flex-direction: row;
-    justify-content: space-between;
-  }
-  .entry-attr {
-    flex-direction: row;
-    justify-content: space-between;
-  }
   .piece {
     grid-template-columns: 1fr;
   }
@@ -1466,11 +1223,6 @@ button.enquire {
   }
   .closing {
     padding: 12vh var(--edge-pad);
-  }
-  /* Align the ledger rows to the left rag, and collapse the page-head rule
-     into the ledger's own top rule so there is no stranded empty band. */
-  .specimen-entry {
-    padding: 1.6rem 0;
   }
   .page-head {
     border-bottom: none;
@@ -2493,119 +2245,6 @@ button.enquire {
 /* Only the figure carries a frame; the text sits on the page ground. The
    figure holds the piece's photograph once one exists, the category's
    generative study over a plinth until then, on the room's own ground. */
-.featured-row {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 2.2rem 1.8rem;
-}
-.featured-card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-decoration: none;
-  color: inherit;
-}
-.featured-figure {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  border: var(--hair);
-  border-radius: var(--radius-m);
-  overflow: hidden;
-}
-.featured-figure[data-ground="dark"] {
-  background: var(--basalt);
-  color: var(--bone);
-}
-.featured-figure canvas,
-.room-tile-figure canvas,
-.buying-figure canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  touch-action: pan-y;
-}
-.featured-photo {
-  object-fit: contain;
-  background: #fff;
-}
-.featured-attr {
-  margin-top: 1.2rem;
-  opacity: 0.7;
-}
-.featured-card h3 {
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-size: clamp(1.35rem, 2.2vw, 1.8rem);
-  line-height: 1.12;
-  letter-spacing: -0.01em;
-  margin-top: 0.45rem;
-}
-.featured-card:hover h3 {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-.featured-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.5rem 1.4rem;
-  margin-top: 0.6rem;
-}
-.featured-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-}
-.featured-dot {
-  width: 8px;
-  height: 8px;
-  flex: 0 0 auto;
-  background: var(--ink);
-}
-.featured-status[data-status="available"] {
-  color: var(--sea);
-}
-.featured-status[data-status="available"] .featured-dot {
-  background: var(--sea);
-}
-.featured-status[data-status="reserved"],
-.featured-status[data-status="sold"] {
-  color: var(--rose);
-}
-.featured-status[data-status="reserved"] .featured-dot,
-.featured-status[data-status="sold"] .featured-dot {
-  background: var(--rose);
-}
-.featured-status[data-status="restoration"] {
-  color: var(--amber);
-}
-.featured-status[data-status="restoration"] .featured-dot {
-  background: var(--amber);
-}
-.featured-price {
-  font-size: 0.8rem;
-  letter-spacing: 0.04em;
-}
-.featured-cta {
-  margin-top: 1.5rem;
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
-  border: 1px solid currentColor;
-  border-radius: 999px;
-  padding: 0.7rem 1.5rem;
-  transition:
-    background 0.25s ease,
-    color 0.25s ease;
-}
-.featured-card:hover .featured-cta {
-  background: var(--ink);
-  color: var(--stone);
-}
 
 /* ---------- Rooms row, the collection compressed to four tiles ---------- */
 .rooms {
@@ -2782,9 +2421,6 @@ button.enquire {
     border-radius: var(--radius-m) var(--radius-m) 0 0;
     padding: 2rem var(--edge-pad) 2.2rem;
   }
-  .featured-row {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
   .rooms-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     row-gap: 2.4rem;
@@ -2804,9 +2440,6 @@ button.enquire {
 
 /* Phones: the trio and the tiles run single file. */
 @media (max-width: 480px) {
-  .featured-row {
-    grid-template-columns: 1fr;
-  }
   .rooms-grid {
     grid-template-columns: 1fr;
   }
@@ -3171,11 +2804,30 @@ button.enquire {
   .admin-filter input {
     flex: 1 1 100%;
   }
-  .admin-piece-row.admin-has-thumb {
+  /* Every dashboard row wraps here, not just the ones with a thumbnail.
+     Words and questions carry a block of text beside their buttons, and
+     without the wrap that text was squeezed into a narrow left column. */
+  .admin-piece-row {
     flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .admin-piece-row > div:first-child {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+  .admin-piece-row.admin-has-thumb > div:first-child {
+    flex: 0 0 auto;
   }
   .admin-piece-main {
     flex: 1 1 12rem;
+  }
+  /* The actions sit under the text on their own full-width row. */
+  .admin-piece-actions {
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+  }
+  .admin-enquiry {
+    flex-wrap: wrap;
   }
   .admin-confirm {
     justify-content: flex-start;
@@ -3183,6 +2835,307 @@ button.enquire {
   .admin-actions .enquire {
     flex: 1 1 auto;
     text-align: center;
+  }
+}
+
+/* ============================================================
+   Product cards and the shop floor
+   ============================================================ */
+
+/* One card idiom for the whole store: the New in row, the shop grid, an
+   era's pieces and the neighbours under a piece all render .pc. The card is
+   a closed object, figure and text inside one bordered surface, so the words
+   never float loose on the page ground. */
+
+.pc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 1.4rem;
+}
+.pc {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  background: var(--paper);
+  border: var(--hair);
+  border-radius: var(--radius-m);
+  overflow: hidden;
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.pc:hover {
+  transform: translateY(-3px);
+  border-color: rgba(30, 33, 30, 0.34);
+  box-shadow: var(--shadow-float);
+}
+.pc-figure {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border-bottom: var(--hair);
+  background: var(--panel);
+  overflow: hidden;
+}
+/* A photograph brings its own white ground; the generative studies keep the
+   era's own, so the fallback still reads as part of the collection. */
+.pc-figure[data-ground="photo"] {
+  background: #fff;
+}
+.pc-figure[data-ground="dark"] {
+  background: var(--basalt);
+  color: var(--bone);
+}
+.pc-figure canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: pan-y;
+}
+.pc-photo {
+  object-fit: contain;
+  background: #fff;
+}
+/* Only a piece that is not simply available carries a flag, so the grid
+   stays quiet and the exceptions read at a glance. */
+.pc-flag {
+  position: absolute;
+  top: 0.7rem;
+  left: 0.7rem;
+  z-index: 1;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  background: var(--ink);
+  color: var(--paper);
+}
+.pc-flag[data-status="reserved"],
+.pc-flag[data-status="sold"] {
+  background: var(--rose);
+}
+.pc-flag[data-status="restoration"] {
+  background: var(--amber);
+}
+.pc-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  padding: 1rem 1.1rem 1.15rem;
+}
+.pc-cat {
+  display: block;
+  opacity: 0.5;
+  margin-bottom: 0.4rem;
+}
+.pc h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.2rem;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.pc:hover h3 {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.pc-attr {
+  margin-top: 0.35rem;
+  font-size: 0.84rem;
+  opacity: 0.65;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* long hedged attributions must not set the height */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.pc-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem 1rem;
+  margin-top: auto;
+  padding-top: 0.9rem;
+}
+.pc-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.68rem;
+}
+.pc-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--ink);
+}
+.pc-status[data-status="available"] {
+  color: var(--sea);
+}
+.pc-status[data-status="available"] .pc-dot {
+  background: var(--sea);
+}
+.pc-status[data-status="reserved"],
+.pc-status[data-status="sold"] {
+  color: var(--rose);
+}
+.pc-status[data-status="reserved"] .pc-dot,
+.pc-status[data-status="sold"] .pc-dot {
+  background: var(--rose);
+}
+.pc-status[data-status="restoration"] {
+  color: var(--amber);
+}
+.pc-status[data-status="restoration"] .pc-dot {
+  background: var(--amber);
+}
+.pc-price {
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- The filter bar ---------- */
+.shop-filters {
+  display: grid;
+  gap: 1rem;
+  padding-bottom: 1.2rem;
+  margin-bottom: 1rem;
+  border-bottom: var(--hair);
+}
+.shop-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.shop-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.55rem 1rem;
+  border: var(--hair);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+.shop-chip:hover {
+  border-color: var(--ink);
+}
+.shop-chip[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+.shop-chip-count {
+  opacity: 0.55;
+}
+.shop-chip[aria-pressed="true"] .shop-chip-count {
+  opacity: 0.7;
+}
+.shop-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.shop-search,
+.shop-select {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: inherit;
+  background: var(--paper);
+  border: var(--hair);
+  border-radius: var(--radius-s);
+  padding: 0.6rem 0.9rem;
+  min-height: 44px;
+}
+.shop-search {
+  flex: 1 1 18rem;
+}
+.shop-select {
+  flex: 0 1 auto;
+  cursor: pointer;
+}
+.shop-search:focus-visible,
+.shop-select:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+.shop-count {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem 1rem;
+  margin-bottom: 1.4rem;
+  opacity: 0.7;
+}
+.shop-clear {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.shop-clear:hover {
+  color: var(--amber);
+}
+.shop-empty {
+  max-width: 52ch;
+  padding: 1.6rem 1.8rem;
+  border: var(--hair);
+  border-left: 2px solid var(--amber);
+  border-radius: var(--radius-s);
+  background: var(--panel);
+}
+
+/* Phones: two to a row. A shop that shows one product per screen makes the
+   buyer work for the range, and these cards read fine at half a phone. */
+@media (max-width: 560px) {
+  .pc-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+  }
+  .pc-body {
+    padding: 0.8rem 0.85rem 0.9rem;
+  }
+  .pc h3 {
+    font-size: 0.98rem;
+  }
+  .pc-attr {
+    font-size: 0.78rem;
+    -webkit-line-clamp: 2;
+  }
+  .pc-meta {
+    padding-top: 0.7rem;
+    gap: 0.25rem;
+  }
+  .pc-price,
+  .pc-status {
+    font-size: 0.64rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pc:hover {
+    transform: none;
   }
 }
 
@@ -3629,7 +3582,7 @@ button.enquire {
    Where :has() is unsupported the chrome simply stays, which is harmless. */
 body:has(.page-dash) .site-header,
 body:has(.page-dash) .announcement,
-body:has(.page-dash) .site-footer {
+body:has(.page-dash) .store-footer {
   display: none;
 }
 body:has(.page-dash) .page-dash {
