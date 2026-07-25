@@ -15,7 +15,7 @@ export type RoomVisual =
   | "grove"
   | "strata"
   | "rings"
-  | "bench";
+  | "silhouette";
 
 export interface Fact {
   term: string;
@@ -151,7 +151,7 @@ export const rooms: Room[] = [
     ],
     cta: { label: "View Modern classics", href: "/collection/modern-classics" },
     variant: "light",
-    visual: "bench",
-    canvasLabel: "Modern classics, a machined joint drawn line by line",
+    visual: "silhouette",
+    canvasLabel: "Modern classics, a chair drawn in one continuous line",
   },
 ];
