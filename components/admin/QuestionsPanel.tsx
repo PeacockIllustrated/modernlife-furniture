@@ -36,9 +36,16 @@ export default function QuestionsPanel({
   };
 
   return (
-    <section className="admin-section">
-      <div className="admin-section-head">
-        <h2 className="admin-h">Questions</h2>
+    <section className="dash-panel">
+      <div className="dash-panel-head">
+        <div>
+          <h2 className="dash-h">Questions</h2>
+          <p className="dash-sub">
+            The answers shown on every piece page, after any questions
+            belonging to the piece itself. Questions about one piece are
+            edited on that piece.
+          </p>
+        </div>
         <button
           className="enquire"
           type="button"
@@ -47,10 +54,6 @@ export default function QuestionsPanel({
           {editing === "new" ? "Close" : "New question"}
         </button>
       </div>
-      <p className="admin-hint">
-        These appear on every piece page, after any questions belonging to the
-        piece itself. Per-piece questions are edited on the piece.
-      </p>
 
       {editing === "new" ? (
         <QuestionForm nextPosition={siteWide.length + 1} onDone={done} />

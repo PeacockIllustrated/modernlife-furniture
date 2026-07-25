@@ -41,16 +41,11 @@ export default async function AdminPage() {
     );
   }
 
+  // The dashboard carries its own top bar and headings, so the page adds
+  // only the screen-reader landmark and gets out of the way.
   return (
-    <main className="page">
-      <div className="page-head">
-        <span className="mono eyebrow">Owner dashboard</span>
-        <h1>The collection</h1>
-        <p>
-        Manage the collection, the collector words and questions, the site
-        copy, and everyone who has written in.
-      </p>
-      </div>
+    <main className="page page-dash">
+      <h1 className="visually-hidden">Owner dashboard</h1>
       <AdminDashboard />
     </main>
   );

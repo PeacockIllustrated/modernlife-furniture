@@ -119,8 +119,17 @@ export default function SitePanel({
   }
 
   return (
-    <section className="admin-section">
-      <h2 className="admin-h">Site copy</h2>
+    <section className="dash-panel">
+      <div className="dash-panel-head">
+        <div>
+          <h2 className="dash-h">Site copy</h2>
+          <p className="dash-sub">
+            The standing words that appear across the site: what you promise
+            about delivery, returns, care and viewings, plus the home page
+            headline and its photographs.
+          </p>
+        </div>
+      </div>
       <form className="form admin-form" onSubmit={save}>
         {PROSE_FIELDS.map(({ key, label }) => (
           <div key={key} className="field">
@@ -133,7 +142,7 @@ export default function SitePanel({
           </div>
         ))}
 
-        <h2 className="admin-h">Home page</h2>
+        <h3 className="dash-block-h dash-form-h">Home page</h3>
         <div className="field">
           <label htmlFor="site-heroHeadline">Hero headline</label>
           <input

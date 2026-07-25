@@ -1356,22 +1356,8 @@ button.enquire {
 }
 
 /* Admin dashboard */
-.admin-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 1.4rem;
-  margin-bottom: 2.5rem;
-  border-bottom: var(--hair);
-}
 .admin-section {
   margin-bottom: 3.5rem;
-}
-.admin-section-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 1.4rem;
 }
 .admin-h {
   font-family: var(--font-display);
@@ -1404,6 +1390,7 @@ button.enquire {
 .admin-piece-actions {
   display: flex;
   gap: 0.8rem;
+  align-items: center;
 }
 .admin-form {
   margin-top: 1.6rem;
@@ -2843,43 +2830,9 @@ button.enquire {
    Store layer, admin editor (owned by the admin agent)
    ============================================================ */
 
-/* The dashboard grows tabs and the full piece template editor. Everything
-   follows the existing admin idiom: hairlines, mono labels, square fields,
-   buttons on the shared .enquire outline. */
-
-/* ---------- Tab nav ---------- */
-.admin-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  padding-bottom: 1rem;
-  margin-bottom: 2.5rem;
-  border-bottom: var(--hair);
-}
-.admin-tab {
-  cursor: pointer;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  color: inherit;
-  background: transparent;
-  border: 1px solid transparent;
-  padding: 0.6rem 0.9rem;
-  min-height: 44px; /* comfortable tap target on touch */
-  opacity: 0.6;
-  transition:
-    opacity 0.25s ease,
-    background 0.25s ease,
-    color 0.25s ease;
-}
-.admin-tab:hover {
-  opacity: 1;
-}
-.admin-tab[aria-pressed="true"] {
-  background: var(--ink);
-  color: var(--stone);
-  opacity: 1;
-}
+/* The dashboard carries the full piece template editor. Everything follows
+   the existing admin idiom: hairlines, mono labels, square fields, buttons
+   on the shared .enquire outline. The shell around it is further down. */
 
 /* ---------- Editor furniture ---------- */
 .admin-count {
@@ -2948,13 +2901,16 @@ button.enquire {
 }
 
 /* ---------- Image rows ---------- */
+/* Contained on white, like every photograph surface on the site, so the
+   owner recognises the piece rather than a cropped corner of it. */
 .admin-thumb {
-  flex: 0 0 44px;
-  width: 44px;
-  height: 44px;
-  object-fit: cover;
+  flex: 0 0 56px;
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
   border: var(--hair);
-  background: var(--stone-deep);
+  border-radius: var(--radius-s);
+  background: #fff;
   display: block;
 }
 .admin-row-actions {
@@ -3000,9 +2956,6 @@ button.enquire {
 }
 
 @media (max-width: 860px) {
-  .admin-tabs {
-    gap: 0.35rem;
-  }
   .admin-toggles {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -3010,12 +2963,6 @@ button.enquire {
     grid-template-columns: 1fr;
     gap: 0;
   }
-}
-
-/* ---------- Tab counts ---------- */
-.admin-tab-count {
-  margin-left: 0.45rem;
-  opacity: 0.7;
 }
 
 /* ---------- Pieces list: search, filter, row furniture ---------- */
@@ -3237,4 +3184,457 @@ button.enquire {
     flex: 1 1 auto;
     text-align: center;
   }
+}
+
+/* ============================================================
+   Dashboard shell: the owner's working surface
+   ============================================================ */
+
+/* The storefront sells; this oversees. The shell is denser and more
+   utilitarian than the public pages, but built from the same tokens so it
+   reads as the same company: paper ground, panel cards, hairlines, the
+   status trio of sea, rose and amber, and mono for labels only. */
+
+.dash {
+  border: var(--hair);
+  border-radius: var(--radius-m);
+  background: var(--panel);
+  overflow: hidden;
+}
+
+/* ---------- Standing top bar ---------- */
+.dash-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1.3rem;
+  background: var(--basalt);
+  color: var(--bone);
+}
+.dash-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  min-width: 0;
+}
+.dash-mark {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--amber);
+}
+.dash-brand strong {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.05rem;
+  line-height: 1.2;
+}
+.dash-brand-sub {
+  display: block;
+  opacity: 0.6;
+}
+.dash-top-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.dash-ghost {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(221, 217, 204, 0.3);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+.dash-ghost:hover {
+  background: var(--bone);
+  color: var(--basalt);
+}
+.dash-ghost:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ---------- Body: navigation beside one panel ---------- */
+.dash-body {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  align-items: start;
+}
+.dash-nav {
+  padding: 1.2rem 0.8rem 2rem;
+  border-right: var(--hair);
+  position: sticky;
+  top: 5rem; /* clears the site header, which stays fixed over this page */
+}
+.dash-nav-group + .dash-nav-group {
+  margin-top: 1.5rem;
+}
+.dash-nav-heading {
+  display: block;
+  padding: 0 0.7rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.5;
+}
+.dash-nav-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.6rem 0.7rem;
+  border: 0;
+  border-radius: var(--radius-s);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.dash-nav-item:hover {
+  background: rgba(30, 33, 30, 0.06);
+}
+.dash-nav-item[aria-current="page"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+.dash-nav-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+.dash-nav-hint {
+  display: block;
+  font-size: 0.76rem;
+  opacity: 0.6;
+  margin-top: 0.1rem;
+}
+.dash-nav-badge {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  padding: 0.1rem 0.42rem;
+  border-radius: 999px;
+  background: rgba(30, 33, 30, 0.12);
+}
+.dash-nav-badge[data-tone="rose"] {
+  background: var(--rose);
+  color: var(--paper);
+}
+.dash-nav-item[aria-current="page"] .dash-nav-badge {
+  background: rgba(245, 243, 239, 0.22);
+  color: inherit;
+}
+
+.dash-main {
+  padding: 1.6rem 1.6rem 2.4rem;
+  background: var(--paper);
+  min-height: 60vh;
+}
+
+/* ---------- Panel headings, shared by every section ---------- */
+.dash-panel + .dash-panel {
+  margin-top: 2.4rem;
+}
+.dash-panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.6rem;
+}
+.dash-h {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 2.6vw, 1.9rem);
+  line-height: 1.1;
+}
+.dash-sub {
+  margin-top: 0.4rem;
+  max-width: 56ch;
+  font-size: 0.92rem;
+  opacity: 0.75;
+}
+.dash-clear {
+  max-width: 56ch;
+  padding: 1.1rem 1.3rem;
+  border: var(--hair);
+  border-left: 2px solid var(--sea);
+  border-radius: var(--radius-s);
+  background: var(--panel);
+  font-size: 0.92rem;
+}
+
+/* ---------- Overview: the numbers ---------- */
+.dash-stats {
+  display: grid;
+  /* 13rem lands four to a row on a desktop panel, so seven tiles read as
+     four and three rather than a ragged five and two. */
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 0.9rem;
+  margin-bottom: 2.4rem;
+}
+.dash-stat {
+  display: block;
+  text-align: left;
+  padding: 1rem 1.1rem 1.1rem;
+  border: var(--hair);
+  border-top: 2px solid rgba(30, 33, 30, 0.25);
+  border-radius: var(--radius-m);
+  background: #fff;
+  color: inherit;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.dash-stat:hover {
+  transform: translateY(-2px);
+}
+.dash-stat[data-tone="sea"] {
+  border-top-color: var(--sea);
+}
+.dash-stat[data-tone="rose"] {
+  border-top-color: var(--rose);
+}
+.dash-stat[data-tone="amber"] {
+  border-top-color: var(--amber);
+}
+.dash-stat-label {
+  display: block;
+  opacity: 0.6;
+}
+.dash-stat-value {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 2.4rem;
+  line-height: 1.05;
+  margin: 0.35rem 0 0.15rem;
+}
+.dash-stat-note {
+  display: block;
+  font-size: 0.78rem;
+  opacity: 0.65;
+}
+
+/* ---------- Overview: the two working columns ---------- */
+.dash-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 1.6rem;
+  align-items: start;
+}
+.dash-block {
+  padding: 1.3rem 1.4rem 1.5rem;
+  border: var(--hair);
+  border-radius: var(--radius-m);
+  background: var(--panel);
+}
+.dash-block-h {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+.dash-form-h {
+  margin-top: 2rem;
+}
+.dash-jobs {
+  list-style: none;
+  display: grid;
+  gap: 0.9rem;
+}
+.dash-job {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  border: var(--hair);
+  border-left: 3px solid var(--amber);
+  border-radius: var(--radius-s);
+  background: #fff;
+}
+.dash-job[data-tone="rose"] {
+  border-left-color: var(--rose);
+}
+.dash-job-count {
+  flex: 0 0 auto;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  line-height: 1;
+  opacity: 0.75;
+}
+.dash-job-body strong {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+.dash-job-body p {
+  font-size: 0.88rem;
+  opacity: 0.75;
+  margin-bottom: 0.5rem;
+  max-width: 52ch;
+}
+.dash-link {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.dash-link:hover {
+  color: var(--amber);
+}
+.dash-recent {
+  list-style: none;
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.dash-recent li {
+  padding-bottom: 1rem;
+  border-bottom: var(--hair);
+}
+.dash-recent li:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.dash-recent-meta {
+  display: block;
+  opacity: 0.55;
+  margin-bottom: 0.2rem;
+}
+.dash-recent p {
+  font-size: 0.88rem;
+  opacity: 0.75;
+  margin-top: 0.2rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* two lines is enough to recognise the enquiry */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* The panels inside the shell drop their old standalone spacing. */
+.dash-main .admin-section {
+  margin-bottom: 0;
+}
+
+/* Tablet: the columns stack before the navigation does. */
+@media (max-width: 1080px) {
+  .dash-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Phones and small tablets: the sidebar becomes a scrolling row of chips
+   above the panel, so the working area keeps the full width. */
+@media (max-width: 860px) {
+  .dash-body {
+    grid-template-columns: 1fr;
+  }
+  .dash-nav {
+    position: static;
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 0.8rem;
+    border-right: 0;
+    border-bottom: var(--hair);
+    -webkit-overflow-scrolling: touch;
+  }
+  .dash-nav-group {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .dash-nav-group + .dash-nav-group {
+    margin-top: 0;
+  }
+  .dash-nav-heading {
+    display: none; /* the labels carry enough on their own at this width */
+  }
+  .dash-nav-item {
+    width: auto;
+    white-space: nowrap;
+    border: var(--hair);
+    min-height: 44px;
+  }
+  .dash-nav-hint {
+    display: none;
+  }
+  .dash-main {
+    padding: 1.2rem 1rem 2rem;
+  }
+  /* Two to a row on a phone: seven full-width tiles would push the working
+     lists off the bottom of the screen. */
+  .dash-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+  .dash-stat {
+    padding: 0.8rem 0.9rem 0.9rem;
+  }
+  .dash-stat-value {
+    font-size: 1.9rem;
+  }
+  .dash-stat-note {
+    font-size: 0.72rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dash-stat:hover {
+    transform: none;
+  }
+}
+
+/* Present to a screen reader, absent to the eye. The dashboard's own top bar
+   carries the visible title, so the page h1 hides here rather than being
+   dropped, which would leave the route without one. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The dashboard route gives its shell the full width of the page container
+   and clears the fixed site header on its own. */
+.page-dash {
+  padding-top: 5.5rem;
+}
+
+/* The dashboard is a tool, not a shop window: the storefront header,
+   announcement and footer come off so the working surface owns the screen.
+   "View the site" in the dashboard's own bar replaces the shop navigation.
+   Where :has() is unsupported the chrome simply stays, which is harmless. */
+body:has(.page-dash) .site-header,
+body:has(.page-dash) .announcement,
+body:has(.page-dash) .site-footer {
+  display: none;
+}
+body:has(.page-dash) .page-dash {
+  padding-top: 1.4rem;
+}
+body:has(.page-dash) .dash-nav {
+  top: 1.4rem;
 }

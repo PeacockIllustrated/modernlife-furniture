@@ -24,9 +24,16 @@ export default function SubscribersPanel({
         : `${subscribers.length} addresses on the list.`;
 
   return (
-    <section className="admin-section">
-      <h2 className="admin-h">The list</h2>
-      <p className="mono admin-count">{count}</p>
+    <section className="dash-panel">
+      <div className="dash-panel-head">
+        <div>
+          <h2 className="dash-h">Mailing list</h2>
+          <p className="dash-sub">
+            Everyone who asked to hear about new pieces first, through the
+            form in the site footer. {count}
+          </p>
+        </div>
+      </div>
       {subscribers.length === 0 ? null : (
         <ul className="admin-list">
           {subscribers.map((s) => (
