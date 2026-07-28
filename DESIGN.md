@@ -1,4 +1,4 @@
-# DESIGN.md — Modern Life Furniture, design system v2
+# DESIGN.md — House of Chairs, design system v2
 
 The working reference for the clean commercial store. It supersedes the
 museum-gallery system; `reference/concept-v5.html` is history, not authority.
@@ -71,6 +71,26 @@ older rules keep working; new work should reference `--paper` and `--panel`.
   light commercial ground and the photography.
 - The announcement strip sits in normal flow beneath the header and scrolls
   away; its top padding keeps its line clear of the fixed bar.
+
+## The house mark
+`components/brand/HouseMark.tsx` draws the name rather than writing it: a
+section cut through a house, three storeys of four bays under a pitched roof,
+a chair in profile in every bay, and one chair alone in the gable in `--amber`
+so the eye lands there. The chair is the abstract profile used by the Modern
+classics study; bays alternate direction so the facade reads as drawn.
+
+It lives in the hero's headline panel in both the quiet and the photographic
+state. The panel is the query container, not the viewport: the same desktop
+gives it 1200px with no starred pieces and 620px with three, so above 820px of
+panel the house takes the right of the panel whole and uncropped, and below it
+drops to a band along the foot with the copy padded clear. The calls to action
+never sit over the drawing.
+
+Pure SVG, no canvas and no client script. Stroke widths are attributes rather
+than CSS because the chairs carry a large scale in their transform;
+`vector-effect: non-scaling-stroke` is the tidier answer but it moves the dash
+pattern into device space and shatters the draw into dots. The resting state
+is fully drawn, so nothing is missing if the animation never runs.
 
 ## Photography
 Photography leads every card, hero and band, through slots managed in the

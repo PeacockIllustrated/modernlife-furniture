@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { rooms } from "@/content/landing";
 import { staticPieces } from "@/content/pieces";
 
-const BASE = "https://modernlifefurniture.co.uk";
+const BASE = "https://houseofchairs.co.uk";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes = ["", "/collection", "/sell", "/enquire"].map((path) => ({

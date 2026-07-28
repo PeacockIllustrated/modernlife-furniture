@@ -1,4 +1,4 @@
--- Modern Life Furniture, store layer. The piece page grows into a full
+-- House of Chairs, store layer. The piece page grows into a full
 -- specimen record: story bands, a specification record, what comes with the
 -- piece, questions, staff-curated collector words, site settings and the
 -- acquisitions list. Additive only; every statement stays inside the modern_

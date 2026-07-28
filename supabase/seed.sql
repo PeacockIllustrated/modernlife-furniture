@@ -72,7 +72,7 @@ values
     'A hollow fibreglass shell on a turned steel pedestal, one of the defining chair shapes of the space age. It swivels through a full circle, seats one in real comfort, and quiets the room the moment you sit back. Refinished and reupholstered; solid and ready for daily use.',
     'Refinished shell, new upholstery over new foam, stand re-enamelled; solid and ready for daily use.',
     true,
-    true, 1, true, 'MLF 001'
+    true, 1, true, 'HOC 001'
   ),
   (
     'cantilever-side-chair',
@@ -86,7 +86,7 @@ values
     'Chromed tubular steel sprung into a single cantilever, the seat and back woven in cane. It is lighter than it looks, gives slightly as you sit, and works as well at a desk as at a dining table. Re-chromed and re-caned; ready for daily use.',
     'Frame re-chromed, seat and back re-caned, floor glides replaced.',
     true,
-    false, null, false, 'MLF 002'
+    false, null, false, 'HOC 002'
   ),
   (
     'sculpted-teak-armchair',
@@ -100,7 +100,7 @@ values
     'An armchair in sculpted teak, the frame shaped to the body and finished on every side. The seat and back are upholstered in wool over new foam, and the arms fall exactly where your hands do. Cleaned and re-oiled; solid and ready for daily use.',
     'Frame cleaned and re-oiled, seat and back reupholstered in wool over new foam, joints checked and sound.',
     true,
-    true, 2, false, 'MLF 008'
+    true, 2, false, 'HOC 008'
   ),
   (
     'sculptural-walnut-armchair',
@@ -114,7 +114,7 @@ values
     'An armchair with a carved walnut frame that reads well from every side, the sort of chair that holds a corner of a room on its own. The walnut is shaped rather than machined, and the seat is upholstered close to the line of the frame. Re-polished and reupholstered; solid and ready for daily use.',
     'Frame re-polished, seat reupholstered in velvet over new foam, joints checked and sound.',
     true,
-    true, 3, false, 'MLF 009'
+    true, 3, false, 'HOC 009'
   )
 on conflict (slug) do update set
   category_id = excluded.category_id,

@@ -13,7 +13,7 @@ export function generateStaticParams() {
 // the standard 1200x630 with the site palette; no external assets so it builds
 // anywhere.
 
-export const alt = "Modern Life Furniture";
+export const alt = "House of Chairs";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -52,7 +52,7 @@ export default async function Image({
             letterSpacing: "-0.02em",
           }}
         >
-          Modern Life Furniture
+          House of Chairs
         </div>
       ),
       { ...size },
@@ -86,7 +86,7 @@ export default async function Image({
             color: "rgba(30, 33, 30, 0.6)",
           }}
         >
-          <span>Modern Life Furniture</span>
+          <span>House of Chairs</span>
           <span>Specimen record</span>
         </div>
 

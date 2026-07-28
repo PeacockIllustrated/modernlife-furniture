@@ -8,8 +8,8 @@ import Link from "next/link";
 export default function Header() {
   return (
     <header className="site-header">
-      <Link href="/" className="mono" aria-label="Modern Life Furniture, home">
-        Modern Life Furniture
+      <Link href="/" className="mono" aria-label="House of Chairs, home">
+        House of Chairs
       </Link>
       <nav className="mono" aria-label="Primary">
         <Link href="/collection">Shop</Link>

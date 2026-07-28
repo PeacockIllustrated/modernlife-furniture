@@ -7,7 +7,6 @@ import TrustStrip from "@/components/gallery/TrustStrip";
 import Manifesto from "@/components/gallery/Manifesto";
 import Words from "@/components/gallery/Words";
 import Closing from "@/components/gallery/Closing";
-import Tide from "@/components/canvas/Tide";
 import RevealObserver from "@/components/scroll/RevealObserver";
 import {
   getFeaturedPieces,
@@ -22,7 +21,7 @@ export const revalidate = 60;
 /**
  * The store home, pieces first: the hero pairs the headline block with the
  * owner's starred pieces, over the hero photograph once one is uploaded and
- * over the Tide canvas until then. Under it the newest arrivals, the
+ * over the paper ground until then. Under it the newest arrivals, the
  * collection compressed to a row of four category tiles with chairs first,
  * the buying band, the four assurances, collector words, then the manifesto
  * and the closing invitation. Every image slot falls back to a generative
@@ -43,9 +42,7 @@ export default async function Home() {
       {settings.heroImage ? (
         <PhotoHero settings={settings} pieces={starred} images={heroImages} />
       ) : (
-        <Hero settings={settings} pieces={starred} images={heroImages}>
-          <Tide label="Tide, the hero field, the grain of time" />
-        </Hero>
+        <Hero settings={settings} pieces={starred} images={heroImages} />
       )}
 
       <Highlighted exclude={starred.map((p) => p.slug)} />

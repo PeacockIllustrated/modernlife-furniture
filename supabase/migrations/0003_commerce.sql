@@ -1,4 +1,4 @@
--- Modern Life Furniture, commerce and curation layer.
+-- House of Chairs, commerce and curation layer.
 -- Adds owner-curated featuring, a verified-provenance seal, and lightweight
 -- interest capture ("I want this"). British spelling throughout.
 

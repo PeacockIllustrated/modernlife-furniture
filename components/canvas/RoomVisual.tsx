@@ -7,8 +7,8 @@ import ProvenanceRings from "./ProvenanceRings";
 import PanelPlaceholder from "./PanelPlaceholder";
 
 /**
- * Chooses the live generative visual for a room. Tide belongs to the hero and
- * is placed there directly, so it is not switched here.
+ * Chooses the live generative visual for a room. The hero carries the house
+ * mark rather than a canvas, so nothing here serves it.
  */
 export default function RoomVisual({
   visual,

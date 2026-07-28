@@ -5,15 +5,20 @@ import "server-only";
  * already stored in Supabase before this runs, so a failed or unconfigured
  * send never blocks the visitor. Configure with three environment variables:
  *   RESEND_API_KEY   the Resend API key
- *   MLF_OWNER_EMAIL  where notifications land (the owner's inbox)
- *   MLF_FROM_EMAIL   the verified sender, optional; a sensible default otherwise
+ *   HOC_OWNER_EMAIL  where notifications land (the owner's inbox)
+ *   HOC_FROM_EMAIL   the verified sender, optional; a sensible default otherwise
+ *
+ * The MLF_ prefixed names are the pre-rebrand spellings and still work, so a
+ * deployment keeps sending until its environment is updated. Remove the
+ * fallbacks once the hosting environment carries the HOC_ names.
  */
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const OWNER_EMAIL = process.env.MLF_OWNER_EMAIL;
+const OWNER_EMAIL = process.env.HOC_OWNER_EMAIL ?? process.env.MLF_OWNER_EMAIL;
 const FROM_EMAIL =
+  process.env.HOC_FROM_EMAIL ??
   process.env.MLF_FROM_EMAIL ??
-  "Modern Life Furniture <notifications@modernlifefurniture.co.uk>";
+  "House of Chairs <notifications@houseofchairs.co.uk>";
 
 /** Whether owner notifications can be sent. */
 export const emailConfigured = Boolean(RESEND_API_KEY && OWNER_EMAIL);

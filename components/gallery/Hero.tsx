@@ -5,6 +5,7 @@ import { emphasise } from "@/components/typography/Em";
 import { statusLabel, priceLabel, canOptimiseImage } from "@/lib/format";
 import RoomVisual from "@/components/canvas/RoomVisual";
 import Plinth from "@/components/gallery/Plinth";
+import HouseMark from "@/components/brand/HouseMark";
 import type { StoreSettings } from "@/content/store";
 import type { Piece, PieceImage } from "@/lib/collection";
 
@@ -15,11 +16,10 @@ import type { Piece, PieceImage } from "@/lib/collection";
  * one large with its photograph, the other two as slim rows, so the first
  * viewport sells real pieces rather than a headline alone.
  *
- * This default export is the quiet state, before a hero photograph exists:
- * the Tide canvas (passed as children from the page) sits behind the
- * headline panel only, never behind the starred cards. Once the owner
- * uploads a hero image, PhotoHero renders instead and reuses the lede and
- * rail exported here.
+ * The house mark sits inside the headline panel in both states, the name
+ * drawn as a section through a house with a chair in every bay. Once the
+ * owner uploads a hero image, PhotoHero renders instead and reuses the lede
+ * and rail exported here, mark included.
  */
 
 function roomFor(categorySlug: string) {
@@ -32,20 +32,17 @@ function roomFor(categorySlug: string) {
 }
 
 /**
- * The headline block: the owner's headline through the house emphasis, the
- * standing subline and the two shop calls to action. Children, when given,
- * are the generative backdrop and sit behind the copy inside the panel.
+ * The headline block: the house mark behind, then the owner's headline
+ * through the house emphasis, the standing subline and the two shop calls to
+ * action. The mark is a hairline drawing on the panel ground, quiet enough
+ * that the type never has to fight it.
  */
-export function HeroLede({
-  settings,
-  children,
-}: {
-  settings: StoreSettings;
-  children?: React.ReactNode;
-}) {
+export function HeroLede({ settings }: { settings: StoreSettings }) {
   return (
     <div className="hero-lede">
-      {children ? <div className="hero-tide">{children}</div> : null}
+      <div className="hero-mark">
+        <HouseMark />
+      </div>
       <div className="hero-lede-copy">
         <h1>{emphasise(settings.heroHeadline)}</h1>
         <p>{hero.sub}</p>
@@ -141,21 +138,19 @@ export default function Hero({
   settings,
   pieces,
   images,
-  children,
 }: {
   settings: StoreSettings;
   pieces: Piece[];
   images: Record<string, PieceImage | null>;
-  children?: React.ReactNode;
 }) {
   return (
     <section
       className={
         pieces.length > 0 ? "hero-store" : "hero-store hero-store-solo"
       }
-      aria-label="Modern Life Furniture"
+      aria-label="House of Chairs"
     >
-      <HeroLede settings={settings}>{children}</HeroLede>
+      <HeroLede settings={settings} />
       <StarredRail pieces={pieces} images={images} />
     </section>
   );

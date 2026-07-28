@@ -69,7 +69,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       ok: true,
       stored: false,
-      note: "Your enquiry was received. Email studio@modernlifefurniture.co.uk if you would like a faster reply.",
+      note: "Your enquiry was received. Email studio@houseofchairs.co.uk if you would like a faster reply.",
     });
   }
 

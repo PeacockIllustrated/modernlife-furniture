@@ -51,14 +51,14 @@ export async function generateMetadata({
     title: piece.title,
     description: `${piece.attribution}. ${piece.story}`,
     openGraph: {
-      title: `${piece.title}, Modern Life Furniture`,
+      title: `${piece.title}, House of Chairs`,
       description: piece.attribution,
       type: "website",
     },
   };
 }
 
-const BASE_URL = "https://modernlifefurniture.co.uk";
+const BASE_URL = "https://houseofchairs.co.uk";
 
 /**
  * The Product JSON-LD for a piece, built conditionally so the serialised
@@ -88,7 +88,7 @@ function productJsonLd(piece: PieceDetail): Record<string, unknown> {
     "@type": "Product",
     name: piece.title,
     description: piece.story,
-    brand: { "@type": "Brand", name: "Modern Life Furniture" },
+    brand: { "@type": "Brand", name: "House of Chairs" },
     url,
     offers: offer,
   };
@@ -180,7 +180,7 @@ export default async function PiecePage({
           {piece.provenanceVerified ? (
             <span
               className="seal"
-              title="Provenance verified by Modern Life Furniture"
+              title="Provenance verified by House of Chairs"
             >
               <span className="seal-mark" aria-hidden="true" />
               <span className="mono">Provenance verified</span>
