@@ -1,4 +1,4 @@
-# CLAUDE.md — Modern Life Furniture
+# CLAUDE.md — House of Chairs
 
 ## What this is
 An online store selling vintage designer furniture, chairs above all. Every piece is one of one, photographed, priced or offered on request, and sold through a fast enquiry flow rather than a checkout. The site's first job is commercial: it is the destination we send people to from social posts, so a piece page must load fast on a phone, make the piece and its price obvious in the first screen, and put the enquiry one tap away at all times. Its second job is to earn outside traffic through clean structure, honest content and strong technical SEO.

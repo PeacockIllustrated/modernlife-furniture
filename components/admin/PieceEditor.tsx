@@ -310,7 +310,7 @@ export default function PieceEditor({
         <input
           value={form.catalogue_number}
           onChange={(e) => set("catalogue_number", e.target.value)}
-          placeholder="MLF 007"
+          placeholder="HOC 007"
         />
       </div>
       <div className="field">

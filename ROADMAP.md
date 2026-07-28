@@ -1,4 +1,4 @@
-# ROADMAP.md — Modern Life Furniture
+# ROADMAP.md — House of Chairs
 
 Six sessions. Each is scoped so a subagent invocation can carry it whole (subagents cannot ask questions mid-run; every dispatch must name files, acceptance criteria and the relevant DESIGN.md or ARCHITECTURE.md section).
 

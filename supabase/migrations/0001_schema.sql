@@ -1,4 +1,4 @@
--- Modern Life Furniture, schema. All tables carry the modern_ prefix.
+-- House of Chairs, schema. All tables carry the modern_ prefix.
 -- See ARCHITECTURE.md for the data model. British spelling throughout.
 
 create extension if not exists "pgcrypto";

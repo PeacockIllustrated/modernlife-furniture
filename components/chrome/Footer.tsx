@@ -40,15 +40,15 @@ export default async function Footer() {
 
         <div className="footer-col">
           <span className="footer-col-h">Contact</span>
-          <a href="mailto:studio@modernlifefurniture.co.uk">
-            studio@modernlifefurniture.co.uk
+          <a href="mailto:studio@houseofchairs.co.uk">
+            studio@houseofchairs.co.uk
           </a>
           <span className="footer-addr">North East England</span>
         </div>
       </div>
 
       <div className="footer-legal mono">
-        <span>Modern Life Furniture</span>
+        <span>House of Chairs</span>
         <span>Vintage designer furniture, chairs above all</span>
         <span>MMXXVI</span>
       </div>

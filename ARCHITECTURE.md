@@ -1,4 +1,4 @@
-# ARCHITECTURE.md — Modern Life Furniture
+# ARCHITECTURE.md — House of Chairs
 
 ## Routes (App Router)
 ```
@@ -22,7 +22,6 @@ components/
   canvas/
     useCanvasScene.ts     shared lifecycle: DPR-capped sizing, resize, IO pause,
                           pointer mapping, reduced-motion single-frame render
-    Tide.tsx              hero field
     BallChair.tsx         the abstract lathe chair, scroll-bound build + swivel
     Seam.tsx              restoration, a grain figure cleaving along a seam
     Grove.tsx             branching shelving
@@ -61,7 +60,7 @@ Attribution honesty is schema-level: `attribution` is free text and seed data us
 The piece page inherits the gallery language: generative category visual as a backdrop at low intensity, photography as the specimen, provenance rendered as an actual rings diagram (reuse ProvenanceRings with the piece's `modern_provenance` rows labelling the coloured rings), restoration before/after photography where `as_found` and `restored` images exist. dl card mirrors the landing labels: attribution, period, materials, restoration, status.
 
 ## Phase two options (do not start in phase one)
-- R3F/WebGL ports of Tide and the ball chair for true depth-of-field and lighting; keep Canvas 2D as the reduced-capability fallback
+- R3F/WebGL ports of the ball chair for true depth-of-field and lighting; keep Canvas 2D as the reduced-capability fallback
 - The exploded drawing driven by piece data: parts list from restoration_notes
 - Search and filtering across the collection
 

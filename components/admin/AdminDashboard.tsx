@@ -178,7 +178,7 @@ export default function AdminDashboard() {
         <div className="dash-brand">
           <span className="dash-mark" aria-hidden="true" />
           <span>
-            <strong>Modern Life Furniture</strong>
+            <strong>House of Chairs</strong>
             <span className="mono dash-brand-sub">Owner dashboard</span>
           </span>
         </div>
