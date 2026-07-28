@@ -5,7 +5,7 @@ import { emphasise } from "@/components/typography/Em";
 import { statusLabel, priceLabel, canOptimiseImage } from "@/lib/format";
 import RoomVisual from "@/components/canvas/RoomVisual";
 import Plinth from "@/components/gallery/Plinth";
-import HouseMark from "@/components/brand/HouseMark";
+import Composite from "@/components/brand/Composite";
 import type { StoreSettings } from "@/content/store";
 import type { Piece, PieceImage } from "@/lib/collection";
 
@@ -16,10 +16,11 @@ import type { Piece, PieceImage } from "@/lib/collection";
  * one large with its photograph, the other two as slim rows, so the first
  * viewport sells real pieces rather than a headline alone.
  *
- * The house mark sits inside the headline panel in both states, the name
- * drawn as a section through a house with a chair in every bay. Once the
- * owner uploads a hero image, PhotoHero renders instead and reuses the lede
- * and rail exported here, mark included.
+ * The hero figure sits inside the headline panel in both states: one seat
+ * section repeated through a transformation, so what reads is the run of
+ * variations rather than any one piece. Once the owner uploads a hero image,
+ * PhotoHero renders instead and reuses the lede and rail exported here,
+ * figure included.
  */
 
 function roomFor(categorySlug: string) {
@@ -32,16 +33,16 @@ function roomFor(categorySlug: string) {
 }
 
 /**
- * The headline block: the house mark behind, then the owner's headline
- * through the house emphasis, the standing subline and the two shop calls to
- * action. The mark is a hairline drawing on the panel ground, quiet enough
- * that the type never has to fight it.
+ * The headline block: the figure behind, then the owner's headline through
+ * the house emphasis, the standing subline and the two shop calls to action.
+ * The figure is hairlines on the panel ground, and it keeps to the part of
+ * the panel the copy does not use, so the type never has to fight it.
  */
 export function HeroLede({ settings }: { settings: StoreSettings }) {
   return (
     <div className="hero-lede">
-      <div className="hero-mark">
-        <HouseMark />
+      <div className="hero-figure">
+        <Composite />
       </div>
       <div className="hero-lede-copy">
         <h1>{emphasise(settings.heroHeadline)}</h1>

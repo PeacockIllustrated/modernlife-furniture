@@ -2067,72 +2067,67 @@ button.enquire {
 .hero-store-photo .hero-lede {
   background: var(--paper);
 }
-/* The house mark: the name drawn, a section through a house with a chair in
-   every bay. Hairlines only, so it fills the panel without competing with the
-   headline; the strokes lay themselves down on load and hold. No canvas, no
-   script, nothing on the critical path but a few hundred bytes of path.
-
-   The house sits bottom right of the panel, whole and uncropped, so the copy
-   keeps the left. The panel is the query container rather than the viewport,
-   because its width depends on whether the starred rail is beside it, not on
-   the screen: the same 1440px desktop gives the panel 1200px with no starred
-   pieces and 620px with three. Below the threshold the drawing drops to a
-   band along the foot and the copy is given room to clear it, so the calls to
-   action never sit over the house. Stroke widths are set on the paths
-   themselves, not here: see HouseMark. */
-.hero-mark {
+/* The hero figure: seven chair profiles overlaid on one floor line, so what
+   reads is the collection rather than any one piece. It is meant to be cropped
+   by the panel, so it fills the ground and composes as a fragment at every
+   aspect the hero takes. Hairlines only, quiet enough to sit under the
+   headline. No canvas, no script, nothing on the critical path but path data.
+   Stroke widths are set on the paths themselves, not here: the profiles carry
+   a large scale in their transform, so each divides its width back down. See
+   Composite. */
+.hero-figure {
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: min(44%, 34rem);
+  inset: 0;
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
 }
+/* Sized here, not by the viewBox, so the profiles stay a constant size at
+   every panel aspect and the panel simply crops what it cannot hold. The
+   figure stands on the panel's own bottom edge, which is ground enough, and
+   runs off the right of it on purpose: it is a fragment of a field, not an
+   object placed in a corner. */
+.hero-figure svg {
+  position: absolute;
+  right: -13%;
+  bottom: 0;
+  display: block;
+  height: clamp(11rem, 84%, 27rem);
+  width: auto;
+  overflow: visible;
+}
+/* The panel is the query container rather than the viewport, because its width
+   depends on whether the starred rail sits beside it, not on the screen: the
+   same 1440px desktop gives the panel 1200px with no starred pieces and 620px
+   with three. On the wide panel the run has the empty right half to itself.
+   On a narrow one there is no empty half, so the run drops to a fragment in
+   the foot of the panel and the copy is given the room to clear it. The calls
+   to action are never crossed by a line. */
 @container (max-width: 820px) {
-  .hero-mark {
-    top: auto;
-    left: 0;
-    width: auto;
-    height: min(15rem, 40%);
+  .hero-figure svg {
+    right: -8%;
+    height: min(13rem, 32%);
   }
   .hero-lede-copy {
-    padding-bottom: min(17rem, 45%);
+    padding-bottom: min(15rem, 41%);
   }
 }
-.hero-mark svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-.mark-line {
+.fig-line {
   fill: none;
   stroke: var(--ink);
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.mark-frame {
-  stroke-opacity: 0.34;
-}
-.mark-floor {
-  stroke-opacity: 0.2;
-}
-.mark-divider {
-  stroke-opacity: 0.12;
-}
-.mark-chair {
-  stroke-opacity: 0.34;
-}
-/* The one chair in the gable, in the brand accent, so the eye lands there. */
-.mark-chair-lead {
+/* The one profile in the brand accent, so a single chair surfaces from the
+   field and the eye has somewhere to land. */
+.fig-lead {
   stroke: var(--amber);
-  stroke-opacity: 0.85;
+  stroke-opacity: 0.8;
 }
 /* Each path carries pathLength 100, so one dash covers any path at any scale.
    The resting state is fully drawn: if the animation never runs, nothing is
    missing. */
-@keyframes mark-draw {
+@keyframes fig-draw {
   from {
     stroke-dashoffset: 100;
   }
@@ -2140,19 +2135,18 @@ button.enquire {
     stroke-dashoffset: 0;
   }
 }
-.hero-mark [data-draw] {
+.hero-figure [data-draw] {
   stroke-dasharray: 100;
   stroke-dashoffset: 0;
-  animation: mark-draw 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation: fig-draw 1.15s cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
-/* Over a hero photograph the panel is opaque paper and the mark stays a shade
-   lighter, so the picture keeps the band. */
-.hero-store-photo .mark-frame,
-.hero-store-photo .mark-chair {
-  stroke-opacity: 0.24;
+/* Over a hero photograph the panel is opaque paper and the figure steps back
+   further, so the picture keeps the band. */
+.hero-store-photo .fig-step {
+  stroke-opacity: 0.14;
 }
 @media (prefers-reduced-motion: reduce) {
-  .hero-mark [data-draw] {
+  .hero-figure [data-draw] {
     animation: none;
     stroke-dashoffset: 0;
   }

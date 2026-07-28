@@ -9,8 +9,8 @@ import type { Piece, PieceImage } from "@/lib/collection";
  * through the site panel. The photograph becomes the backdrop for the whole
  * composition; the headline block sits in a soft paper panel so the type
  * never fights the picture, no gradients and no scrims, and the starred rail
- * keeps its own paper cards for the same reason. The panel carries the house
- * mark as it does in the quiet state. Until an image exists the page renders
+ * keeps its own paper cards for the same reason. The panel carries the hero
+ * figure as it does in the quiet state. Until an image exists the page renders
  * the default hero instead.
  */
 export default function PhotoHero({
