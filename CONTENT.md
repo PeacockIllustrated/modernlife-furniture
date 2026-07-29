@@ -51,7 +51,7 @@ and reassuring, and confirm receipt plainly.
 Piece counts, periods, schools and origins in the category data are
 plausible placeholders. Flag placeholder rows in seed data with
 `placeholder: true` and confirm with the owner before launch. Same for the
-contact email `studio@houseofchairs.co.uk`, the delivery and returns
+contact email `sales@houseofchairs.co.uk`, the delivery and returns
 prose in `content/store.ts`, and the collector words.
 
 ## Attribution rules (legal and ethical)

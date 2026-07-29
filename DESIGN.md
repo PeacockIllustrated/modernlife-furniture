@@ -72,34 +72,62 @@ older rules keep working; new work should reference `--paper` and `--panel`.
 - The announcement strip sits in normal flow beneath the header and scrolls
   away; its top padding keeps its line clear of the fixed bar.
 
+## The chair silhouettes
+Sixteen drawn chair profiles live in `public/Asset *.svg` and are extracted
+into `lib/chairs.ts` by `npm run chairs`. The SVGs stay the source; the module
+is generated, so edit the drawings, not the paths. Inlining them keeps both the
+splash and the hero off the network: the whole set is about 10KB of path data,
+cheaper than sixteen requests, scalable, and recolourable to any token.
+
+They carry the brand on their own. Do not outline them, do not put them in
+frames or grids of equal cells, and do not arrange them into a picture of
+something else: they are the pieces, shown as pieces.
+
+## The splash
+`components/splash/` is the first-visit curtain: chairs rain in on the paper
+ground, pile up under a real solver (`lib/physics.ts`), then the floor opens
+and the heap drains off the bottom of the screen. The paper goes before the
+chairs do, so the site appears behind them while they are still falling.
+
+It is a curtain over the home page only. A piece page opened from a social
+post is the money page and loads straight into the piece. Four things about it
+are not negotiable, and all four are handled outside the canvas so they hold
+even when the script does not run:
+
+- **It always leaves.** A CSS animation clears the overlay after five seconds
+  whatever happens, and the inline pre-paint script schedules its own release
+  of the scroll lock. A bundle that never loads cannot freeze the page.
+- **It never repeats in a session**, and never runs under reduced motion. Both
+  are decided before first paint, so a returning visitor sees no flash of it.
+- **Any input skips it**: pointer, key, wheel or touch.
+- **It is not read out.** The overlay is decorative and hidden from assistive
+  technology; the page underneath is the document.
+
+The solver is oriented boxes, SAT, and sequential impulses with warm starting.
+Bodies are the silhouettes' bounding boxes inset to 84%, so pieces interlock
+slightly rather than resting on invisible air. Chair size comes off the
+smaller screen edge and the count off the area, so a phone gets a heap of the
+same visual weight as a desktop rather than a swarm of specks.
+
 ## The hero figure
-`components/brand/Composite.tsx` is a progression, not a picture. One element
-is drawn fourteen times: the section of a seat, reduced to a plane you rest on
-and a rake that holds you. No legs, no frame, no object, nothing closed. Each
-repeat steps up and to the right, shrinks, opens its rake and softens its
-corner, so the family sweeps from upright and tight to low and open. What
-reads is the transformation, which is what a room of one-of-one chairs is.
-One repeat is `--amber`, taken from inside the run rather than its edge.
+`components/brand/ChairFall.tsx` is the same fall as the splash, slowed right
+down and turned into weather. Where the splash is an event with a beginning
+and an end, this is ambient: pieces drift down through the headline panel,
+turning slowly, and each one that leaves the bottom is put back above the top
+somewhere new, so it never ends and never repeats. No collision and no pile: a
+pile fills up and stops, and this has to hold for as long as somebody reads
+the headline.
 
-Every parameter moves monotonically across the run; only the line weight
-alternates, and that is what gives the field depth. Keep it that way. The
-moment values are chosen per repeat rather than interpolated, it stops being
-a system and starts being decoration.
+It is deliberately faint, ink at 7 to 14 per cent with one piece in `--amber`
+a little stronger. The headline, the subline and the two calls to action own
+this panel; the chairs are texture behind them. If it ever competes with the
+type, take the opacity down, not the count.
 
-It lives in the hero's headline panel in both the quiet and the photographic
-state, and it is sized in CSS rather than by the viewBox, so the repeats stay
-a constant size at every panel aspect and the panel simply crops what it
-cannot hold. The panel is the query container, not the viewport: the same
-desktop gives it 1200px with no starred pieces and 620px with three. On the
-wide panel the run has the empty right half to itself; below 820px of panel it
-drops to a fragment in the foot with the copy padded clear. No line ever
-crosses a call to action.
-
-Pure SVG, no canvas and no client script. Stroke widths are attributes rather
-than CSS because each repeat carries its scale in its transform;
-`vector-effect: non-scaling-stroke` is the tidier answer but it moves the dash
-pattern into device space and shatters the draw into dots. The resting state
-is fully drawn, so nothing is missing if the animation never runs.
+Lifecycle is `useCanvasScene`, the same hook as every other visual here, so it
+inherits the whole contract: device pixel ratio capped at two, the loop paused
+whenever the panel is off-screen, deferred until the page has gone idle so it
+never competes with the first render, and one still frame under reduced motion
+with nothing missing.
 
 ## Photography
 Photography leads every card, hero and band, through slots managed in the

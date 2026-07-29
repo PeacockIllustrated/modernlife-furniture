@@ -8,6 +8,7 @@ import Manifesto from "@/components/gallery/Manifesto";
 import Words from "@/components/gallery/Words";
 import Closing from "@/components/gallery/Closing";
 import RevealObserver from "@/components/scroll/RevealObserver";
+import Splash from "@/components/splash/Splash";
 import {
   getFeaturedPieces,
   getPieceHeroImages,
@@ -38,28 +39,31 @@ export default async function Home() {
   const heroImages = await getPieceHeroImages(starred.map((p) => p.slug));
 
   return (
-    <main>
-      {settings.heroImage ? (
-        <PhotoHero settings={settings} pieces={starred} images={heroImages} />
-      ) : (
-        <Hero settings={settings} pieces={starred} images={heroImages} />
-      )}
+    <>
+      <Splash />
+      <main>
+        {settings.heroImage ? (
+          <PhotoHero settings={settings} pieces={starred} images={heroImages} />
+        ) : (
+          <Hero settings={settings} pieces={starred} images={heroImages} />
+        )}
 
-      <Highlighted exclude={starred.map((p) => p.slug)} />
+        <Highlighted exclude={starred.map((p) => p.slug)} />
 
-      <RoomsRow />
+        <RoomsRow />
 
-      <BuyingBand image={settings.workshopImage} alt={settings.workshopAlt} />
+        <BuyingBand image={settings.workshopImage} alt={settings.workshopAlt} />
 
-      <TrustStrip />
+        <TrustStrip />
 
-      <Words />
+        <Words />
 
-      <Manifesto />
+        <Manifesto />
 
-      <Closing />
+        <Closing />
 
-      <RevealObserver />
-    </main>
+        <RevealObserver />
+      </main>
+    </>
   );
 }

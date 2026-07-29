@@ -42,7 +42,7 @@ const organisationJsonLd = {
   "@type": "Organization",
   name: "House of Chairs",
   url: "https://houseofchairs.co.uk",
-  email: "studio@houseofchairs.co.uk",
+  email: "sales@houseofchairs.co.uk",
 };
 
 export default function RootLayout({
