@@ -9,7 +9,7 @@ const KIND_LABELS: Partial<Record<EnquiryKind, string>> = {
   selling: "I have a piece to sell",
 };
 
-const MAILTO = "mailto:studio@houseofchairs.co.uk";
+const MAILTO = "mailto:sales@houseofchairs.co.uk";
 
 /**
  * The enquiry form. Posts to /api/enquire, which rate limits and writes to
@@ -128,7 +128,7 @@ export default function EnquiryForm({
 
       <p className="form-note mono">
         Or write to us directly at{" "}
-        <a href={MAILTO}>studio@houseofchairs.co.uk</a>
+        <a href={MAILTO}>sales@houseofchairs.co.uk</a>
       </p>
     </form>
   );

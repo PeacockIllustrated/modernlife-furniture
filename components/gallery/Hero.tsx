@@ -5,7 +5,7 @@ import { emphasise } from "@/components/typography/Em";
 import { statusLabel, priceLabel, canOptimiseImage } from "@/lib/format";
 import RoomVisual from "@/components/canvas/RoomVisual";
 import Plinth from "@/components/gallery/Plinth";
-import Composite from "@/components/brand/Composite";
+import ChairRow from "@/components/brand/ChairRow";
 import type { StoreSettings } from "@/content/store";
 import type { Piece, PieceImage } from "@/lib/collection";
 
@@ -16,11 +16,11 @@ import type { Piece, PieceImage } from "@/lib/collection";
  * one large with its photograph, the other two as slim rows, so the first
  * viewport sells real pieces rather than a headline alone.
  *
- * The hero figure sits inside the headline panel in both states: one seat
- * section repeated through a transformation, so what reads is the run of
- * variations rather than any one piece. Once the owner uploads a hero image,
- * PhotoHero renders instead and reuses the lede and rail exported here,
- * figure included.
+ * The hero figure sits inside the headline panel in both states: the
+ * collection stood in a row on one ground line, the same silhouettes the
+ * splash throws around. Once the owner uploads a hero image, PhotoHero
+ * renders instead and reuses the lede and rail exported here, figure
+ * included.
  */
 
 function roomFor(categorySlug: string) {
@@ -42,7 +42,7 @@ export function HeroLede({ settings }: { settings: StoreSettings }) {
   return (
     <div className="hero-lede">
       <div className="hero-figure">
-        <Composite />
+        <ChairRow />
       </div>
       <div className="hero-lede-copy">
         <h1>{emphasise(settings.heroHeadline)}</h1>
