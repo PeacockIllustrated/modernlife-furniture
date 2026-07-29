@@ -110,21 +110,24 @@ smaller screen edge and the count off the area, so a phone gets a heap of the
 same visual weight as a desktop rather than a swarm of specks.
 
 ## The hero figure
-`components/brand/ChairRow.tsx` stands the collection in a row on one ground
-line: the same silhouettes the splash throws around, but set down and lined
-up, because the hero is the shop and the splash is the arrival. So it is
-composed, not simulated. Heights, gaps and the small leans are authored, the
-rhythm is deliberately uneven, two pieces sit back at lower opacity for depth,
-and one is in `--amber`.
+`components/brand/ChairFall.tsx` is the same fall as the splash, slowed right
+down and turned into weather. Where the splash is an event with a beginning
+and an end, this is ambient: pieces drift down through the headline panel,
+turning slowly, and each one that leaves the bottom is put back above the top
+somewhere new, so it never ends and never repeats. No collision and no pile: a
+pile fills up and stops, and this has to hold for as long as somebody reads
+the headline.
 
-The chairs stand on the panel's own bottom edge, and the row is sized in CSS
-rather than by the viewBox, so they stay a constant size at every panel aspect
-and the panel crops what it cannot hold. It runs off the right edge on
-purpose: a shop window, not a family portrait. The panel is the query
-container, not the viewport, because its width depends on whether the starred
-rail sits beside it: the same 1440px desktop gives it 1200px with no starred
-pieces and 620px with three. The copy always keeps a band clear above the row,
-so no chair ever stands under a call to action.
+It is deliberately faint, ink at 7 to 14 per cent with one piece in `--amber`
+a little stronger. The headline, the subline and the two calls to action own
+this panel; the chairs are texture behind them. If it ever competes with the
+type, take the opacity down, not the count.
+
+Lifecycle is `useCanvasScene`, the same hook as every other visual here, so it
+inherits the whole contract: device pixel ratio capped at two, the loop paused
+whenever the panel is off-screen, deferred until the page has gone idle so it
+never competes with the first render, and one still frame under reduced motion
+with nothing missing.
 
 ## Photography
 Photography leads every card, hero and band, through slots managed in the

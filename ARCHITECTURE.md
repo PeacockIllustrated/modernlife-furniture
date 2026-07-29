@@ -20,7 +20,7 @@ Era slugs are fixed and match the landing CTAs. Do not rename them.
 ```
 components/
   brand/
-    ChairRow.tsx          the hero figure, the collection stood in a row
+    ChairFall.tsx         the hero figure, chairs drifting as ambient weather
   splash/
     Splash.tsx            the first-visit curtain, server rendered
     SplashCanvas.tsx      the falling pile, on canvas
