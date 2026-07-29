@@ -81,7 +81,7 @@ export default function ChairFall() {
           scale: size / chairs[chair].h,
           angle: (rand() - 0.5) * 1.4,
           spin: (rand() - 0.5) * 0.16,
-          fall: 16 + rand() * 26,
+          fall: 32 + rand() * 52,
           alpha: 0.07 + rand() * 0.07,
           amber: i === Math.floor(count * 0.45),
         };
