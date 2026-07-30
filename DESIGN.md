@@ -54,23 +54,52 @@ Two faces, and the pairing is the mark's own: the lockup sets HOUSE and CHAIRS
 in a sans and the "of" between them in a calligraphic hand, with the tagline
 repeating the pair.
 
-- **Montserrat** states. 300 for large display with tight tracking
-  (`-0.02em`), 400 for body, 500 for labels, 600 kept for the rare hard stop.
-- **Anaktoria** accents, and only accents: the one emphasised word in a
-  heading, through the `em` that `emphasise()` produces. Set at `1.1em`,
-  because the hand runs small beside Montserrat at a shared size.
+**Montserrat states.** It is loaded as the variable file, no weight list, so
+the whole wght axis costs one request and any value on it is available.
 
-Anaktoria ships one weight and no separate italic; its lowercase is already a
-cursive hand. **Never ask for bold or italic on it.** A synthesised weight
-smears a calligraphic face, and a synthesised slant double-slants it. Where
-more emphasis is wanted, change the face, not the weight. That is also why the
-per-context `em` rules that used to say "italic, weight 400" are gone: the one
-shared `em` rule carries it now.
+Weight answers to size, so the type keeps one apparent colour across the
+scale. Big type wants less weight, small type wants more:
+
+| Largest display, 4rem and up | 280 |
+| Band headings, 2.4 to 4rem   | 320 |
+| Sub-headings, 1.6 to 2.4rem  | 380 |
+| Card titles and small heads  | 500 |
+| Body                         | 400 |
+| Labels (`.mono`)             | 500 |
+
+**Anaktoria is the voice**, not decoration and not a label. It takes the places
+where the shop speaks rather than names something: the manifesto, a collector's
+words, the hedge in an attribution ("attributed to", "school of"), the aside
+under a section label, and the strapline in the footer. The `.accent` class
+applies it anywhere else it is wanted. Never at small-print sizes: a cursive
+hand at 12px is decoration rather than information.
+
+It ships one weight and no separate italic; its lowercase is already a cursive
+hand. **Never ask for bold or italic on it.** A synthesised weight smears a
+calligraphic face and a synthesised slant double-slants it. Everything that
+sets it also pins `font-weight: 400`.
+
+**The highlighted word** is the `em` that `emphasise()` produces from
+`*asterisks*`. It stays in Montserrat, sits a step heavier than its line at
+500, and eases to 600 under the pointer.
+
+The hover is driven through `font-variation-settings` rather than
+`font-weight`, because that is what interpolates continuously; `font-weight`
+alone jumps between named instances. This only works because Montserrat is
+loaded variable, so do not put a weight list back in `app/fonts.ts`. The
+transition is removed under reduced motion. The word widens a little as it
+thickens, which is the honest cost of interpolating a weight inline.
+
+`em` names `--font-body` rather than inheriting it. Inside an accent passage
+the parent is the hand, and asking the hand for 500 would have the browser
+fake a bold; naming the body face keeps the highlight the same gesture
+everywhere and keeps the hand safe. A highlight inside an accent passage also
+drops to `0.9em`, because the hand runs large beside Montserrat.
 
 `--font-mono` keeps its name because around a hundred call sites use `.mono`,
-but the role is labels, not monospace. It is the same family as the body, told
-apart by weight (500), size (0.72rem) and tracking (0.1em), the way
-"MODERN LIVING" is set under the mark.
+but the role is labels, not monospace: the same family as the body, told apart
+by weight (500), size (0.72rem) and tracking (0.1em), the way "MODERN LIVING"
+is set under the mark.
 
 The accent face is vendored whole in `vendor/fonts/` and built for the web by
 `npm run font:accent`, which subsets it to Latin and converts to woff2: 184KB

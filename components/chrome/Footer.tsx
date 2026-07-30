@@ -49,7 +49,7 @@ export default async function Footer() {
 
       <div className="footer-legal mono">
         <span>House of Chairs</span>
-        <span>Vintage designer furniture, chairs above all</span>
+        <span className="accent">Vintage designer furniture, chairs above all</span>
         <span>MMXXVI</span>
       </div>
     </footer>
