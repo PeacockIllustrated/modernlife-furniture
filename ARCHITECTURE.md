@@ -47,7 +47,12 @@ app/
   fonts/                  Anaktoria-latin.woff2, built by `npm run font:accent`
 vendor/
   fonts/                  the accent face as supplied, with its readme
+scripts/
+  render-social.mjs       renders the social reel to MP4; copies scripts/reel/
+                          into app/ for the run and removes it again
+  reel/page.tsx           the render harness, never part of the site
 public/
+  social/                 the rendered reel, vertical and square
   logo/                   the mark as exported: FullSet, Logo, Icon, Tagline,
                           plus house-of-chairs-animated.svg built by `npm run logo`
 lib/

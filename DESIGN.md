@@ -189,6 +189,33 @@ slightly rather than resting on invisible air. Chair size comes off the
 smaller screen edge and the count off the area, so a phone gets a heap of the
 same visual weight as a desktop rather than a swarm of specks.
 
+## The social reel
+`node scripts/render-social.mjs [--square]` renders the film in
+`public/social/`: 1080x1920 by default, 1080x1080 with `--square`, H.264 at
+30fps. Needs a Chromium (`CHROMIUM_PATH` if it is not at the default) and
+ffmpeg (`pip install imageio-ffmpeg`).
+
+It is made from the real thing. The chairs are the real silhouettes falling
+through the real solver in `lib/physics.ts`, and the logo is the exported asset
+inlined so its own CSS animation can be seeked. Nothing is reimplemented for
+video, so the reel cannot drift from what the site does.
+
+The harness page is copied into `app/` for the run and removed afterwards, so
+no dev-only route ships. It lays itself over the viewport rather than hiding
+the site chrome by name, so a change to the header or footer cannot leak into a
+frame. Time is driven from outside through `window.__seek(ms)`, which advances
+the world to an absolute moment and draws: every frame is the frame that was
+asked for however long the machine took to make it, and two runs are identical.
+
+Both cuts read their size from the frame rather than a constant. That matters:
+with the world fixed at 1920 tall, the square cut piled its chairs below the
+bottom of the picture and the heap never appeared.
+
+The arc is rain, heap, the mark assembling over it, a beat, the floor opening
+so the heap drains away, then the mark alone with the domain. About six
+seconds. If it needs to be shorter for a placement, move the storyboard
+constants at the top of `scripts/reel/page.tsx`.
+
 ## The hero figure
 `components/brand/ChairFall.tsx` is the same fall as the splash, slowed right
 down and turned into weather. Where the splash is an event with a beginning
