@@ -1,8 +1,8 @@
 /**
- * House emphasis. A span wrapped in asterisks becomes an em, which the
- * surrounding display styles set in Fraunces italic, so "Restored on the
- * *bench*" reads as the owner typed it and the dashboard needs no rich text.
- * Server-safe: no state, no effects, just markup.
+ * House emphasis. A span wrapped in asterisks becomes an em, which the shared
+ * `em` rule sets in the accent hand, the same one the mark uses for its "of",
+ * so "Restored on the *bench*" reads as the owner typed it and the dashboard
+ * needs no rich text. Server-safe: no state, no effects, just markup.
  */
 import type { ReactNode } from "react";
 

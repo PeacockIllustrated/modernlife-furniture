@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { fraunces, archivo, splineMono } from "./fonts";
+import { montserrat, anaktoria } from "./fonts";
 import LenisProvider from "@/components/scroll/LenisProvider";
 import Announcement from "@/components/chrome/Announcement";
 import Header from "@/components/chrome/Header";
@@ -51,7 +51,7 @@ export default function RootLayout({
   return (
     <html
       lang="en-GB"
-      className={`${fraunces.variable} ${archivo.variable} ${splineMono.variable}`}
+      className={`${montserrat.variable} ${anaktoria.variable}`}
     >
       <body>
         <script

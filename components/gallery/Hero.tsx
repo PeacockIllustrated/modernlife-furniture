@@ -32,10 +32,10 @@ function roomFor(categorySlug: string) {
 }
 
 /**
- * The headline block: the falling chairs behind, then the owner's headline
- * through the house emphasis, the standing subline and the two shop calls to
- * action. The chairs drift at an opacity where they read as texture, so the
- * type never has to fight them.
+ * The headline block: the falling chairs behind, then the mark, the owner's
+ * headline through the house emphasis, the standing subline and the two shop
+ * calls to action. The chairs drift at an opacity where they read as texture,
+ * so the type never has to fight them.
  */
 export function HeroLede({ settings }: { settings: StoreSettings }) {
   return (
@@ -44,6 +44,19 @@ export function HeroLede({ settings }: { settings: StoreSettings }) {
         <ChairFall />
       </div>
       <div className="hero-lede-copy">
+        {/* The mark over the headline, the same exported asset the splash
+            plays, so a returning visitor who never sees the curtain still gets
+            the logo assembling itself once. Decorative: the name is already in
+            the header and the h1 carries the page. */}
+        {/* eslint-disable-next-line @next/next/no-img-element -- next/image
+            would proxy and rasterise the SVG and its animation would not run */}
+        <img
+          className="hero-logo"
+          src="/logo/house-of-chairs-animated.svg"
+          alt=""
+          width={2440}
+          height={1241}
+        />
         <h1>{emphasise(settings.heroHeadline)}</h1>
         <p>{hero.sub}</p>
         <div className="hero-cta">

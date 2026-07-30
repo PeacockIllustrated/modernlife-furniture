@@ -50,13 +50,33 @@ older rules keep working; new work should reference `--paper` and `--panel`.
   rounding belongs to elements that sit inside a ground, not to the grounds.
 
 ## Type
-- Display: Fraunces, weight 300 (400 for card h3s), italic for the one
-  emphasis word (the "Checked, documented, *delivered*" pattern). Loaded via
-  next/font.
-- Body and UI: Archivo 400/500.
-- Mono (Spline Sans Mono) is demoted to small metadata only: eyebrows,
-  counters, prices, status lines, nav, footer columns.
-- Sentence case everywhere, including nav and buttons.
+Two faces, and the pairing is the mark's own: the lockup sets HOUSE and CHAIRS
+in a sans and the "of" between them in a calligraphic hand, with the tagline
+repeating the pair.
+
+- **Montserrat** states. 300 for large display with tight tracking
+  (`-0.02em`), 400 for body, 500 for labels, 600 kept for the rare hard stop.
+- **Anaktoria** accents, and only accents: the one emphasised word in a
+  heading, through the `em` that `emphasise()` produces. Set at `1.1em`,
+  because the hand runs small beside Montserrat at a shared size.
+
+Anaktoria ships one weight and no separate italic; its lowercase is already a
+cursive hand. **Never ask for bold or italic on it.** A synthesised weight
+smears a calligraphic face, and a synthesised slant double-slants it. Where
+more emphasis is wanted, change the face, not the weight. That is also why the
+per-context `em` rules that used to say "italic, weight 400" are gone: the one
+shared `em` rule carries it now.
+
+`--font-mono` keeps its name because around a hundred call sites use `.mono`,
+but the role is labels, not monospace. It is the same family as the body, told
+apart by weight (500), size (0.72rem) and tracking (0.1em), the way
+"MODERN LIVING" is set under the mark.
+
+The accent face is vendored whole in `vendor/fonts/` and built for the web by
+`npm run font:accent`, which subsets it to Latin and converts to woff2: 184KB
+of OpenType covering every ancient script becomes 18KB. It is George Douros's,
+from Unicode Fonts for Ancient Scripts, offered free for any use including
+redistribution, so it is served from our own origin.
 
 ## Layout rhythm
 - Content capped at `--shell` (1200px) and centred via `--edge-pad`;

@@ -42,6 +42,11 @@ components/
     Footer.tsx
   scroll/
     LenisProvider.tsx     Lenis + GSAP ScrollTrigger sync (lenis/react)
+app/
+  fonts.ts                the pairing: Montserrat from Google, Anaktoria local
+  fonts/                  Anaktoria-latin.woff2, built by `npm run font:accent`
+vendor/
+  fonts/                  the accent face as supplied, with its readme
 public/
   logo/                   the mark as exported: FullSet, Logo, Icon, Tagline,
                           plus house-of-chairs-animated.svg built by `npm run logo`
