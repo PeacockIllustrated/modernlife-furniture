@@ -36,10 +36,23 @@ export default function Splash() {
     <>
       <div id="splash" className="splash" aria-hidden="true">
         <SplashCanvas />
-        <div className="splash-word">
-          <span>House of</span>
-          <em>chairs</em>
-        </div>
+        {/* The logo assembles itself over the falling chairs. It is the
+            exported asset, played straight from public/logo, so the splash and
+            anything else the logo is used in can never drift apart. An <img>
+            keeps the 35KB of artwork out of the page HTML and still runs the
+            CSS animation inside the file; the preload scanner finds it in the
+            first bytes of the document, so it starts on time. */}
+        {/* eslint-disable-next-line @next/next/no-img-element -- next/image
+            would proxy and rasterise the SVG, and the CSS animation inside the
+            file would never run. A plain img is the only thing that plays it. */}
+        <img
+          className="splash-logo"
+          src="/logo/house-of-chairs-animated.svg"
+          alt=""
+          width={2440}
+          height={1241}
+          fetchPriority="high"
+        />
       </div>
       <script dangerouslySetInnerHTML={{ __html: PREPAINT }} />
     </>
