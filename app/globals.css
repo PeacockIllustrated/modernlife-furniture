@@ -86,15 +86,55 @@ button:focus-visible,
   letter-spacing: 0.1em;
 }
 
-/* The emphasised word in a heading. The lockup sets its "of" in the same hand,
-   so a heading picks up the mark's own hierarchy rather than leaning on an
-   italic the accent face does not have. It sets small against Montserrat at a
-   shared size, hence the bump; never give it a weight or a slant. */
+/* The highlighted word. It stays in Montserrat and steps a little heavier than
+   the line it sits in, then eases heavier again under the pointer.
+
+   The weight is driven through font-variation-settings rather than
+   font-weight, because that is what interpolates continuously: font-weight
+   alone would jump between named instances. It needs the variable file to be
+   smooth, which is why app/fonts.ts asks for no weight list. font-weight is
+   set alongside it so a fallback face, which has no wght axis, still lands on
+   something sensible.
+
+   The word widens very slightly as it thickens; that is the honest cost of
+   interpolating a weight inline and is small enough to read as intent. */
 em {
-  font-family: var(--font-accent);
+  /* Named, not inherited. Inside an accent passage the parent is the
+     calligraphic hand, which has one weight, and asking it for 500 would have
+     the browser fake a bold and smear it. Naming the body face here keeps the
+     highlight the same gesture everywhere and keeps the hand safe. */
+  font-family: var(--font-body);
   font-style: normal;
+  font-weight: 500;
+  font-variation-settings: "wght" 500;
+  transition: font-variation-settings 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+em:hover {
+  font-weight: 600;
+  font-variation-settings: "wght" 600;
+}
+@media (prefers-reduced-motion: reduce) {
+  em {
+    transition: none;
+  }
+}
+
+/* The accent hand, wherever the shop speaks in its own voice rather than
+   labelling something: the manifesto, a collector's words, the hedge in an
+   attribution, the strapline. Short, warm, qualifying copy. It is never a
+   label and never small print, because a cursive hand at 12px is decoration
+   rather than information. */
+.accent em,
+.manifesto p em,
+.words-item blockquote p em,
+.word-quote em {
+  font-size: 0.9em;
+}
+.accent {
+  font-family: var(--font-accent);
   font-weight: 400;
-  font-size: 1.1em;
+  /* The hand runs small beside Montserrat at a shared size. */
+  font-size: 1.08em;
   letter-spacing: 0.005em;
 }
 
@@ -199,7 +239,7 @@ em {
 }
 .hero h1 {
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: 280;
   font-size: clamp(2.8rem, 11vw, 8rem);
   line-height: 0.94;
   letter-spacing: -0.02em;
@@ -227,8 +267,8 @@ em {
   border-top: var(--hair);
 }
 .manifesto p {
-  font-family: var(--font-display);
-  font-weight: 300;
+  font-family: var(--font-accent);
+  font-weight: 400;
   font-size: clamp(1.5rem, 3.4vw, 2.9rem);
   line-height: 1.28;
   max-width: 24em;
@@ -286,7 +326,7 @@ em {
 }
 .label h2 {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 320;
   font-size: clamp(2rem, 3.6vw, 3.2rem);
   line-height: 1.05;
   letter-spacing: -0.01em;
@@ -298,9 +338,11 @@ em {
   opacity: 0.92;
 }
 .label .hint {
+  font-family: var(--font-accent);
   display: block;
   margin-bottom: 2.2rem;
   opacity: 0.6;
+  font-weight: 400;
 }
 dl {
   display: grid;
@@ -362,7 +404,7 @@ dd {
 }
 .closing h2 {
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: 280;
   font-size: clamp(2.4rem, 6vw, 5.2rem);
   letter-spacing: -0.015em;
   line-height: 1.02;
@@ -441,7 +483,7 @@ dd {
 }
 .shop-by h2 {
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: 320;
   font-size: clamp(2rem, 4.4vw, 3.2rem);
   letter-spacing: -0.015em;
   line-height: 1.04;
@@ -469,7 +511,7 @@ dd {
 }
 .highlight-head h2 {
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: 320;
   font-size: clamp(2rem, 4.6vw, 3.4rem);
   letter-spacing: -0.015em;
   line-height: 1.04;
@@ -594,7 +636,7 @@ dd {
 }
 .page-head h1 {
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: 280;
   font-size: clamp(2.6rem, 6vw, 5rem);
   line-height: 1;
   letter-spacing: -0.015em;
@@ -670,15 +712,17 @@ dd {
 }
 .piece-body h1 {
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: 320;
   font-size: clamp(2.2rem, 4.4vw, 3.6rem);
   line-height: 1.02;
   letter-spacing: -0.015em;
   margin-bottom: 0.8rem;
 }
 .piece-body .attribution {
+  font-family: var(--font-accent);
   margin-bottom: 2rem;
   opacity: 0.7;
+  font-weight: 400;
 }
 .piece-body .story {
   margin-bottom: 2.4rem;
@@ -753,7 +797,7 @@ dd {
 }
 .acquire-figure {
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: 380;
   font-size: clamp(1.6rem, 3vw, 2.2rem);
   line-height: 1;
   letter-spacing: -0.01em;
@@ -945,7 +989,7 @@ dd {
 }
 .service-list h3 {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 500;
   font-size: 1.4rem;
   margin-bottom: 0.5rem;
 }
@@ -1067,7 +1111,7 @@ button.enquire {
 }
 .feature h2 {
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: 320;
   font-size: clamp(2rem, 5vw, 3.4rem);
   line-height: 1.05;
   letter-spacing: -0.015em;
@@ -1142,7 +1186,7 @@ button.enquire {
 }
 .admin-h {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 380;
   font-size: 1.8rem;
   margin-bottom: 1.2rem;
 }
@@ -1373,7 +1417,7 @@ button.enquire {
    the section wayfinding, so the grounds below can vary without shouting. */
 .store-head {
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: 380;
   font-size: clamp(1.6rem, 3vw, 2.3rem);
   line-height: 1.06;
   letter-spacing: -0.01em;
@@ -1445,7 +1489,7 @@ button.enquire {
 }
 .story-band-text h2 {
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: 320;
   font-size: clamp(1.7rem, 3.4vw, 2.7rem);
   line-height: 1.05;
   letter-spacing: -0.015em;
@@ -1521,7 +1565,7 @@ button.enquire {
 .included-label {
   display: block;
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 500;
   font-size: 1.15rem;
   line-height: 1.25;
   margin-bottom: 0.35rem;
@@ -1693,8 +1737,8 @@ button.enquire {
   padding-top: 1.4rem;
 }
 .word-quote {
-  font-family: var(--font-display);
-  font-weight: 300;
+  font-family: var(--font-accent);
+  font-weight: 400;
   font-size: clamp(1.15rem, 2vw, 1.4rem);
   line-height: 1.35;
   margin-bottom: 1.1rem;
@@ -1735,7 +1779,7 @@ button.enquire {
   white-space: nowrap;
   text-overflow: ellipsis;
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 500;
   font-size: 1.05rem;
 }
 .sticky-bar-price {
@@ -1901,7 +1945,7 @@ button.enquire {
 }
 .words-band h2 {
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: 320;
   font-size: clamp(2rem, 4.4vw, 3.2rem);
   letter-spacing: -0.015em;
   line-height: 1.04;
@@ -1917,8 +1961,8 @@ button.enquire {
   padding-left: 1.6rem;
 }
 .words-item blockquote p {
-  font-family: var(--font-display);
-  font-weight: 300;
+  font-family: var(--font-accent);
+  font-weight: 400;
   font-size: clamp(1.15rem, 1.9vw, 1.45rem);
   line-height: 1.42;
 }
@@ -1938,7 +1982,7 @@ button.enquire {
 }
 .footer-news h2 {
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: 320;
   font-size: clamp(1.7rem, 3vw, 2.4rem);
   letter-spacing: -0.01em;
   line-height: 1.1;
@@ -2011,6 +2055,11 @@ button.enquire {
 .footer-addr {
   opacity: 0.6;
   padding: 0.6rem 0;
+}
+.footer-legal .accent {
+  font-size: 0.86rem;
+  letter-spacing: 0.01em;
+  text-transform: none;
 }
 .footer-legal {
   display: flex;
@@ -2111,7 +2160,7 @@ button.enquire {
 }
 .hero-lede h1 {
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: 280;
   font-size: clamp(2.3rem, 4.6vw, 4.4rem);
   line-height: 1.02;
   letter-spacing: -0.02em;
@@ -2198,7 +2247,7 @@ button.enquire {
 }
 .star-card h2 {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 500;
   font-size: clamp(1.25rem, 1.7vw, 1.55rem);
   line-height: 1.12;
   letter-spacing: -0.01em;
@@ -2282,7 +2331,7 @@ button.enquire {
 }
 .rooms-head h2 {
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: 320;
   font-size: clamp(2rem, 4.4vw, 3.2rem);
   letter-spacing: -0.015em;
   line-height: 1.04;
@@ -2331,7 +2380,7 @@ button.enquire {
 }
 .room-tile h3 {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 380;
   font-size: clamp(1.25rem, 1.8vw, 1.6rem);
   line-height: 1.15;
   letter-spacing: -0.01em;
@@ -2388,7 +2437,7 @@ button.enquire {
 }
 .buying-body h2 {
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: 320;
   font-size: clamp(1.9rem, 3.2vw, 2.9rem);
   line-height: 1.08;
   letter-spacing: -0.015em;
@@ -2966,7 +3015,7 @@ button.enquire {
 }
 .pc h3 {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 500;
   font-size: 1.2rem;
   line-height: 1.15;
   letter-spacing: -0.01em;
@@ -2976,6 +3025,7 @@ button.enquire {
   text-underline-offset: 4px;
 }
 .pc-attr {
+  font-family: var(--font-accent);
   margin-top: 0.35rem;
   font-size: 0.84rem;
   opacity: 0.65;
@@ -3214,7 +3264,7 @@ button.enquire {
 .dash-brand strong {
   display: block;
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 500;
   font-size: 1.05rem;
   line-height: 1.2;
 }
@@ -3343,7 +3393,7 @@ button.enquire {
 }
 .dash-h {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 380;
   font-size: clamp(1.5rem, 2.6vw, 1.9rem);
   line-height: 1.1;
 }
@@ -3403,7 +3453,7 @@ button.enquire {
 .dash-stat-value {
   display: block;
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: 320;
   font-size: 2.4rem;
   line-height: 1.05;
   margin: 0.35rem 0 0.15rem;
@@ -3429,7 +3479,7 @@ button.enquire {
 }
 .dash-block-h {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 500;
   font-size: 1.2rem;
   margin-bottom: 1rem;
 }
@@ -3456,6 +3506,7 @@ button.enquire {
 .dash-job-count {
   flex: 0 0 auto;
   font-family: var(--font-display);
+  font-weight: 380;
   font-size: 1.6rem;
   line-height: 1;
   opacity: 0.75;

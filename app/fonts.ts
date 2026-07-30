@@ -4,10 +4,12 @@ import localFont from "next/font/local";
 /**
  * Two faces, the pairing the mark itself is built from.
  *
- * Montserrat carries the statement: every heading, the body and the labels.
- * Anaktoria is the accent, the calligraphic hand that sets the "of" in the
- * lockup and the "Timeless pieces for" line under it. Here it sets the one
- * emphasised word in a heading, and nothing else.
+ * Montserrat carries the statement: every heading, the body, the labels, and
+ * the highlighted words, which sit a step heavier than their line and ease
+ * heavier again on hover. Anaktoria is the voice: the calligraphic hand that
+ * sets the "of" in the lockup and the "Timeless pieces for" line under it, and
+ * here it takes the places where the shop speaks rather than labels, the
+ * manifesto, the collector words, an attribution's hedge, the strapline.
  *
  * Anaktoria is George Douros's, from Unicode Fonts for Ancient Scripts, and is
  * offered free for any use including redistribution, so it can be served from
@@ -21,10 +23,11 @@ import localFont from "next/font/local";
  * this shop actually writes in.
  */
 
+// No weight list, so this is the variable file: one request for the whole wght
+// axis instead of four static cuts. That is what lets a highlighted word ease
+// from medium to semibold on hover rather than snapping between two files.
 export const montserrat = Montserrat({
   subsets: ["latin"],
-  // 300 for large display, 400 body, 500 labels, 600 for the rare hard stop.
-  weight: ["300", "400", "500", "600"],
   display: "swap",
   variable: "--font-montserrat",
 });
