@@ -3649,7 +3649,7 @@ body:has(.page-dash) .dash-nav {
   pointer-events: none;
   transition: background-color 0.42s ease;
 }
-.splash[data-state="draining"] .splash-word {
+.splash[data-state="draining"] .splash-logo {
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -3664,35 +3664,20 @@ body:has(.page-dash) .dash-nav {
   inset: 0;
   display: block;
 }
-/* High in the frame rather than centred: the heap builds from the floor up,
-   and the name has to stay readable over paper, not over chairs. */
-.splash-word {
+/* Above centre rather than in it: the heap builds from the floor up, and the
+   lockup has to sit clear of it while it assembles. The soft paper glow is not
+   a plate, it just lifts the mark off whatever chair happens to be passing
+   behind it. */
+.splash-logo {
   position: absolute;
   z-index: 1;
-  left: 0;
-  right: 0;
-  top: 17%;
-  text-align: center;
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(2.4rem, 8vw, 6rem);
-  line-height: 1;
-  letter-spacing: -0.025em;
+  left: 50%;
+  top: 38%;
+  transform: translate(-50%, -50%);
+  width: min(82vw, 780px);
+  height: auto;
   pointer-events: none;
-  color: var(--ink);
-  /* A paper halo rather than a plate behind the name: the letters stay ink,
-     and where a chair passes under them the glow separates the two. A
-     difference blend would do the same job but turns the letters cyan over
-     the amber pieces. */
-  text-shadow:
-    0 0 28px var(--paper),
-    0 0 14px var(--paper),
-    0 0 5px var(--paper);
-}
-.splash-word em {
-  display: block;
-  font-style: italic;
-  font-weight: 400;
+  filter: drop-shadow(0 0 22px var(--paper)) drop-shadow(0 0 9px var(--paper));
 }
 /* While the curtain is up the page behind it does not scroll. Removed by the
    canvas the moment the splash ends, and never added when it is skipped. */

@@ -83,11 +83,42 @@ They carry the brand on their own. Do not outline them, do not put them in
 frames or grids of equal cells, and do not arrange them into a picture of
 something else: they are the pieces, shown as pieces.
 
+## The logo
+The mark lives in `public/logo/` as the designer exported it: `FullSet.svg` is
+the full lockup (icon, wordmark, rule, tagline), with `Logo.svg`, `Icon.svg`
+and `Tagline.svg` as the pieces. Those four are the source and are never edited
+by hand here.
+
+`npm run logo` reads `FullSet.svg` and writes
+`public/logo/house-of-chairs-animated.svg`: the same artwork, passed through
+untouched, with a `data-part` attribute on each element and a block of CSS
+appended to the file's own `<style>`. Re-export from Illustrator and run it
+again; the script counts the drawable elements and fails loudly if the export
+order changed, rather than animating the wrong letter.
+
+The build, in order, is the mark explaining itself:
+
+1. **H, U, S and E fall in**, leaving the gap where the O belongs.
+2. **CHAIRS arrives letter by letter** from the left.
+3. **The O drops last**, onto the H of CHAIRS that has just settled beneath it.
+   That interlock is the whole idea of the lockup, so the animation is built
+   to point at it and everything else waits its turn.
+4. **The rest assembles**: "of", the icon, the rule drawing left to right, then
+   the tagline.
+
+It ends at about 2.2 seconds. The output is self-contained, with no script and
+no external references, so it plays in a browser, inside an `<img>`, and in
+anything else that renders SVG with CSS. That is what lets the splash and any
+exported use of the logo be the same file rather than two things that drift.
+Under reduced motion the whole lockup renders at rest with nothing missing.
+
 ## The splash
 `components/splash/` is the first-visit curtain: chairs rain in on the paper
 ground, pile up under a real solver (`lib/physics.ts`), then the floor opens
 and the heap drains off the bottom of the screen. The paper goes before the
-chairs do, so the site appears behind them while they are still falling.
+chairs do, so the site appears behind them while they are still falling. The
+logo assembles over the top of it, played straight from the exported asset, and
+the floor holds until it has landed and had a beat to be read.
 
 It is a curtain over the home page only. A piece page opened from a social
 post is the money page and loads straight into the piece. Four things about it

@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "chairs": "node scripts/extract-chairs.mjs"
+    "chairs": "node scripts/extract-chairs.mjs",
+    "logo": "node scripts/build-logo-animation.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",

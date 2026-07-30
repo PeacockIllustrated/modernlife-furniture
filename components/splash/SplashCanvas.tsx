@@ -21,8 +21,10 @@ import { World, makeBody, STEP, COLLIDER_INSET } from "@/lib/physics";
 
 const PER_TICK = 4; // chairs per spawn, so the page fills rather than drizzles
 const SPAWN_EVERY = 0.042; // seconds between spawns
-const MIN_PILE = 1.7; // seconds of piling before the floor may open
-const MAX_PILE = 2.2; // seconds after which it opens regardless
+// The logo finishes assembling at about 2.17s, so the floor holds until it has
+// landed and had a beat to be read. Any input still cuts the whole thing short.
+const MIN_PILE = 2.2; // seconds of piling before the floor may open
+const MAX_PILE = 2.5; // seconds after which it opens regardless
 const DRAIN = 0.85; // seconds for the heap to clear the bottom of the screen
 
 // The palette, as weights: mostly ink, a few basalt, one in amber per handful.

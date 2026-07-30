@@ -1,0 +1,160 @@
+/**
+ * Builds the animated logo from public/logo/FullSet.svg.
+ *
+ * The artwork is never redrawn here. The original file is passed through
+ * untouched apart from two additions: a `data-part` attribute on each drawable
+ * element so the stylesheet can address it, and a block of CSS appended to the
+ * file's own <defs><style>. That way the designer can re-export FullSet.svg at
+ * any time, and `npm run logo` re-applies the animation to whatever came out
+ * of Illustrator.
+ *
+ * The order of drawable elements in the file is the order of PARTS below. If
+ * the export ever reorders or adds elements, the count check will fail loudly
+ * rather than animating the wrong letter.
+ *
+ * Output is a single self-contained SVG: no script, no external references,
+ * animation by CSS only. It plays in a browser, inside an <img>, and in
+ * anything else that renders SVG with CSS, which is what makes it usable both
+ * as the splash and as an asset to hand to somebody else.
+ */
+import { readFileSync, writeFileSync } from "node:fs";
+
+const SRC = "public/logo/FullSet.svg";
+const OUT = "public/logo/house-of-chairs-animated.svg";
+
+/**
+ * Every drawable element in FullSet.svg, in document order, named for what it
+ * actually is. The two-piece letters (the H of HOUSE, the icon) are named so
+ * their pieces can be driven together.
+ */
+const PARTS = [
+  "chairs-c", // 0
+  "chairs-a", // 1
+  "chairs-i", // 2
+  "chairs-r", // 3
+  "chairs-s", // 4
+  "chairs-h", // 5  the H the O comes to rest on
+  "house-h-bar", // 6  the H of HOUSE is drawn in two pieces
+  "house-h", // 7
+  "house-u", // 8
+  "house-o", // 9  oversized, descends onto chairs-h
+  "house-e", // 10
+  "of-o", // 11
+  "of-f", // 12
+  "house-s", // 13
+  "icon-c", // 14
+  "icon-stem", // 15
+  "icon-bar", // 16
+  "icon-h", // 17
+  ...Array.from({ length: 17 }, (_, i) => `tag1-${i}`), // 18..34 "Timeless pieces for"
+  ...Array.from({ length: 12 }, (_, i) => `tag2-${i}`), // 35..46 "MODERN LIVING"
+  "rule", // 47
+];
+
+/**
+ * How far above its resting place each dropped piece starts, in viewBox units.
+ * It has to clear the piece's own foot or the bottom of it sits in frame before
+ * the drop begins: the icon is 900 units tall and was showing its base. Pieces
+ * that belong to one letter or one mark share a distance so they stay locked
+ * together and travel at the same speed.
+ */
+const DROP = {
+  "house-h": 400,
+  "house-h-bar": 400,
+  "house-u": 400,
+  "house-s": 400,
+  "house-e": 400,
+  "house-o": 560,
+  "icon-h": 960,
+  "icon-bar": 960,
+};
+
+/** The build, in seconds. Keep the whole thing under the splash's own window. */
+const T = {
+  houseDrop: { at: 0, step: 0.07, dur: 0.44 },
+  chairs: { at: 0.45, step: 0.075, dur: 0.3 },
+  // The O leaves as the H of CHAIRS finishes settling, and lands on it.
+  o: { at: 0.8, dur: 0.44 },
+  of: { at: 1.2, step: 0.06, dur: 0.28 },
+  icon: { at: 1.14, step: 0.07, dur: 0.42 },
+  rule: { at: 1.46, dur: 0.34 },
+  tag1: { at: 1.6, step: 0.012, dur: 0.24 },
+  tag2: { at: 1.78, step: 0.014, dur: 0.24 },
+};
+
+const n = (v) => Number(v.toFixed(3));
+
+/** One CSS rule per part: which keyframes, how long, and when. */
+function rules() {
+  const out = [];
+  const add = (part, anim, dur, delay, easing = "cubic-bezier(.2,.75,.3,1)") => {
+    const drop = DROP[part] ? `--drop:${DROP[part]}px;` : "";
+    out.push(
+      `[data-part="${part}"]{${drop}animation:${anim} ${n(dur)}s ${easing} ${n(delay)}s both}`,
+    );
+  };
+
+  // 1. The H, U, S and E fall in, leaving the gap where the O belongs.
+  const house = ["house-h", "house-u", "house-s", "house-e"];
+  house.forEach((p, i) => add(p, "hoc-drop", T.houseDrop.dur, T.houseDrop.at + i * T.houseDrop.step));
+  // The bar travels with the rest of its letter.
+  add("house-h-bar", "hoc-drop", T.houseDrop.dur, T.houseDrop.at);
+
+  // 2. CHAIRS arrives letter by letter from the left.
+  ["chairs-c", "chairs-h", "chairs-a", "chairs-i", "chairs-r", "chairs-s"].forEach((p, i) =>
+    add(p, "hoc-in-left", T.chairs.dur, T.chairs.at + i * T.chairs.step),
+  );
+
+  // 3. The O drops last, onto the H that has just settled under it.
+  add("house-o", "hoc-drop", T.o.dur, T.o.at);
+
+  // 4. Then the rest of the lockup assembles.
+  ["of-o", "of-f"].forEach((p, i) => add(p, "hoc-rise", T.of.dur, T.of.at + i * T.of.step));
+  ["icon-h", "icon-bar"].forEach((p, i) => add(p, "hoc-drop", T.icon.dur, T.icon.at + i * T.icon.step));
+  ["icon-c", "icon-stem"].forEach((p, i) =>
+    add(p, "hoc-rise", T.icon.dur, T.icon.at + (i + 2) * T.icon.step),
+  );
+  add("rule", "hoc-draw", T.rule.dur, T.rule.at, "cubic-bezier(.4,0,.2,1)");
+  for (let i = 0; i < 17; i++) add(`tag1-${i}`, "hoc-fade", T.tag1.dur, T.tag1.at + i * T.tag1.step, "ease-out");
+  for (let i = 0; i < 12; i++) add(`tag2-${i}`, "hoc-fade", T.tag2.dur, T.tag2.at + i * T.tag2.step, "ease-out");
+
+  return out.join("\n");
+}
+
+const CSS = `
+/* Generated by scripts/build-logo-animation.mjs. Do not edit here. */
+[data-part]{transform-box:view-box;transform-origin:0 0}
+@keyframes hoc-drop{from{transform:translateY(calc(var(--drop, 400px) * -1))}to{transform:translateY(0)}}
+@keyframes hoc-in-left{from{opacity:0;transform:translateX(-52px)}to{opacity:1;transform:translateX(0)}}
+@keyframes hoc-rise{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes hoc-fade{from{opacity:0}to{opacity:1}}
+@keyframes hoc-draw{from{stroke-dashoffset:100}to{stroke-dashoffset:0}}
+[data-part="rule"]{stroke-dasharray:100}
+${rules()}
+/* Everything at rest, nothing missing, for anyone who asked for less motion. */
+@media (prefers-reduced-motion: reduce){
+  [data-part]{animation:none !important;opacity:1 !important;transform:none !important;stroke-dashoffset:0 !important}
+}
+`;
+
+let svg = readFileSync(SRC, "utf8");
+
+// Tag each drawable element in document order.
+let i = 0;
+svg = svg.replace(/<(path|polygon|rect|line|circle|ellipse)\b/g, (m, tag) => {
+  const part = PARTS[i++];
+  if (!part) throw new Error(`FullSet.svg has more drawable elements than PARTS knows about (${i})`);
+  // The rule is drawn on, so it needs a length the dash array can work against.
+  const extra = part === "rule" ? ' pathLength="100"' : "";
+  return `<${tag} data-part="${part}"${extra}`;
+});
+if (i !== PARTS.length) {
+  throw new Error(`Expected ${PARTS.length} drawable elements in FullSet.svg, found ${i}. Re-check the export order against PARTS.`);
+}
+
+// Append to the file's own style block rather than adding a second one.
+if (!svg.includes("</style>")) throw new Error("FullSet.svg has no <style> block to extend");
+svg = svg.replace("</style>", `${CSS}</style>`);
+
+writeFileSync(OUT, svg);
+console.log(`wrote ${OUT} (${PARTS.length} parts, build ends at ~${n(T.tag2.at + 11 * T.tag2.step + T.tag2.dur)}s)`);
