@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "chairs": "node scripts/extract-chairs.mjs",
-    "logo": "node scripts/build-logo-animation.mjs"
+    "logo": "node scripts/build-logo-animation.mjs",
+    "font:accent": "python3 scripts/subset-accent-font.py"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",

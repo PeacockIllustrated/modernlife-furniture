@@ -32,10 +32,15 @@
   --gutter: clamp(1.25rem, 4vw, 3.25rem);
   --edge-pad: max(var(--gutter), calc((100vw - var(--shell)) / 2));
 
-  /* next/font families, injected on <html> in layout.tsx */
-  --font-display: var(--font-fraunces), Georgia, serif;
-  --font-body: var(--font-archivo), system-ui, sans-serif;
-  --font-mono: var(--font-spline-mono), ui-monospace, monospace;
+  /* next/font families, injected on <html> in layout.tsx. Two faces, the
+     pairing the mark is built from: Montserrat states, Anaktoria accents.
+     --font-mono keeps its name because a hundred call sites use .mono, but the
+     role is now labels rather than monospace: same family as the body, told
+     apart by weight, size and tracking. */
+  --font-display: var(--font-montserrat), system-ui, sans-serif;
+  --font-body: var(--font-montserrat), system-ui, sans-serif;
+  --font-mono: var(--font-montserrat), system-ui, sans-serif;
+  --font-accent: var(--font-anaktoria), Georgia, serif;
 }
 
 * {
@@ -76,8 +81,21 @@ button:focus-visible,
 
 .mono {
   font-family: var(--font-mono);
+  font-weight: 500;
   font-size: 0.72rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
+}
+
+/* The emphasised word in a heading. The lockup sets its "of" in the same hand,
+   so a heading picks up the mark's own hierarchy rather than leaning on an
+   italic the accent face does not have. It sets small against Montserrat at a
+   shared size, hence the bump; never give it a weight or a slant. */
+em {
+  font-family: var(--font-accent);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.1em;
+  letter-spacing: 0.005em;
 }
 
 /* Breathing room: hold the generative visuals in from their panel edges
@@ -186,10 +204,6 @@ button:focus-visible,
   line-height: 0.94;
   letter-spacing: -0.02em;
 }
-.hero h1 em {
-  font-style: italic;
-  font-weight: 400;
-}
 .hero-sub {
   display: flex;
   justify-content: space-between;
@@ -219,9 +233,6 @@ button:focus-visible,
   line-height: 1.28;
   max-width: 24em;
   margin: 0 auto;
-}
-.manifesto em {
-  font-style: italic;
 }
 
 /* ---------- Specimen room ---------- */
@@ -1440,10 +1451,6 @@ button.enquire {
   letter-spacing: -0.015em;
   margin-bottom: 1rem;
 }
-.story-band-text h2 em {
-  font-style: italic;
-  font-weight: 400;
-}
 .story-band-text p {
   max-width: 44ch;
   opacity: 0.9;
@@ -2089,6 +2096,14 @@ button.enquire {
   height: 100%;
 }
 
+/* The mark sits over the headline at a size that reads as a signature rather
+   than a second headline: the h1 is still the loudest thing in the panel. */
+.hero-logo {
+  display: block;
+  width: min(58%, 19rem);
+  height: auto;
+  margin-bottom: clamp(1rem, 2.4vw, 1.9rem);
+}
 .hero-lede-copy {
   position: relative;
   z-index: 2;
@@ -2102,10 +2117,6 @@ button.enquire {
   letter-spacing: -0.02em;
   margin-bottom: 1rem;
   max-width: 14ch;
-}
-.hero-lede h1 em {
-  font-style: italic;
-  font-weight: 400;
 }
 .hero-lede p {
   max-width: 38ch;
@@ -2383,10 +2394,6 @@ button.enquire {
   letter-spacing: -0.015em;
   margin-bottom: 1.2rem;
   max-width: 18ch;
-}
-.buying-body h2 em {
-  font-style: italic;
-  font-weight: 400;
 }
 .buying-body p {
   opacity: 0.85;
