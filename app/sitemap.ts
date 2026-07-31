@@ -5,7 +5,7 @@ import { staticPieces } from "@/content/pieces";
 const BASE = "https://houseofchairs.co.uk";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const routes = ["", "/collection", "/sell", "/enquire"].map((path) => ({
+  const routes = ["", "/collection", "/brochure", "/sell", "/enquire"].map((path) => ({
     url: `${BASE}${path}`,
     lastModified: new Date("2026-07-05"),
   }));

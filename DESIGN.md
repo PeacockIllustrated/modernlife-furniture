@@ -209,6 +209,45 @@ whenever the panel is off-screen, deferred until the page has gone idle so it
 never competes with the first render, and one still frame under reduced motion
 with nothing missing.
 
+## The catalogue, /brochure
+A printed brochure rebuilt for the web: `app/brochure/` with its own
+stylesheet, `content/brochure.ts` for the copy, `components/brochure/` for the
+three parts that move. It borrows the devices that make a document read as a
+document, and adds the three a printed one cannot have.
+
+The print devices: a cover with trim marks, an issue seal and the mark; a
+contents with dot leaders; numbered plates with catalogue references; folios in
+the outer corner of every leaf; a specification index as back matter; a
+colophon with a registration mark. Twelve leaves, alternating paper, panel and
+basalt grounds, one idea each.
+
+The three the web adds: a running head sticky under the site header, carrying
+the section, a hairline that fills as you read, a live folio count and the
+enquiry, so the money action is one tap from every plate; a print stylesheet
+that turns the dark bands to ink on white and gives each leaf its own A4 page,
+so "print or save as PDF" hands back a real document; and photography served
+through next/image with real `sizes`.
+
+Two things worth knowing before editing it:
+
+- **Photographs are mounted on white board.** `.br-figure` is a white card with
+  a hairline and `--radius-m`. The pieces are shot in daylight against white,
+  so an unmounted photograph on the paper ground reads as a brighter rectangle
+  with no edge; the board makes that a plate rather than an accident, and it is
+  what lets the same photograph sit on a basalt band without punching a hole in
+  it. The pair spread squares its plates and fits rather than fills, because
+  two portrait plates side by side push the records off the screen.
+- **The spec lists opt out of the sitewide `dl` rule.** `globals.css` makes
+  every `dl` a two column grid; `.br-specs` and the colophon list set
+  `display: block` so their rows are rows. Remove that and they silently set
+  two abreast in half the width they need.
+
+Attribution on this route follows CLAUDE.md exactly, and the colophon prints
+the rule so a reader can see it: a maker is named only where the piece carries
+a mark, and then as a description of the mark. `dimensions` and `pricePence`
+are null in the content file and render honest fallbacks; neither is ever
+guessed.
+
 ## Photography
 Photography leads every card, hero and band, through slots managed in the
 dashboard (hero image, buying band image, per-piece galleries). Every slot
