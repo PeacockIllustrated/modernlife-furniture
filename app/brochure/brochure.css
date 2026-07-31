@@ -1,0 +1,1050 @@
+/* ============================================================
+   The catalogue, /brochure
+
+   A printed brochure rebuilt for the web: a cover, a contents with
+   dot leaders, numbered plates, a specification index and a
+   colophon, all on the design system v2 tokens. Nothing here
+   invents a colour, a face or a radius; it borrows the print
+   devices and lets the tokens do the talking.
+
+   Everything is prefixed `br-` so it can never collide with the
+   store's own three thousand lines. The last block is a print
+   stylesheet, so the page a customer reads on a phone is the same
+   document that comes out of a printer or a save-as-PDF.
+   ============================================================ */
+
+/* The running head is a sibling of the document, not a child of it, so both
+   have to carry these. `--br-head` is the height of the fixed site header,
+   which is what the sticky rail parks under. */
+.brochure,
+.br-rail {
+  --br-head: 54px;
+  --br-rule: 1px solid var(--hair-colour);
+}
+.brochure {
+  /* The vertical rhythm of a leaf: generous, one idea per band. */
+  --br-leaf-y: clamp(4.5rem, 11vh, 9rem);
+  background: var(--paper);
+}
+
+/* ---------- The leaf, one band of the document ---------- */
+.br-leaf,
+.br-cover {
+  /* Anchors from the contents land below the fixed header and the running
+     head, not behind them. */
+  scroll-margin-top: calc(var(--br-head) + 3rem);
+}
+.br-leaf {
+  position: relative;
+  padding: var(--br-leaf-y) var(--edge-pad);
+}
+.br-leaf--panel {
+  background: var(--panel);
+}
+.br-leaf--dark {
+  background: var(--basalt);
+  color: var(--bone);
+}
+.br-leaf--dark .br-eyebrow,
+.br-leaf--dark .br-folio {
+  color: var(--bone);
+}
+
+/* Folio, bottom outer corner, the way a page number sits on paper. */
+.br-folio {
+  position: absolute;
+  right: var(--edge-pad);
+  bottom: calc(var(--br-leaf-y) / 2.6);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  opacity: 0.5;
+}
+.br-folio::before {
+  content: "";
+  width: clamp(1.2rem, 4vw, 2.6rem);
+  height: 1px;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+/* ---------- Section labels ---------- */
+.br-eyebrow {
+  display: block;
+  opacity: 0.62;
+  margin-bottom: 0.9rem;
+}
+.br-h {
+  font-family: var(--font-display);
+  font-weight: 320;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  letter-spacing: -0.015em;
+  line-height: 1.04;
+}
+.br-lede {
+  max-width: 52ch;
+  margin-top: 1.2rem;
+  opacity: 0.86;
+}
+
+/* ============================================================
+   Running head
+   The brochure's own chrome: a sticky rule carrying the issue,
+   a reading progress hairline, a live folio count and the enquiry,
+   so the next action is one tap away from any plate.
+   ============================================================ */
+.br-rail {
+  position: sticky;
+  top: var(--br-head);
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 2vw, 1.6rem);
+  padding: 0.35rem var(--edge-pad);
+  background: rgba(245, 243, 239, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: var(--br-rule);
+}
+.br-rail-issue {
+  white-space: nowrap;
+  opacity: 0.7;
+}
+.br-rail-track {
+  flex: 1;
+  height: 1px;
+  background: var(--hair-colour);
+  position: relative;
+  overflow: hidden;
+}
+.br-rail-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--amber);
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
+}
+.br-rail-folio {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
+}
+.br-rail-cta {
+  display: inline-flex;
+  align-items: center;
+  /* The house minimum, kept even in a compact bar: this is the money action
+     on the page and it is the one thing a reader taps from a phone. */
+  min-height: 44px;
+  padding: 0.4rem 1.2rem;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease;
+}
+.br-rail-cta:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+@media (max-width: 620px) {
+  .brochure,
+  .br-rail {
+    --br-head: 70px;
+  }
+  .br-rail-issue {
+    display: none;
+  }
+}
+
+/* ============================================================
+   Cover
+   ============================================================ */
+.br-cover {
+  position: relative;
+  background: var(--basalt);
+  color: var(--bone);
+  padding: clamp(3.5rem, 9vh, 7rem) var(--edge-pad) clamp(3rem, 7vh, 5.5rem);
+}
+/* Three parts, two arrangements. On a wide screen the mark sits over the copy
+   in the outer column with the plate beside them; on a phone they stack in
+   reading order, mark first, because a cover that opens on a photograph with
+   the mark underneath is not a cover. */
+.br-cover-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  grid-template-rows: auto 1fr;
+  gap: 0 clamp(2rem, 5vw, 4.5rem);
+  align-items: center;
+  max-width: var(--shell);
+  margin: 0 auto;
+}
+.br-cover-copy {
+  grid-column: 1;
+  /* Sit under the mark's rule. Centring it in the row the plate stretches
+     leaves a hole between the rule and the headline. */
+  align-self: start;
+}
+.br-cover-plate {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: center;
+}
+.br-cover-mark {
+  grid-column: 1;
+  align-self: end;
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  padding-bottom: 1.4rem;
+  margin-bottom: clamp(1.6rem, 4vh, 2.8rem);
+  border-bottom: 1px solid rgba(221, 217, 204, 0.28);
+}
+/* The mark as the designer drew it, inverted to sit on the basalt board. The
+   artwork is solid black on transparent, so a straight invert lands on white;
+   the opacity settles it back to the bone the rest of the dark bands use. */
+.br-cover-logo {
+  width: clamp(9rem, 20vw, 14rem);
+  height: auto;
+  filter: invert(1);
+  opacity: 0.88;
+}
+.br-cover-mark span {
+  opacity: 0.62;
+}
+.br-cover h1 {
+  font-family: var(--font-display);
+  font-weight: 280;
+  font-size: clamp(2.5rem, 6vw, 4.4rem);
+  letter-spacing: -0.025em;
+  line-height: 1;
+}
+/* The highlighted phrase breaks as a unit or not at all; a cover that leaves
+   "with" alone on its own line is a cover nobody proofread. */
+.br-cover h1 em {
+  white-space: nowrap;
+}
+.br-cover-strap {
+  margin-top: 1.4rem;
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  opacity: 0.82;
+  max-width: 36ch;
+  text-wrap: balance;
+}
+.br-cover-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 1.4rem;
+  margin-top: clamp(1.8rem, 4vh, 2.6rem);
+  padding-top: 1.2rem;
+  border-top: 1px solid rgba(221, 217, 204, 0.28);
+  opacity: 0.72;
+}
+.br-cover-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: clamp(1.8rem, 4vh, 2.4rem);
+}
+.br-cover .br-btn-solid {
+  background: var(--bone);
+  border-color: var(--bone);
+  color: var(--basalt);
+}
+.br-cover .br-btn-solid:hover {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: var(--basalt);
+}
+.br-cover .br-btn-line {
+  border-color: rgba(221, 217, 204, 0.5);
+  color: var(--bone);
+}
+.br-cover .br-btn-line:hover {
+  background: var(--bone);
+  color: var(--basalt);
+}
+
+/* The cover plate: the photograph mounted like a print on the board,
+   which is also what keeps a white studio background from reading as
+   a hole in a dark ground. */
+.br-cover-plate {
+  position: relative;
+}
+.br-cover-plate .br-figure {
+  margin: 0;
+}
+/* The seal in the corner of the plate: an issue stamp, the one place on the
+   cover the accent is allowed to shout. */
+.br-cover-issue {
+  position: absolute;
+  top: -0.9rem;
+  left: -0.9rem;
+  z-index: 2;
+  display: grid;
+  place-content: center;
+  width: clamp(3.8rem, 7vw, 5rem);
+  height: clamp(3.8rem, 7vw, 5rem);
+  border-radius: 999px;
+  background: var(--amber);
+  color: var(--basalt);
+  text-align: center;
+  line-height: 1.15;
+}
+.br-cover-issue small {
+  display: block;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.54rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+.br-cover-issue strong {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.5rem;
+  letter-spacing: 0.04em;
+}
+
+/* Corner brackets, the trim marks a printed cover carries. */
+.br-crop {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 0 solid rgba(221, 217, 204, 0.42);
+  pointer-events: none;
+}
+.br-crop[data-corner="tl"] {
+  top: 14px;
+  left: 14px;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+.br-crop[data-corner="tr"] {
+  top: 14px;
+  right: 14px;
+  border-top-width: 1px;
+  border-right-width: 1px;
+}
+.br-crop[data-corner="bl"] {
+  bottom: 14px;
+  left: 14px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+}
+.br-crop[data-corner="br"] {
+  bottom: 14px;
+  right: 14px;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+}
+
+@media (max-width: 860px) {
+  .br-cover-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    gap: 2rem;
+  }
+  .br-cover-mark,
+  .br-cover-copy,
+  .br-cover-plate {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .br-cover-mark {
+    margin-bottom: 0;
+  }
+  .br-cover-plate {
+    max-width: 22rem;
+  }
+}
+
+/* ============================================================
+   The plate figure: a photograph mounted on white board
+   ============================================================ */
+.br-figure {
+  position: relative;
+  margin: 0;
+  background: #fff;
+  border: var(--br-rule);
+  border-radius: var(--radius-m);
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+}
+.br-leaf--dark .br-figure,
+.br-cover .br-figure {
+  border-color: rgba(221, 217, 204, 0.24);
+}
+.br-figure img {
+  object-fit: cover;
+}
+.br-caption {
+  display: flex;
+  gap: 0.7rem;
+  align-items: baseline;
+  margin-top: 0.8rem;
+  padding-top: 0.7rem;
+  border-top: var(--br-rule);
+  opacity: 0.62;
+}
+.br-leaf--dark .br-caption {
+  border-top-color: rgba(221, 217, 204, 0.28);
+}
+
+/* ============================================================
+   Contents
+   ============================================================ */
+.br-contents-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  max-width: var(--shell);
+  margin: 0 auto;
+}
+.br-toc {
+  list-style: none;
+  border-top: var(--br-rule);
+}
+.br-toc li {
+  border-bottom: var(--br-rule);
+}
+.br-toc a {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  padding: 0.95rem 0;
+  min-height: 44px;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.br-toc a:hover {
+  color: var(--amber);
+}
+.br-toc-no {
+  width: 2.4rem;
+  flex: none;
+  opacity: 0.5;
+  font-variant-numeric: tabular-nums;
+}
+.br-toc-title {
+  font-size: 1rem;
+}
+.br-toc-hedge {
+  opacity: 0.6;
+  font-size: 0.95rem;
+}
+.br-toc-dots {
+  flex: 1;
+  min-width: 1.5rem;
+  border-bottom: 1px dotted var(--hair-colour);
+  transform: translateY(-0.28em);
+}
+.br-toc-folio {
+  flex: none;
+  opacity: 0.55;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 860px) {
+  .br-contents-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+  }
+}
+@media (max-width: 620px) {
+  /* On a phone the row is title, leader, folio, the way a contents page has
+     always been set. The hedge goes, and so does the number in the left
+     margin, which is the same folio printed twice. */
+  .br-toc-hedge,
+  .br-toc-no {
+    display: none;
+  }
+  .br-toc-folio {
+    font-size: 0;
+  }
+  .br-toc-folio::after {
+    content: attr(data-folio);
+    font-size: 0.72rem;
+  }
+}
+
+/* ============================================================
+   Foreword, with the printed drop cap
+   ============================================================ */
+/* Heading in the outer column, text in a measure beside it, the way a
+   foreword sits on a spread. A single 62ch column on a 1200px leaf leaves
+   half the paper blank and reads as a mistake rather than as air. */
+.br-foreword-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  max-width: var(--shell);
+  margin: 0 auto;
+}
+.br-foreword {
+  max-width: 58ch;
+}
+.br-foreword p {
+  margin-top: 1.2rem;
+  font-size: clamp(1rem, 1.5vw, 1.12rem);
+}
+.br-foreword p:first-of-type {
+  margin-top: 1.6rem;
+}
+/* The drop cap sits at 400, not at the 280 the rest of the display scale uses
+   at this size. A capital at four times the body size is not display type, it
+   is one letter carrying a paragraph, and Montserrat's thin W at that size
+   reads as two V's. */
+.br-foreword p:first-of-type::first-letter {
+  float: left;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 3.4em;
+  line-height: 0.82;
+  padding: 0.04em 0.1em 0 0;
+  color: var(--amber);
+}
+.br-sign {
+  display: block;
+  margin-top: 1.6rem;
+  font-size: 1.25rem;
+  opacity: 0.78;
+}
+@media (max-width: 860px) {
+  .br-foreword-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.4rem;
+  }
+}
+
+/* ============================================================
+   A plate
+   ============================================================ */
+/* Equal columns: at the shell width the photograph and its record come out
+   within fifty pixels of each other in height, so the spread sits level
+   without either side being padded out to meet the other. */
+.br-plate {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: center;
+  max-width: var(--shell);
+  margin: 0 auto;
+}
+.br-plate--flip .br-plate-figure {
+  order: 2;
+}
+.br-plate-head {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding-bottom: 0.9rem;
+  margin-bottom: 1.1rem;
+  border-bottom: var(--br-rule);
+  opacity: 0.7;
+}
+.br-leaf--dark .br-plate-head {
+  border-bottom-color: rgba(221, 217, 204, 0.28);
+}
+.br-plate-head .br-plate-no {
+  color: var(--amber);
+  opacity: 1;
+}
+.br-plate-head-sep {
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.25;
+}
+.br-plate h2,
+.br-plate h3 {
+  font-family: var(--font-display);
+  font-weight: 320;
+  font-size: clamp(1.75rem, 3.4vw, 2.7rem);
+  letter-spacing: -0.015em;
+  line-height: 1.05;
+}
+.br-attribution {
+  display: block;
+  margin-top: 0.6rem;
+  font-size: 1.12rem;
+  opacity: 0.78;
+}
+.br-plate-body {
+  margin-top: 1.2rem;
+  max-width: 46ch;
+  opacity: 0.9;
+}
+.br-aside {
+  display: block;
+  margin-top: 1.1rem;
+  font-size: 1.2rem;
+  opacity: 0.72;
+}
+
+/* The specification list, set as a printed record.
+
+   `display: block` is not decoration: globals.css makes every dl a two column
+   grid, which would take these rows as grid items and set them two abreast in
+   half the width they need. The record owns its own layout, one row per line,
+   term and detail inside each. */
+.br-specs {
+  display: block;
+  margin-top: 1.8rem;
+  border-top: var(--br-rule);
+}
+.br-leaf--dark .br-specs,
+.br-leaf--dark .br-specs > div {
+  border-color: rgba(221, 217, 204, 0.28);
+}
+.br-specs > div {
+  display: grid;
+  grid-template-columns: 8.5rem minmax(0, 1fr);
+  gap: 0.4rem 1.2rem;
+  padding: 0.7rem 0;
+  border-bottom: var(--br-rule);
+}
+.br-specs dt {
+  opacity: 0.55;
+}
+.br-specs dd {
+  font-size: 0.95rem;
+  opacity: 0.92;
+}
+@media (max-width: 520px) {
+  .br-specs > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.2rem;
+  }
+}
+
+/* The buy line: status, price, and the enquiry. */
+.br-acquire {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem 1.4rem;
+  margin-top: 1.7rem;
+}
+.br-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.85;
+}
+.br-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--sea);
+}
+.br-status[data-status="reserved"] .br-dot,
+.br-status[data-status="sold"] .br-dot {
+  background: var(--rose);
+}
+.br-status[data-status="restoration"] .br-dot {
+  background: var(--amber);
+}
+.br-price {
+  font-family: var(--font-display);
+  font-weight: 380;
+  font-size: 1.22rem;
+}
+
+/* ---------- Buttons, the house pill in brochure scope ---------- */
+.br-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
+  padding: 0.85rem 1.8rem;
+  min-height: 44px;
+  text-decoration: none;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
+}
+.br-btn-solid {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.br-btn-solid:hover {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: var(--basalt);
+}
+.br-btn-line:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+.br-leaf--dark .br-btn {
+  border-color: rgba(221, 217, 204, 0.5);
+}
+.br-leaf--dark .br-btn-solid {
+  background: var(--bone);
+  border-color: var(--bone);
+  color: var(--basalt);
+}
+.br-leaf--dark .br-btn-solid:hover,
+.br-leaf--dark .br-btn-line:hover {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: var(--basalt);
+}
+
+@media (max-width: 860px) {
+  .br-plate {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.8rem;
+  }
+  .br-plate--flip .br-plate-figure {
+    order: 0;
+  }
+}
+
+/* ============================================================
+   The pair spread: two plates shown together
+   ============================================================ */
+.br-pair-head {
+  max-width: var(--shell);
+  margin: 0 auto clamp(2rem, 5vh, 3.2rem);
+}
+.br-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.5rem, 4vw, 3.4rem);
+  max-width: var(--shell);
+  margin: 0 auto;
+}
+/* Square plates on the pair spread, and the photograph fitted rather than
+   filled. Two portrait plates side by side push the record most of a screen
+   down the leaf; squaring them keeps both stools and their records in one
+   view, and because the board is white the letterboxing is invisible. */
+.br-pair .br-figure {
+  aspect-ratio: 1 / 1;
+}
+.br-pair .br-figure img {
+  object-fit: contain;
+}
+.br-pair-item h3 {
+  font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+  margin-top: 1rem;
+}
+.br-pair-item .br-plate-body {
+  font-size: 0.95rem;
+  max-width: none;
+}
+.br-pair-item .br-specs {
+  margin-top: 1.2rem;
+}
+@media (max-width: 720px) {
+  .br-pair {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3rem;
+  }
+}
+
+/* ============================================================
+   Buying, the numbered assurances
+   ============================================================ */
+.br-buying {
+  max-width: var(--shell);
+  margin: 0 auto;
+}
+.br-buying-head {
+  max-width: 46ch;
+  margin-bottom: clamp(2.2rem, 5vh, 3.4rem);
+}
+.br-points {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1.4rem, 3vw, 2.6rem);
+}
+.br-point {
+  border-top: 1px solid rgba(221, 217, 204, 0.28);
+  padding-top: 1rem;
+}
+.br-point .br-point-no {
+  display: block;
+  color: var(--amber);
+  margin-bottom: 0.7rem;
+}
+.br-point h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.02rem;
+  margin-bottom: 0.45rem;
+}
+.br-point p {
+  font-size: 0.92rem;
+  opacity: 0.78;
+}
+@media (max-width: 860px) {
+  .br-points {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 520px) {
+  .br-points {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ============================================================
+   Specification index, the back matter
+   ============================================================ */
+.br-index {
+  max-width: var(--shell);
+  margin: 0 auto;
+}
+.br-index-scroll {
+  margin-top: clamp(1.8rem, 4vh, 2.6rem);
+  overflow-x: auto;
+}
+.br-table {
+  width: 100%;
+  min-width: 44rem;
+  border-collapse: collapse;
+  text-align: left;
+}
+.br-table th {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  opacity: 0.55;
+  padding: 0 0.9rem 0.7rem 0;
+  border-bottom: var(--br-rule);
+  white-space: nowrap;
+}
+.br-table td {
+  padding: 0.85rem 0.9rem 0.85rem 0;
+  border-bottom: var(--br-rule);
+  vertical-align: top;
+  font-size: 0.94rem;
+}
+.br-table tr:hover td {
+  background: rgba(30, 33, 30, 0.03);
+}
+.br-table .br-cell-no {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+  white-space: nowrap;
+}
+.br-table .br-cell-title a {
+  text-decoration: none;
+  border-bottom: 1px solid var(--hair-colour);
+}
+.br-table .br-cell-title a:hover {
+  border-bottom-color: currentColor;
+}
+.br-table .br-cell-hedge {
+  opacity: 0.7;
+}
+.br-index-note {
+  margin-top: 1.4rem;
+  max-width: 60ch;
+  font-size: 0.92rem;
+  opacity: 0.7;
+}
+
+/* ============================================================
+   Order form and colophon
+   ============================================================ */
+.br-order {
+  max-width: 58ch;
+  margin: 0 auto;
+  text-align: center;
+}
+.br-order .br-eyebrow {
+  margin-bottom: 1.1rem;
+}
+.br-order h2 {
+  font-family: var(--font-display);
+  font-weight: 280;
+  font-size: clamp(2.2rem, 5.6vw, 4.2rem);
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+}
+.br-order p {
+  margin: 1.3rem auto 2.2rem;
+  opacity: 0.85;
+}
+.br-order-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  justify-content: center;
+}
+
+.br-colophon {
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  max-width: var(--shell);
+  margin: 0 auto;
+}
+.br-reg {
+  display: block;
+  width: 44px;
+  height: 44px;
+  opacity: 0.65;
+}
+.br-colophon-mark p {
+  margin-top: 1rem;
+  font-size: 1.15rem;
+  opacity: 0.72;
+  max-width: 24ch;
+}
+.br-colophon dl {
+  /* Same reason as .br-specs: opt out of the sitewide dl grid. */
+  display: block;
+  border-top: 1px solid rgba(221, 217, 204, 0.28);
+}
+.br-colophon dl > div {
+  display: grid;
+  grid-template-columns: 9rem minmax(0, 1fr);
+  gap: 0.4rem 1.2rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid rgba(221, 217, 204, 0.28);
+}
+.br-colophon dt {
+  opacity: 0.55;
+}
+.br-colophon dd {
+  font-size: 0.94rem;
+  opacity: 0.86;
+}
+.br-colophon-cta {
+  margin-top: 1.8rem;
+}
+.br-colophon-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.8rem 1.4rem;
+  margin-top: 1.6rem;
+  opacity: 0.55;
+}
+@media (max-width: 860px) {
+  .br-colophon {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .br-colophon dl > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.2rem;
+  }
+}
+
+/* ============================================================
+   Print: the same document, on paper
+   The dark bands invert to ink on white rather than flooding a
+   sheet, each leaf takes its own page, and the buttons give way
+   to the address a reader would actually use.
+   ============================================================ */
+.br-print-only {
+  display: none;
+}
+@media print {
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+  .site-header,
+  .announcement,
+  .store-footer,
+  .br-rail,
+  .br-order-cta,
+  .br-cover-cta,
+  .br-colophon-cta,
+  .br-acquire .br-btn {
+    display: none !important;
+  }
+  .br-print-only {
+    display: block;
+  }
+  caption.br-print-only {
+    display: table-caption;
+    text-align: left;
+    padding-bottom: 0.8rem;
+    opacity: 0.6;
+  }
+  .brochure {
+    --br-leaf-y: 0;
+  }
+  .br-cover,
+  .br-leaf {
+    break-after: page;
+    padding: 0 0 8mm;
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .br-leaf--dark .br-figure,
+  .br-cover .br-figure,
+  .br-leaf--dark .br-plate-head,
+  .br-leaf--dark .br-specs,
+  .br-leaf--dark .br-specs > div,
+  .br-point,
+  .br-colophon dl,
+  .br-colophon dl > div {
+    border-color: rgba(0, 0, 0, 0.25) !important;
+  }
+  .br-plate,
+  .br-pair,
+  .br-cover-grid,
+  .br-contents-grid,
+  .br-colophon {
+    break-inside: avoid;
+  }
+  /* The mark is inverted to sit on the basalt cover. On paper the cover is
+     white, so the inversion would print white on white and the catalogue
+     would come out of the printer unbranded. */
+  .br-cover-logo {
+    filter: none;
+    opacity: 1;
+  }
+  /* Out of the corner and into the flow: hung off the plate's top left it
+     falls outside the printable area and gets trimmed. */
+  .br-cover-issue {
+    position: static;
+    margin-bottom: 6mm;
+  }
+  .br-figure {
+    aspect-ratio: 3 / 4;
+    max-height: 130mm;
+  }
+  .br-cover h1 {
+    font-size: 42pt;
+  }
+  .br-h {
+    font-size: 24pt;
+  }
+  .br-plate h2,
+  .br-plate h3 {
+    font-size: 18pt;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  a {
+    text-decoration: none;
+  }
+}

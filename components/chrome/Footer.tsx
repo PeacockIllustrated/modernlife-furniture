@@ -34,6 +34,7 @@ export default async function Footer() {
         <nav className="footer-col" aria-label="The store">
           <span className="footer-col-h">The store</span>
           <Link href="/collection">All pieces</Link>
+          <Link href="/brochure">The catalogue</Link>
           <Link href="/sell">Sell to us</Link>
           <Link href="/enquire">Enquire</Link>
         </nav>
